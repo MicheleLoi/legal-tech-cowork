@@ -53,10 +53,12 @@ esplicita:
 > aggiunto. Monitora automaticamente l'ecosistema legal-tech AI open
 > source — il bollettino è popolato da una routine che applica una
 > threshold policy esplicita (qualità, licenza OSS, rilevanza italiana),
-> non da curazione manuale runtime. Le citazioni e i riferimenti normativi
-> prodotti dalle skill richiedono sempre la tua verifica professionale
-> prima dell'uso. La responsabilità del contenuto legale finale resta tua.
-> Confermi di aver letto?
+> non da curazione manuale runtime. **Il bollettino si aggiorna
+> automaticamente il primo di ogni mese.** Clicca "Update" sul plugin
+> in Claude Desktop quando vuoi sincronizzare l'ultima versione.
+> Le citazioni e i riferimenti normativi prodotti dalle skill richiedono
+> sempre la tua verifica professionale prima dell'uso. La responsabilità
+> del contenuto legale finale resta tua. Confermi di aver letto?
 
 Attendi una conferma esplicita (l'avvocato scrive "sì", "confermo", "ok",
 "ho capito", o equivalente). Solo dopo, prosegui.

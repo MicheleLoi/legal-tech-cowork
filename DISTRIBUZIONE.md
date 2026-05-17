@@ -68,11 +68,11 @@ dirà:
 
 ### Aggiornamenti
 
-Quando la routine pubblica nuove voci nel bollettino (~mensile), il
-plugin le vede automaticamente alla prossima apertura di Cowork. Non
-devi fare nulla.
+Il bollettino si aggiorna **automaticamente il primo di ogni mese**
+(ore 10:00 italiane in estate, 9:00 in inverno). Le nuove voci
+appaiono al prossimo apertura di Cowork.
 
-Per forzare un controllo aggiornamenti vai su
+Per forzare un controllo aggiornamenti **subito** vai su
 **Customize → Plugin** e clicca **"Update"** accanto a MHC-L.
 
 ---

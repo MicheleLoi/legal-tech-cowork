@@ -280,9 +280,13 @@ partire dal pool opt-in degli avvocati. L'avvocato non vede mai GitHub.
 
 **Via primaria — routine automatica mensile (ecosystem-monitor):**
 
-1. La routine `bollettino-research` in MHC-Work viene invocata
-   automaticamente via `scheduled-tasks` MCP (default: primo lunedì del
-   mese) o manualmente dal founder.
+1. La routine `bollettino-research` viene invocata automaticamente
+   come **remote agent (routine claude.ai/code)** ogni **primo del
+   mese alle ore 10:00 ora italiana** (cron `0 8 1 * *` UTC; in inverno
+   = 9:00 CET, in estate = 10:00 CEST). Routine ID:
+   `trig_01XKWAFBLAC4JcLibcf451J7` — log esecuzioni a
+   `claude.ai/code/routines/`. Founder può anche invocarla manualmente
+   in qualunque momento via Claude Code in MHC-Work.
 2. Cerca su GitHub API **broadly** nell'ecosistema legal-tech AI open
    source (topic `claude-skill`, `legal-tech`, etc.; ecosystem keywords
    post-Mike Bommarito; org `anthropics/*` + publisher whitelist se
