@@ -1,17 +1,16 @@
 {
   "name": "legal-tech-cowork",
   "owner": {
-    "name": "Michele Loi",
-    "url": "https://github.com/MicheleLoi"
+    "name": "Michele Loi"
   },
   "plugins": [
     {
       "name": "mhc-l",
       "source": ".",
       "description": "Meta-plugin di adattamento italiano per skill legal-tech AI open source. Fork-and-extend di legal-builder-hub di Anthropic con layer italiano (adattamento + verifica fonti IT/EU) e bollettino ecosystem-monitored.",
-      "version": "2.0.0",
-      "category": "legal",
-      "tags": ["legal", "italian", "legal-tech", "meta-plugin", "ecosystem-monitor", "anthropic-fork"]
+      "author": {
+        "name": "Michele Loi"
+      }
     }
   ]
 }
