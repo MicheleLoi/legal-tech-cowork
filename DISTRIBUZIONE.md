@@ -68,9 +68,9 @@ dirà:
 
 ### Aggiornamenti
 
-Il bollettino si aggiorna **automaticamente il primo di ogni mese**
-(ore 10:00 italiane in estate, 9:00 in inverno). Le nuove voci
-appaiono al prossimo apertura di Cowork.
+Il bollettino si aggiorna **automaticamente il 17 di ogni mese
+alle 22:40 ora italiana** (CEST estate / CET inverno). Le nuove
+voci appaiono al prossimo apertura di Cowork.
 
 Per forzare un controllo aggiornamenti **subito** vai su
 **Customize → Plugin** e clicca **"Update"** accanto a MHC-L.
