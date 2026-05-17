@@ -23,17 +23,18 @@ momenti distinti che devi tenere separati e svolgere nell'ordine corretto:
    debba reinstallare nulla.
 2. **Presenta il catalogo** all'avvocato in due pannelli (Novità, Avvisi
    importanti) con linguaggio sobrio forense.
-3. **Su richiesta di installazione**, scarica il codice della skill dal suo
-   repo, **proponi all'avvocato un adattamento italiano** (prompt, esempi,
-   riferimenti normativi tradotti e portati nel contesto del diritto italiano),
-   **pre-filtra la proposta con `verifica-fonti`** per flaggare riferimenti
-   normativi dubbi prima di mostrarla all'avvocato, e **attendi conferma
-   esplicita** prima di attivarla.
-4. **Dopo l'attivazione di una skill marcata IT o EU**, suggerisci
-   automaticamente all'avvocato di invocare `verifica-fonti` sull'output
-   prodotto al momento dell'uso, per controllare le citazioni generate
-   runtime (distinte da quelle hardcoded nel template della skill, già
-   pre-filtrate al momento dell'install).
+3. **Su richiesta di installazione**, delega allo `skill-installer` (che
+   applica silenziosamente tutti i check di sicurezza e mostra una sola
+   riga per-tier all'avvocato per conferma). Dopo l'installazione,
+   ricorda all'avvocato che può chiedere l'adattamento italiano come
+   **secondo passo cosciente separato**, invocando esplicitamente
+   `adattamento-italiano [nome]`. Install e adattamento sono due
+   richieste distinte.
+4. **Dopo l'attivazione di una skill marcata IT o EU** (anche solo
+   tramite adattamento italiano successivo), suggerisci automaticamente
+   all'avvocato di invocare `verifica-fonti` sull'output prodotto al
+   momento dell'uso, per controllare le citazioni generate runtime
+   (distinte da quelle hardcoded nel template della skill).
 
 L'avvocato porta la conoscenza giuridica. Tu porti la tecnologia. La
 responsabilità del contenuto legale finale resta dell'avvocato — questa
@@ -57,9 +58,19 @@ esplicita:
 > automaticamente il 17 di ogni mese alle 22:40 ora italiana.** Clicca
 > "Update" sul plugin in Claude Desktop quando vuoi sincronizzare
 > l'ultima versione prima della prossima esecuzione automatica.
-> Le citazioni e i riferimenti normativi prodotti dalle skill richiedono
-> sempre la tua verifica professionale prima dell'uso. La responsabilità
-> del contenuto legale finale resta tua. Confermi di aver letto?
+>
+> **Catena di responsabilità.** Il founder garantisce solo la
+> distribuzione e l'automazione del filtro tecnico; non garantisce la
+> sostanza giuridica né tecnica delle skill terze. Per le skill
+> Anthropic-official (tier 1) la sostanza tecnica è garantita da
+> Anthropic. Per le skill di terzi (tier 2), che hanno comunque
+> superato i check automatici di sicurezza, per uso in produzione su
+> dati di clienti reali è raccomandato il confronto con il tuo
+> consulente IT. La validazione giuridica dell'output resta sempre
+> tua: le citazioni e i riferimenti normativi prodotti dalle skill
+> richiedono sempre la tua verifica professionale prima dell'uso.
+>
+> Confermi di aver letto?
 
 Attendi una conferma esplicita (l'avvocato scrive "sì", "confermo", "ok",
 "ho capito", o equivalente). Solo dopo, prosegui.
@@ -233,114 +244,127 @@ conversazione — solo segnalare con chiarezza.
 
 ---
 
-## Passo 3 — Installazione: delega al skill-installer + adattamento-italiano
+## Passo 3 — Installazione: delega al skill-installer
 
 Quando l'avvocato chiede di installare una skill (clicca `[Installa]` o dice
 "installa la skill X"), **non scrivere file tu**. L'installazione è
-delegata a due skill specializzate forkate/aggiunte:
+delegata allo `skill-installer` (forkato da `legal-builder-hub` di
+Anthropic, sotto Apache-2.0) — gestisce allowlist, fetch in subagent
+read-only, structural trust check, license verification pre+post fetch,
+freshness gate, install log strutturato, tutto silenziosamente.
+L'avvocato vede solo una riga per-tier che riassume cosa sta installando
+e conferma esplicitamente.
 
-- **`skill-installer`** (forkato da `legal-builder-hub` di Anthropic, sotto
-  Apache-2.0) — gestisce allowlist, fetch in subagent read-only, raw-source
-  display, structural trust check, license verification pre+post fetch,
-  freshness gate, install log strutturato. È il layer di sicurezza
-  industrial-grade che non riscriviamo.
-- **`adattamento-italiano`** (originale MHC-L, MIT) — hook invocato dallo
-  `skill-installer` allo Step 6.5 del suo workflow, **solo per skill con
-  `jurisdiction: IT` o `EU`**. Genera la proposta di adattamento usando
-  `skills/catalogo/adaptation_prompt.md`, pre-flight `verifica-fonti`,
-  attende conferma esplicita dell'avvocato.
+**Install e adattamento italiano sono due richieste separate.**
+L'installazione avviene tramite `skill-installer` che applica i
+controlli di sicurezza automaticamente. Dopo l'installazione l'avvocato
+riceve un promemoria su come richiedere l'adattamento italiano — questo
+richiede una seconda richiesta esplicita da parte sua. La REV2 cascade
+refactor (2026-05-18) ha rimosso il vecchio hook che attivava
+l'adattamento automaticamente per skill IT/EU: non funzionava in cowork
+e lasciava fuori il caso comune di skill generiche che l'avvocato
+voleva comunque in italiano.
 
 ### 3.1 — Invoca skill-installer
 
-Passa al `skill-installer` la voce del bollettino selezionata dall'avvocato
-(`bollettino_entry` completo, inclusi `repo_url`, `skill_path`,
-`jurisdiction`, `reputation.license`, `founder_disclaimer`). L'installer
-esegue il proprio workflow (vedi `skills/skill-installer/SKILL.md` Steps
-1–6). Tu (catalogo) sei chiamante; lui restituirà esito.
+Passa al `skill-installer` la voce del bollettino selezionata
+dall'avvocato (`bollettino_entry` completo, inclusi `repo_url`,
+`skill_path`, `tier`, `reputation.license`, `founder_disclaimer`).
+L'installer esegue il proprio workflow silenziosamente e mostra
+all'avvocato una sola riga per-tier:
 
-### 3.2 — Cosa succede per skill IT/EU
+- **Tier 1** (Anthropic-official): *"Installando [nome] — plugin
+  ufficiale Anthropic, licenza Apache-2.0. ..."*
+- **Tier 2** (publisher terzo, passa threshold): *"Installando
+  [publisher]/[nome] — publisher terzo, passa i check tecnici
+  automatici. ..."*
+- **Tier 2 WARN** (anomalia non bloccante): Tier 2 + *"Anomalia
+  rilevata: [...]. Non bloccante. Procedi?"*
+- **REFUSE** (license assente / hook sospetto / injection): *"Skill
+  [nome] rifiutata: [motivo]. Installazione bloccata per sicurezza."*
 
-Se `jurisdiction` è `IT` o `EU`, lo `skill-installer` allo Step 6.5
-invoca automaticamente `adattamento-italiano`, che:
+Vedi `skills/skill-installer/SKILL.md` per il dettaglio.
 
-1. Carica `skills/catalogo/adaptation_prompt.md` come istruzione operativa
-2. Genera la proposta di adattamento
-3. Esegue pre-flight `verifica-fonti` sui riferimenti `[VERIFICA]`
-4. Presenta la proposta con flag inline 🟢/🟡/🔴 e attende conferma
-   esplicita (Approva / Modifica / Mostra completo / Annulla)
-5. Su Approva: restituisce al `skill-installer` la SKILL.md adattata,
-   che l'installer userà al posto del file originale nello Step 7
-6. Su Annulla: aborta l'installazione (lo `skill-installer` non scrive
-   nulla)
+### 3.2 — Due richieste separate: install poi (eventualmente) adattamento
 
-Vedi `skills/adattamento-italiano/SKILL.md` per il dettaglio del
-contratto.
+**Per ogni skill installata, dovrai esplicitamente chiedere
+l'adattamento italiano come secondo passo cosciente. L'installer non
+lo fa automaticamente.**
 
-### 3.3 — Cosa succede per skill `none` o `other`
+Dopo che lo `skill-installer` conferma l'installazione, mostra a sua
+volta un nudge:
 
-Se `jurisdiction` è `none` (utility tooling senza diritto specifico) o
-`other` (diritto straniero non adattabile), lo `skill-installer` salta
-lo Step 6.5 e installa il file originale senza adattamento. **MHC-L
-non proporrà `verifica-fonti` automaticamente** sugli output di queste
-skill — vedi Passo 4.
+> *"Skill `[nome]` installata in versione originale (inglese). Per
+> adattarla al diritto italiano e verificare le citazioni normative,
+> scrivi: 'adatta `[nome]` in italiano' o usa `/adattamento-italiano
+> [nome]`."*
 
-### 3.4 — Cosa fai tu (catalogo) dopo l'installazione
+Se l'avvocato non chiede l'adattamento, la skill resta in versione
+originale (inglese) — può essere usata così, ma MHC-L non proporrà
+`verifica-fonti` automaticamente sui suoi output. L'avvocato può
+chiedere l'adattamento in qualsiasi momento successivo.
+
+### 3.3 — Cosa fai tu (catalogo) dopo l'installazione
 
 Lo `skill-installer` ti restituisce l'esito (`installed` / `cancelled` /
-`refused_by_security_gate` / `cancelled_at_adaptation`). Aggiorna
-`.mhc-l-state.json` di conseguenza (`installed_skills` solo se esito
-`installed`). Comunica all'avvocato:
+`refused_by_security_gate`). Aggiorna `.mhc-l-state.json` di
+conseguenza (`installed_skills` solo se esito `installed`). Comunica
+all'avvocato:
 
-- **Installata**: *"Skill `<nome>` installata[, con adattamento italiano
-  applicato]. La trovi attiva nella prossima conversazione. Rileggi i
-  file in `~/.claude/plugins/config/mhc-l/installed_skills/<nome>/` e
-  provala su una pratica a basso rischio prima dell'uso professionale."*
+- **Installata**: ripeti il nudge sull'adattamento italiano (vedi 3.2)
+  + invito a rileggere i file in
+  `~/.claude/plugins/config/mhc-l/installed_skills/<nome>/` e provarla
+  su una pratica a basso rischio prima dell'uso professionale.
 - **Cancellata dall'avvocato**: *"Installazione annullata. La skill
   `<nome>` resta non installata."*
 - **Rifiutata dal gate sicurezza**: ripeti il motivo dato dallo
-  `skill-installer` (es. license non in allowlist, pattern injection
-  bloccante, mismatch metadata/LICENSE). Non bypassare.
+  `skill-installer` (es. license assente, pattern injection bloccante).
+  Non bypassare.
 
 **Mai installare bypassando lo `skill-installer`.** Il fork del layer
 sicurezza Anthropic è il motivo per cui esiste questo plugin nella forma
-attuale — bypassarlo significa perdere allowlist, raw-source display,
-freshness gate, security findings.
+attuale — bypassarlo significa perdere allowlist, internal trust
+analysis, freshness gate, security findings.
 
-### 3.5 — Update di una skill già installata (rigenera-da-zero)
+### 3.4 — Update di una skill già installata (re-install + re-adattamento opzionale)
 
-Quando una skill **già installata** dall'avvocato riceve un update upstream
-(nuovo commit / nuovo release nel suo repo originale) e il bollettino lo
-segnala, il flusso è **deliberatamente conservativo: rigenera l'adattamento
-italiano da zero e ripresentalo all'avvocato per nuova conferma**.
+Quando una skill **già installata** dall'avvocato riceve un update
+upstream (nuovo commit / nuovo release nel suo repo originale) e il
+bollettino lo segnala, il flusso è **deliberatamente conservativo**:
+re-installa via `skill-installer` (che rifà tutti i check sulla nuova
+versione) e — se la skill era stata adattata in italiano in precedenza —
+proponi all'avvocato di rigenerare l'adattamento da zero.
 
 Sequenza:
 
-1. **Scarica la nuova versione** del codice skill dal `repo_url`.
-2. **Mostra all'avvocato un diff sintetico della skill originale** (cosa
-   è cambiato upstream tra la versione installata e la versione nuova).
-   Serve a fargli capire cosa è effettivamente nuovo.
-3. **Rigenera l'adattamento italiano da zero** con `adaptation_prompt.md`
-   sulla nuova versione.
-4. **Pre-flight `verifica-fonti` sulla proposta rigenerata** (stesso
-   meccanismo di 3.3 sopra). Flag verdi/gialli/rossi sui riferimenti
-   normativi.
-5. **Richiama i suoi edit precedenti** (dai `user_edits_applied` nello
-   stato): mostrali come *suggerimento di riapplicarli*, perché
-   l'adattamento rigenerato di default non li include. L'avvocato sceglie
-   quali riapplicare al nuovo adattamento.
-6. **Stessa interfaccia di approvazione di `adattamento-italiano`**
-   (Approva / Modifica / Annulla, con flag pre-flight visibili). Solo
-   dopo approva esplicita, sovrascrivi la skill installata.
+1. **Re-installa la nuova versione** via `skill-installer`. L'installer
+   rifà allowlist, license check, structural trust, heuristic scan,
+   freshness — e mostra all'avvocato la riga per-tier per nuova
+   conferma. Su `sì`, sovrascrive la skill installata con la nuova
+   versione originale.
+2. **Se la skill era stata adattata in italiano** (controlla
+   `install-log.yaml` → `italian_adaptation_applied: true` per quel
+   `skill_name`), proponi all'avvocato:
+   > *"La skill `[nome]` era stata adattata in italiano. L'upgrade ha
+   > sovrascritto l'adattamento con la nuova versione originale. Vuoi
+   > rigenerare l'adattamento italiano sulla nuova versione? (sì / no /
+   > più tardi)"*
+3. Su `sì`, invoca `adattamento-italiano [nome]` come secondo passo.
+   Quella skill rigenera la proposta da zero sulla nuova versione,
+   pre-flight `verifica-fonti`, e — se l'avvocato approva — sovrascrive
+   di nuovo la skill installata con la versione adattata. Se in passato
+   l'avvocato aveva fatto edit specifici (registrati in
+   `lawyer_edits_applied`), `adattamento-italiano` glieli ripropone
+   come suggerimento di riapplicarli.
 
-**Perché rigenera-da-zero e non un diff sull'adattamento esistente:**
-applicare un diff a un adattamento custom prodotto da un LLM è fragile
-(la mappatura adaptation-italiano ↔ skill-originale non è strutturata,
-gli errori di merge silenziosi su riferimenti normativi non danno errori
-runtime ma errori sostanziali). Costo: 5-15K token + 5-10 min di tempo
-dell'avvocato per review. Costo accettabile data la frequenza (mensile,
-non continua) e il contesto (legale, dove la correttezza vince
-sull'efficienza). Decisione: vedi `notes/pdl/pdl_meta_skill_decisions_20260517.md`
-Q7.
+**Perché rigenera-da-zero l'adattamento e non un diff:** applicare un
+diff a un adattamento custom prodotto da un LLM è fragile (la mappatura
+adaptation-italiano ↔ skill-originale non è strutturata, gli errori di
+merge silenziosi su riferimenti normativi non danno errori runtime ma
+errori sostanziali). Costo: 5-15K token + 5-10 min di tempo
+dell'avvocato per review. Costo accettabile data la frequenza
+(mensile, non continua) e il contesto (legale, dove la correttezza
+vince sull'efficienza).
 
 ---
 
@@ -383,6 +407,7 @@ sempre `verifica-fonti`."*
       "skill_path": "skills/nome-skill/SKILL.md",
       "area": "commerciale | privacy | lavoro | societario | contenzioso | ip | altro",
       "jurisdiction": "none | IT | EU | other",
+      "tier": 1,
       "publisher": {
         "name": "string",
         "type": "individual | company | anthropic-official | academic",
@@ -410,6 +435,14 @@ sempre `verifica-fonti`."*
   ]
 }
 ```
+
+**Nota su `tier`:**
+- `1` — Anthropic-official (publisher sotto `anthropics/*`). Drive la
+  riga per-tier "plugin ufficiale Anthropic" mostrata dallo
+  `skill-installer`.
+- `2` — community vetted (publisher terzo che passa la threshold
+  policy). Drive la riga per-tier "publisher terzo, passa i check
+  tecnici automatici" mostrata dallo `skill-installer`.
 
 **Nota su `italian_adaptation_status`:**
 - `pending` — voce mai adattata da nessun avvocato; nessun template di
@@ -471,26 +504,29 @@ sopra per la logica di selezione. Gestito da questa skill:
 
 ## Errori da NON commettere
 
-1. **Installare una skill bypassando `skill-installer` o
-   `adattamento-italiano`.** Per skill IT/EU, lo `skill-installer`
-   invoca automaticamente `adattamento-italiano` al suo Step 6.5;
-   saltare questo passaggio significa installare codice senza
-   proposta di adattamento mostrata e approvata.
+1. **Installare una skill bypassando `skill-installer`.** Lo
+   `skill-installer` (forkato Apache-2.0 da Anthropic) è il solo
+   punto che applica allowlist, internal trust analysis, license
+   verification, heuristic scan, freshness gate, install log
+   strutturato. Bypassarlo = perdere il layer di sicurezza
+   industrial-grade.
 2. **Scrivere file di skill installata direttamente da catalogo.** Lo
-   `skill-installer` (forkato Apache-2.0 da Anthropic) è il solo punto
-   che scrive in `~/.claude/plugins/config/mhc-l/installed_skills/`.
-   Bypassare quel layer = perdere allowlist, freshness gate, security
-   findings.
-3. **Mostrare il catalogo come fosse uno shop.** Non è una vetrina, è
-   una lista skill ecosystem-monitored che ha superato la threshold
-   policy. Niente "promo", "trending", "consigliati per te" stile
-   raccomandazione algoritmica.
-4. **Saltare il disclaimer al primo uso.** L'avvocato deve sapere che
-   la responsabilità giuridica resta sua e che il bollettino è
-   popolato automaticamente, non da curazione manuale runtime.
-5. **Inventare citazioni normative nell'adattamento.** Marca sempre
-   con `[VERIFICA]` ogni riferimento. L'avvocato controlla, tu non
-   garantisci. (Vedi `adaptation_prompt.md` per i vincoli operativi.)
+   `skill-installer` è il solo che scrive in
+   `~/.claude/plugins/config/mhc-l/installed_skills/`.
+3. **Invocare `adattamento-italiano` automaticamente dopo
+   l'installazione.** REV2 (2026-05-18) ha disaccoppiato install e
+   adattamento: l'adattamento è un secondo passo cosciente che
+   l'avvocato richiede esplicitamente. Il tuo compito è solo
+   mostrare il nudge post-install che lo invita a farlo (vedi
+   Passo 3.2).
+4. **Mostrare il catalogo come fosse uno shop.** Non è una vetrina,
+   è una lista skill ecosystem-monitored che ha superato la
+   threshold policy. Niente "promo", "trending", "consigliati per
+   te" stile raccomandazione algoritmica.
+5. **Saltare il disclaimer al primo uso.** L'avvocato deve sapere
+   che la responsabilità giuridica resta sua, che il founder
+   garantisce solo la distribuzione, e che il bollettino è popolato
+   automaticamente.
 6. **Trattare `bollettino.json` come catalogo statico bundled.** Il
    bollettino vive online e si aggiorna per accumulo automatico —
    sempre cerca di scaricarlo fresh prima di mostrarlo (con il

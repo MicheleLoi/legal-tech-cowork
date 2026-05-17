@@ -55,6 +55,34 @@ divergono è un bug: il giudizio del founder si esprime modificando
 
 ---
 
+## Campo `tier` — classificazione publisher
+
+Ogni entry bollettino include un campo `tier` (intero):
+
+- **`tier: 1` — Anthropic-official**: publisher è `anthropics/*` (namespace GitHub Anthropic). Esempio: `knowledge-work-plugins/legal`. Il founder garantisce la distribuzione; Anthropic garantisce la sostanza tecnica.
+- **`tier: 2` — Community vetted**: publisher terzo che passa la threshold policy (licenza OSS, reputazione minima, no pattern rischiosi). Esempio: `terminalskills/contract-review`. Per uso in produzione raccomandato consulente IT.
+- **REFUSE** (non appare nel bollettino): entry filtrata a monte dalla routine `bollettino-research` per license assente / shell hook / injection pattern. Non viene mai salvata nel bollettino.
+
+### Criteri classificazione automatica (routine bollettino-research)
+
+```python
+if publisher.startswith("anthropics/"):
+    tier = 1
+else:
+    tier = 2  # se passa threshold; altrimenti REFUSE (non entra nel bollettino)
+```
+
+### Per-tier messaging (skill-installer)
+
+| Tier | Output al lawyer |
+|------|-----------------|
+| 1 | "plugin ufficiale Anthropic, licenza Apache-2.0. Il founder garantisce solo la distribuzione. Anthropic garantisce la sostanza tecnica." |
+| 2 | "publisher terzo, passa i check tecnici automatici. Per uso in produzione raccomandato consulente IT." |
+| 2 WARN | Tier 2 standard + "Anomalia rilevata: [descrizione]. Non bloccante. Procedi?" |
+| REFUSE | "Skill rifiutata: [motivo]. Installazione bloccata per sicurezza." |
+
+---
+
 ## Schema
 
 ```json
@@ -78,6 +106,7 @@ divergono è un bug: il giudizio del founder si esprime modificando
 
   "area": "commerciale | privacy | lavoro | societario | contenzioso | ip | regolatorio | altro",
   "jurisdiction": "none | IT | EU | other",
+  "tier": 1,
 
   "publisher": {
     "name": "Nome editore (es. Anthropic, Studio Rossi & Associati, ecc.)",

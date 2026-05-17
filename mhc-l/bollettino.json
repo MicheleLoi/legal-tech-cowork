@@ -4,7 +4,8 @@
   "_note_en": "Initial state: empty. The bollettino grows automatically via the 'bollettino-research' routine running in MHC-Work which applies an explicit threshold policy (OSS license, minimum reputation, IT-relevance heuristic) and auto-commits + auto-pushes. Founder out of runtime loop. Do not add entries manually here unless documented exception.",
   "_field_notes": {
     "jurisdiction": "IT|EU|other|none — only IT and EU trigger auto-invocation of verifica-fonti after install and at runtime",
-    "italian_adaptation_status": "pending|ready|stale — pending=never adapted, ready=adapted template generated and validated at least once, stale=upstream skill changed after adaptation"
+    "italian_adaptation_status": "pending|ready|stale — pending=never adapted, ready=adapted template generated and validated at least once, stale=upstream skill changed after adaptation",
+    "tier": "1 = Anthropic-official (publisher anthropics/*); 2 = community vetted (publisher terzo, passa threshold policy). REFUSE entries are filtered upstream by bollettino-research routine (license assente, hook shell sospetto, injection pattern) and never reach this file. Drives the per-tier line shown to the lawyer by skill-installer."
   },
   "version": "2026-05-17",
   "last_updated": "2026-05-17",
@@ -19,6 +20,7 @@
 
       "area": "commerciale",
       "jurisdiction": "[?]",
+      "tier": 1,
 
       "publisher": {
         "name": "Anthropic",
@@ -59,6 +61,7 @@
 
       "area": "commerciale",
       "jurisdiction": "[?]",
+      "tier": 2,
 
       "publisher": {
         "name": "TerminalSkills",
