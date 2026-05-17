@@ -105,13 +105,13 @@ heuristic). L'avvocato vede sempre la versione più recente senza reinstall.
 **URL canonico** (da configurare al rilascio sostituendo `MicheleLoi`):
 
 ```
-https://raw.githubusercontent.com/MicheleLoi/legal-tech-cowork/main/bollettino.json
+https://raw.githubusercontent.com/MicheleLoi/legal-tech-cowork/main/mhc-l/bollettino.json
 ```
 
 E per le validazioni di comunità:
 
 ```
-https://raw.githubusercontent.com/MicheleLoi/legal-tech-cowork/main/community_validations.json
+https://raw.githubusercontent.com/MicheleLoi/legal-tech-cowork/main/mhc-l/community_validations.json
 ```
 
 **Come scaricarli (in ordine di tentativo, fermati al primo che riesce):**
