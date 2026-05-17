@@ -1,0 +1,8 @@
+{
+  "_schema": "https://github.com/MicheleLoi/legal-tech-cowork/blob/main/BOLLETTINO_FORMAT.md#community-validations",
+  "_note_it": "Stato iniziale: vuoto. Le validazioni di comunità arrivano via pull-request automatizzate dal pool di avvocati opt-in. Una voce diventa 'community_validated' a partire da 3 validazioni indipendenti (vedi BOLLETTINO_FORMAT.md).",
+  "_note_en": "Initial state: empty. Community validations arrive via automated pull requests from opt-in lawyer pool. An entry becomes 'community_validated' from 3 independent validations onwards (see BOLLETTINO_FORMAT.md).",
+  "version": "0.0.0-empty",
+  "last_updated": "2026-05-17",
+  "validations": []
+}

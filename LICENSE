@@ -1,0 +1,39 @@
+MIT License — for original parts of this repository
+
+Copyright (c) 2026 Michele Loi
+
+The following files (and any other file authored originally for this
+project — recognizable by the absence of an Anthropic copyright header
+at the top) are released under the MIT terms below:
+
+- skills/adattamento-italiano/
+- skills/verifica-fonti/
+- skills/catalogo/adaptation_prompt.md
+- bollettino.json (the schema design and the threshold policy)
+- BOLLETTINO_FORMAT.md (the threshold policy section in particular)
+- README.md, DISTRIBUZIONE.md, BUILD_NOTES.md (project documentation)
+
+Files inherited from anthropics/claude-for-legal (the upstream
+legal-builder-hub plugin) carry Anthropic's original copyright header
+and remain under the Apache License 2.0. See LICENSE-ANTHROPIC for
+the full Apache 2.0 text, and NOTICE for attribution.
+
+---
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
