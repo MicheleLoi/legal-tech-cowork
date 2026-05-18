@@ -111,6 +111,16 @@ nessuna chiamata di rete fuori dal contesto cowork.
 
 ## Domande frequenti
 
+**Che differenza c'è da Claude senza plugin?**
+Senza plugin, Claude risponde citando normativa italiana ma non ha un
+modulo strutturato di auto-controllo: se cita una sentenza con
+numerazione anacronistica o un articolo del codice civile incoerente
+col concetto descritto, non lo segnala. Con `verifica-fonti` attiva,
+quando glielo chiedi (*"controlla le citazioni"*), produce un rapporto
+formale citazione-per-citazione con flag di formato, plausibilità e
+coerenza. Lavorano in due passi: prima Claude risponde, poi tu — se
+intendi usare le citazioni in un atto — gli chiedi il rapporto.
+
 **Posso disinstallare il plugin?**
 Sì, da **Customize → Plugin → Remove** accanto a MHC-L.
 

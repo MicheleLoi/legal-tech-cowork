@@ -10,10 +10,18 @@ testo corrispondano a documenti reali e siano formalmente coerenti.*
 
 ## Cosa fa il plugin
 
-Il plugin contiene **una sola skill**: `verifica-fonti`. Riceve un testo
-(tipicamente l'output di un'altra skill o una bozza dell'avvocato) e
-produce un rapporto di verifica delle citazioni normative italiane ed
-europee. Controlla:
+Il plugin contiene **una sola skill**: `verifica-fonti`. Il nome
+è volutamente conservativo: la skill **non** cerca sentenze su
+database online, **non** valuta la correttezza giuridica sostanziale,
+**non** aggiorna testi normativi. Fa **una cosa sola**: prende un
+testo che contiene citazioni normative italiane o europee e produce
+un rapporto formale (formato, plausibilità, coerenza interna,
+possibili invenzioni). Per la verifica sostanziale ti indirizza ai
+registri authoritative.
+
+Riceve un testo (tipicamente l'output di un'altra skill o una bozza
+dell'avvocato) e produce un rapporto di verifica delle citazioni
+normative italiane ed europee. Controlla:
 
 - **Formato** — la citazione segue uno dei pattern noti (codici italiani,
   leggi, decreti, sentenze Cassazione, Corte Costituzionale, Consiglio
