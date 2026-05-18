@@ -1,6 +1,6 @@
 {
-  "name": "mhc-l",
-  "version": "3.1.0",
+  "name": "iuris-it",
+  "version": "3.2.0",
   "description": "Skill italiana di verifica fonti normative e giurisprudenziali (Cassazione, Corte Cost., Consiglio di Stato, TAR, EUR-Lex, Agenzia Entrate, CNF, Garante, AGCM, ANAC, Banca d'Italia). Plus modalità avanzata opzionale: il bollettino curato di skill legal-tech italiane si attiva su invocazione esplicita e orchestra catalogo, installer e adattamento di skill terze. Default: usi solo verifica-fonti. Avanzato: chiami il bollettino e accedi all'ecosistema esteso.",
   "keywords": ["legal", "italian-law", "source-verification", "italy", "verifica-fonti", "advanced-mode", "italian-skills-ecosystem"],
   "author": {
