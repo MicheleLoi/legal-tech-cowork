@@ -1,11 +1,12 @@
 {
   "name": "mhc-l",
-  "version": "2.5.0",
-  "description": "Meta-plugin di adattamento italiano per skill legal-tech AI open source. Fork-and-extend di legal-builder-hub di Anthropic (Apache-2.0) con layer italiano (adattamento + verifica fonti IT/EU) e bollettino ecosystem-monitored popolato automaticamente. Avvocato come unica autorità giuridica del flusso.",
+  "version": "3.0.0",
+  "description": "Skill italiana di verifica delle fonti normative e giurisprudenziali — Cassazione, Corte Costituzionale, Consiglio di Stato, TAR, EUR-Lex, Agenzia Entrate, CNF, Garante Privacy, AGCM, ANAC, Banca d'Italia. Per skill legali generali usa il marketplace ufficiale Anthropic — Claude risponde in italiano se gli parli italiano.",
+  "keywords": ["legal", "italian-law", "source-verification", "italy", "verifica-fonti"],
   "author": {
     "name": "Michele Loi"
   },
-  "license": "MIT AND Apache-2.0",
+  "license": "MIT",
   "homepage": "https://github.com/MicheleLoi/legal-tech-cowork",
   "repository": "https://github.com/MicheleLoi/legal-tech-cowork"
 }
