@@ -5,8 +5,8 @@
   },
   "plugins": [
     {
-      "name": "mhc-l",
-      "source": "./mhc-l",
+      "name": "iuris-it",
+      "source": "./iuris-it",
       "description": "Skill italiana di verifica delle fonti normative e giurisprudenziali (Cassazione, Corte Costituzionale, Consiglio di Stato, TAR, EUR-Lex, Garante Privacy, AGCM, ANAC, Banca d'Italia). Per skill legali generali usa il marketplace Anthropic — Claude parla italiano nativo.",
       "author": {
         "name": "Michele Loi"
