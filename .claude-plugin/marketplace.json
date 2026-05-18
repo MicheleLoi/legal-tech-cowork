@@ -6,6 +6,7 @@
   "plugins": [
     {
       "name": "mhc-l",
+      "version": "2.5.0",
       "source": "./mhc-l",
       "description": "Meta-plugin di adattamento italiano per skill legal-tech AI open source. Fork-and-extend di legal-builder-hub di Anthropic con layer italiano (adattamento + verifica fonti IT/EU) e bollettino ecosystem-monitored.",
       "author": {
