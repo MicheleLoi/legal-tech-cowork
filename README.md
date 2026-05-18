@@ -16,12 +16,17 @@ MHC-L è un **fork-and-extend** di `legal-builder-hub`
 ([anthropics/claude-for-legal](https://github.com/anthropics/claude-for-legal),
 Apache-2.0) con tre layer aggiunti originali nostri (MIT):
 
-1. **Layer italiano (`adattamento-italiano`)** — hook che si innesta nel
-   pipeline `skill-installer` forkato (al suo Step 6.5) e, per ogni
-   skill marcata `jurisdiction: IT` o `EU`, genera una proposta di
-   adattamento al diritto italiano usando una mappa normativa esplicita
-   (`adaptation_prompt.md`). L'avvocato approva, modifica o annulla
-   prima che la skill venga effettivamente installata.
+1. **Layer italiano (`adattamento-italiano`)** — skill invocabile
+   esplicitamente dall'avvocato per adattare una skill già installata
+   al diritto italiano. Genera una proposta di traduzione + mappatura
+   dei riferimenti normativi all'equivalente italiano/europeo (usando
+   `adaptation_prompt.md`), pre-flighta le citazioni con
+   `verifica-fonti`, e mostra il diff per Approva / Modifica /
+   Annulla. Si attiva (a) su richiesta diretta dell'avvocato
+   ("adatta `[X]` in italiano"), oppure (b) come risposta "sì" al
+   prompt che lo `skill-installer` mostra dopo aver installato una
+   skill non classificata come italiana/europea (REV2.1, 2026-05-18).
+   Mai automaticamente, mai come hook silenzioso.
 
 2. **Verifica fonti italiane ed europee (`verifica-fonti`)** — controllo
    di coerenza, plausibilità e formato delle citazioni normative IT/EU.
@@ -61,10 +66,14 @@ L'avvocato installa **un solo plugin** (`mhc-l`) che contiene tutto.
 
 ## Come funziona (modello operativo)
 
-1. **Bollettino vive online.** Il file `bollettino.json` in questo repo
-   è il catalogo. Si aggiorna automaticamente via la routine
-   `bollettino-research` in MHC-Work — l'avvocato vede sempre la versione
-   più recente, niente reinstall.
+1. **Bollettino bundled all'install, opzione live opzionale.** Il
+   file `bollettino.json` in questo repo è il catalogo, aggiornato
+   mensilmente dalla routine `bollettino-research` in MHC-Work. La
+   modalità di default consegna all'avvocato la copia bundled con il
+   plugin (sempre disponibile, no setup tecnico). La modalità live
+   (fetch fresh ad ogni apertura) richiede un'azione facoltativa di
+   configurazione dell'utente — istruzioni:
+   [`https://micheleloi.pro/mhc-l/istruzioni/`](https://micheleloi.pro/mhc-l/istruzioni/).
 2. **Skill discovery automatica.** La routine cerca su GitHub broadly
    skill legal-tech AI open source, applica la threshold policy
    esplicita (vedi `BOLLETTINO_FORMAT.md` § "Threshold policy") e
@@ -74,11 +83,16 @@ L'avvocato installa **un solo plugin** (`mhc-l`) che contiene tutto.
    Anthropic) gestisce allowlist, fetch in subagent read-only,
    raw-source display, structural trust check, license verification
    pre+post fetch, freshness gate. Layer di sicurezza industrial-grade.
-4. **Adattamento italiano sotto conferma (per skill IT/EU).** Al Step
-   6.5 dello skill-installer, l'hook `adattamento-italiano` genera la
-   proposta italiana, pre-flighta i riferimenti normativi con
-   `verifica-fonti`, e mostra il diff all'avvocato per Approva /
-   Modifica / Annulla.
+4. **Adattamento italiano come secondo passo cosciente
+   dell'avvocato.** Dopo che lo `skill-installer` ha completato
+   l'install, l'avvocato può chiedere esplicitamente *"adatta `[X]`
+   in italiano"* (o usare `/adattamento-italiano [X]`). Per le skill
+   non classificate come italiane/europee, lo `skill-installer`
+   propone direttamente la scelta con un prompt sì/no (REV2.1,
+   2026-05-18). In entrambi i casi `adattamento-italiano` genera la
+   proposta, pre-flighta le citazioni normative con `verifica-fonti`,
+   e mostra il diff all'avvocato per Approva / Modifica / Annulla.
+   Hook automatici silenziosi sono stati rimossi per design.
 5. **Verifica fonti post-uso.** Dopo l'output di skill marcate IT o EU,
    MHC-L suggerisce di passare il testo a `verifica-fonti` per un
    controllo di coerenza delle citazioni runtime.
@@ -97,10 +111,11 @@ video walkthrough. In sintesi:
 
 ## Stato del catalogo
 
-**Vuoto al primo rilascio.** Le voci entrano automaticamente tramite la
-routine `bollettino-research` che gira mensile in MHC-Work. Vedi
-`BOLLETTINO_FORMAT.md` per lo schema, la threshold policy, e il
-processo di ingresso.
+Il catalogo cresce per accumulo automatico. La routine
+`bollettino-research` in MHC-Work monitora mensilmente l'ecosistema
+legal-tech open source e pubblica le voci che superano la threshold
+policy. Vedi `BOLLETTINO_FORMAT.md` per lo schema, la threshold
+policy e il processo di ingresso.
 
 ## Per chi è
 

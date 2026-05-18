@@ -58,6 +58,11 @@ In una nuova conversazione Cowork scrivi:
 Al primo utilizzo apparirà un breve disclaimer (una volta sola) che
 chiede conferma di aver letto. Poi vedrai il catalogo.
 
+Vedrai una nota che dice che il catalogo è la copia installata con
+il plugin: è normale, è la modalità di default. Per l'opzione
+"sempre aggiornato in tempo reale" vedi la pagina istruzioni:
+[`https://micheleloi.pro/mhc-l/istruzioni/`](https://micheleloi.pro/mhc-l/istruzioni/).
+
 Se il catalogo è vuoto (succede al primo rilascio), il plugin te lo
 dirà:
 
@@ -66,14 +71,25 @@ dirà:
 > open source e pubblica le skill che superano la threshold policy.
 > Quando saranno disponibili, le vedrai qui."*
 
-### Aggiornamenti
+### Aggiornamenti del bollettino
 
-Il bollettino si aggiorna **automaticamente il 17 di ogni mese
-alle 22:40 ora italiana** (CEST estate / CET inverno). Le nuove
-voci appaiono al prossimo apertura di Cowork.
+Il bollettino vive come file pubblico sul repo GitHub del plugin. La
+routine automatica `bollettino-research` lo aggiorna **il 17 di ogni
+mese alle 22:40 ora italiana** (CEST estate / CET inverno),
+aggiungendo le nuove skill legal-tech open source che hanno superato
+la threshold policy.
 
-Per forzare un controllo aggiornamenti **subito** vai su
-**Customize → Plugin** e clicca **"Update"** accanto a MHC-L.
+**Modalità di default — copia installata con il plugin.** Il catalogo
+che vedi è la versione del bollettino fissata al momento in cui hai
+installato (o aggiornato) il plugin in Claude Desktop. Le nuove voci
+pubblicate dalla routine mensile **non sono visibili** finché non
+aggiorni il plugin. Per quel caso le sezioni di gestione plugin di
+Claude Desktop sono la via canonica (Customize → Plugin).
+
+Se vuoi che il bollettino si aggiorni automaticamente ad ogni
+apertura del catalogo senza dipendere dagli aggiornamenti plugin,
+vedi la pagina istruzioni:
+[`https://micheleloi.pro/mhc-l/istruzioni/`](https://micheleloi.pro/mhc-l/istruzioni/).
 
 ---
 
@@ -136,4 +152,44 @@ No per il primo download del bollettino. Sì per skill già installate
 
 ---
 
-*DISTRIBUZIONE.md — v2.0.0 — 2026-05-17*
+## Modalità live (opzionale)
+
+*Per uso avanzato. Non necessaria per usare il plugin nella sua
+versione default. Versione web della guida con screenshot:
+[`https://micheleloi.pro/mhc-l/istruzioni/`](https://micheleloi.pro/mhc-l/istruzioni/).*
+
+Se vuoi che il catalogo sia sempre aggiornato all'ultima versione
+del bollettino senza dover aspettare gli aggiornamenti del plugin,
+puoi consentire al plugin di leggere il file direttamente dal repo
+GitHub. Operazione una volta sola, va fatta nelle impostazioni di
+Claude Desktop.
+
+**Procedura:**
+
+1. Apri Claude Desktop, vai in **Impostazioni** (icona ingranaggio
+   in basso a sinistra, oppure scorciatoia da tastiera del tuo
+   sistema operativo).
+2. Cerca la sezione **Connettori → Egress allowlist** (può chiamarsi
+   anche *"Domini consentiti"* o *"Outbound network allowlist"* a
+   seconda della versione Claude Desktop).
+3. Aggiungi il dominio:
+   ```
+   raw.githubusercontent.com
+   ```
+4. Salva le impostazioni.
+
+Da quel momento, ogni volta che chiedi al plugin di mostrarti il
+catalogo, scarica il bollettino aggiornato direttamente dal repo
+GitHub — senza più dipendere dagli aggiornamenti plugin per vedere
+le nuove voci.
+
+**Perché non è attivo di default:** Claude Desktop tiene i plugin
+isolati a livello di rete come scelta di sicurezza standard. Il
+dominio `raw.githubusercontent.com` serve solo a leggere file
+pubblici di GitHub, non comporta rischi materiali; ma l'opt-in
+manuale resta a tua discrezione. Senza, il plugin funziona
+comunque — semplicemente vedi la copia installata.
+
+---
+
+*DISTRIBUZIONE.md — v2.1.0 — 2026-05-18 (REV2.5 onboarding revision)*

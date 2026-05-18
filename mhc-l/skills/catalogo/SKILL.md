@@ -55,9 +55,16 @@ esplicita:
 > source — il bollettino è popolato da una routine che applica una
 > threshold policy esplicita (qualità, licenza OSS, rilevanza italiana),
 > non da curazione manuale runtime. **Il bollettino si aggiorna
-> automaticamente il 17 di ogni mese alle 22:40 ora italiana.** Clicca
-> "Update" sul plugin in Claude Desktop quando vuoi sincronizzare
-> l'ultima versione prima della prossima esecuzione automatica.
+> automaticamente il 17 di ogni mese alle 22:40 ora italiana.**
+>
+> **Catalogo bundled di default.** Per impostazione standard il
+> catalogo che vedrai è la copia installata insieme al plugin:
+> funziona offline, è sempre disponibile, è la modalità di default.
+> Esiste anche una modalità "live" opzionale (catalogo aggiornato in
+> tempo reale ad ogni apertura) che richiede una piccola
+> configurazione di Claude Desktop — istruzioni su
+> [`https://micheleloi.pro/mhc-l/istruzioni/`](https://micheleloi.pro/mhc-l/istruzioni/).
+> Non è necessaria, è un'opzione.
 >
 > **Catena di responsabilità.** Il founder garantisce solo la
 > distribuzione e l'automazione del filtro tecnico; non garantisce la
@@ -129,56 +136,83 @@ https://raw.githubusercontent.com/MicheleLoi/legal-tech-cowork/main/mhc-l/commun
 inferire la disponibilità di uno strumento, prova sempre prima):**
 
 1. **Tenta `WebFetch` sui due URL canonici** (`bollettino.json` e
-   `community_validations.json`). Questo è il path primario e quello
-   che regge la promessa di prodotto: il bollettino vive online,
-   l'avvocato vede sempre la versione più recente senza reinstall né
-   clic su "Update". Cache temporanea per la sessione corrente.
+   `community_validations.json`). Path della "modalità live": il
+   bollettino viene scaricato fresh dal repo GitHub ad ogni
+   invocazione. Cache temporanea per la sessione corrente.
 
    **Vincolo operativo cardine:** **devi sempre tentare `WebFetch`
    realmente**. È vietato inferire a priori che `WebFetch` non sia
    disponibile, ristretta, o bloccata nella sandbox cowork. L'unico
-   modo per saperlo è provare e leggere la risposta.
+   modo per saperlo è provare e leggere la risposta. Se riesce,
+   l'avvocato è in modalità live (ha completato l'opt-in configurazione
+   egress allowlist documentato nella pagina istruzioni).
 
-2. **Solo se `WebFetch` ritorna un errore esplicito** (errore di rete,
-   timeout, dominio bloccato, capability non disponibile dal runtime,
-   permission denied, 4xx/5xx HTTP, ecc.) → **cattura il messaggio
-   d'errore preciso** e fai fallback al bundled: leggi il file
-   `bollettino.json` **dentro il plugin stesso** (path relativo al
-   plugin folder: `bollettino.json` accanto a `.claude-plugin/`).
-   Questo file è bundled alla build del plugin e contiene la versione
-   del bollettino disponibile al momento del release.
+   **Messaggio all'avvocato quando WebFetch riesce:**
 
-   **Messaggio obbligatorio all'avvocato quando usi il bundled** (deve
-   citare l'errore preciso ricevuto, non solo dire "uso bundled"):
+   > *"Bollettino aggiornato dal repo GitHub (`last_updated`:
+   > `<last_updated>`)."*
 
-   > *"Il download live del bollettino è fallito (`WebFetch` su
-   > `<URL>` → errore: `<descrizione errore ricevuto>`). Sto mostrando
-   > la copia bundled del bollettino, datata `<last_updated del file
-   > bundled>`. Per la versione più recente vai sul pannello Plugins
-   > di Claude Desktop e clicca 'Update' accanto a MHC-L — rifarà la
-   > pull dal repo GitHub."*
+2. **Se `WebFetch` ritorna un errore** (errore di rete, timeout,
+   dominio bloccato dalle impostazioni egress di Claude Desktop,
+   capability non disponibile, permission denied, 4xx/5xx HTTP,
+   ecc.) → fai fallback al `bollettino.json` **bundled nel plugin
+   stesso** (path relativo al plugin folder: `bollettino.json`
+   accanto a `.claude-plugin/`). Questo è lo **scenario di default**
+   per la maggior parte degli avvocati — NON è un'errore, NON è
+   degradazione, è il path normale per chi non ha attivato la
+   modalità live.
 
-   Citare l'errore preciso serve a due cose: (a) l'avvocato sa che il
-   sistema ha tentato realmente e non si è auto-degradato; (b) se il
-   fallback diventa cronico, l'errore citato è il debug input per
-   capire perché.
+   **Messaggio all'avvocato quando usi il bundled (tono neutro, NON
+   d'errore):**
+
+   > *"Catalogo installato con il plugin (versione del giorno:
+   > `<last_updated>`). Per attivare la modalità live (catalogo
+   > aggiornato in tempo reale ad ogni apertura) vedi
+   > [`https://micheleloi.pro/mhc-l/istruzioni/`](https://micheleloi.pro/mhc-l/istruzioni/)."*
+
+   **Vincoli sul messaggio:**
+   - NON mostrare l'errore tecnico ricevuto da `WebFetch` (es. *"egress
+     blocked"*, *"dominio non whitelisted"*) — l'avvocato non-tech non
+     può fare niente con quella informazione e si confonde
+   - NON usare parole d'errore (*"fallito"*, *"non riuscito"*, *"errore"*)
+   - NON suggerire "click Update sul plugin" — è misleading (l'update
+     plugin è azione tecnica diversa dal refresh contenuto)
+   - L'errore tecnico ricevuto va comunque catturato e scritto
+     nell'install-log per debug (vedi `install-log.yaml`), NON nel
+     messaggio lawyer-facing
 
 3. **Bollettino locale in cartella di lavoro (ultimo fallback, edge
    case).** Se anche il bundled non è leggibile, controlla
    `bollettino.json` nella cartella di lavoro connessa. Non documentare
    all'avvocato come scenario normale.
 
-**Rationale (per l'agent che legge):** la promessa di prodotto del
-README è "il bollettino vive online, sempre aggiornato, no reinstall".
-Quella promessa regge solo se `WebFetch` viene **realmente tentata**
-ad ogni invocazione. Inferire "WebFetch non è disponibile" senza
-provare rompe la promessa silenziosamente: l'avvocato vede dati
-bundled stale credendo che il sistema abbia fatto il suo lavoro.
-Bug strutturale osservato 2026-05-18 (REV2.2 patch): l'agent cowork
-saltava `WebFetch` per inferenza preventiva e scattava direttamente
-al bundled senza informare l'avvocato dell'errore — diagnosi empirica
-ha rivelato che `WebFetch` funziona, era il check `"se disponibile"`
-ad essere too permissive.
+**Rationale (per l'agent che legge):**
+
+Il modello è **bundled di default, live come opt-in** (decisione
+doctrine 2026-05-18, REV2.5 onboarding revision). L'avvocato non-tech
+target primario non sa cos'è una egress allowlist né dove configurarla
+— per lui il path normale è bundled, e questa è una scelta di prodotto,
+non una degradazione.
+
+**WebFetch va sempre tentata realmente** (mai inferenza preventiva)
+per due ragioni:
+- (a) l'avvocato avanzato che ha attivato l'opt-in deve poter accedere
+  alla modalità live senza alcun nuovo intervento;
+- (b) il check empirico è la sola fonte di verità sullo stato del
+  runtime.
+
+Quando WebFetch fallisce, **il messaggio bundled deve essere neutro**:
+l'avvocato non-tech non deve sentirsi tech-inadequate né credere che
+qualcosa sia rotto. La pagina istruzioni linkata gli dice cosa
+attivare se vuole l'esperienza live, ma è opzionale e non urge.
+
+Storia del refactor:
+- **REV2.2** (2026-05-18): formulazione imperativa "tenta sempre
+  WebFetch realmente" — bug fix per inferenza preventiva
+- **REV2.5** (2026-05-18): bundled è il default per design (non
+  scenario d'errore); messaggio fallback riformulato in tono neutro
+  + URL pagina istruzioni invece di reference DISTRIBUZIONE.md
+  (avvocati non sanno cosa sono i file `.md`)
 
 **Cosa fare se `entries` è vuoto.** Lo stato iniziale del bollettino è
 vuoto perché il catalogo cresce per accumulo automatico. Comunicalo
@@ -547,19 +581,34 @@ sopra per la logica di selezione. Gestito da questa skill:
    che la responsabilità giuridica resta sua, che il founder
    garantisce solo la distribuzione, e che il bollettino è popolato
    automaticamente.
-6. **Trattare `bollettino.json` come catalogo statico bundled.** Il
-   bollettino vive online e si aggiorna per accumulo automatico —
-   tenta sempre `WebFetch` realmente, fallback bundled SOLO dopo un
-   errore esplicito ricevuto. Vedi Passo 1.
+6. **Trattare il bundled come scenario degradato o d'errore.** Il
+   bundled è la **modalità di default** per la maggior parte degli
+   avvocati (target primario = non-tech, non ha configurato l'egress
+   allowlist di Claude Desktop). Il messaggio deve essere neutro
+   ("Catalogo installato con il plugin, versione: X"), mai
+   allarmista. La modalità live è opt-in opzionale, non lo standard
+   atteso. REV2.5 doctrine (2026-05-18).
 
-7. **Inferire la disponibilità di `WebFetch` senza provarla.** È il
-   bug strutturale che la REV2.2 patch corregge (vedi Passo 1
-   Rationale). Anche se il runtime sembra ristretto, la regola è:
-   tenta, leggi la risposta, agisci sulla risposta — mai sull'ipotesi.
+7. **Inferire la disponibilità di `WebFetch` senza provarla.**
+   Tentare `WebFetch` resta vincolo cardine (REV2.2): il check
+   empirico è la sola fonte di verità sul runtime, e l'avvocato
+   avanzato che ha attivato l'opt-in egress deve poter accedere
+   alla modalità live senza alcun nuovo intervento. Mai inferire
+   "WebFetch non funziona" senza provare.
 
-8. **Mostrare il messaggio bundled senza citare l'errore preciso
-   ricevuto.** Il fallback bundled è onesto solo se trasparente: il
-   messaggio all'avvocato deve riportare il testo dell'errore
-   (descrizione del fallimento `WebFetch`) non solo dire "sto usando
-   bundled". Senza l'errore citato, l'avvocato non sa se il sistema
-   ha provato.
+8. **Mostrare l'errore tecnico di `WebFetch` nel messaggio
+   lawyer-facing.** L'avvocato non-tech non può fare niente con
+   *"egress blocked"*, *"dominio non whitelisted"*, *"403"*, ecc. —
+   si confonde, si sente tech-inadequate, perde fiducia nel sistema
+   ("perché mi sta mostrando un errore?"). L'errore tecnico ricevuto
+   da `WebFetch` va catturato e scritto nell'`install-log.yaml` per
+   debug futuro, NON mostrato in chat. Il messaggio lawyer-facing
+   resta neutro (vedi bullet 6 + Passo 1 §2).
+
+9. **Suggerire "clicca Update sul plugin" come refresh del
+   bollettino.** Misleading: l'update plugin è operazione tecnica di
+   manutenzione (pull commit più recente da GitHub) — non è
+   "aggiorna il catalogo" nel mental model dell'avvocato. Per il
+   refresh contenuto la via giusta è la modalità live (opt-in
+   egress allowlist documentato sulla pagina istruzioni). REV2.5
+   doctrine (2026-05-18).
