@@ -12,6 +12,23 @@ description: >
 
 # verifica-fonti — Controllo coerenza citazioni normative IT/EU
 
+## Quick-start (leggi prima questo)
+
+Le skill legali ufficiali Anthropic sono in inglese. Parla italiano a
+Claude per averle in italiano native — Claude capisce entrambe le
+lingue nativamente, non hai bisogno di skill "tradotte". Questo skill
+(`verifica-fonti`) ti dà uno strumento mirato: controlla che i
+riferimenti normativi e giurisprudenziali italiani citati corrispondano
+a documenti reali e siano formalmente coerenti. Lavora bene su:
+Cassazione, Corte Costituzionale, Consiglio di Stato, TAR, EUR-Lex,
+Agenzia Entrate, CNF, Garante Privacy, AGCM, ANAC, Banca d'Italia.
+
+Invocazione tipica dopo una risposta di Claude con citazioni normative:
+
+> *"Controlla le citazioni di questa risposta."*
+> *"Passa l'output a verifica-fonti."*
+> *"Queste citazioni reggono?"*
+
 ## Cosa fa questa skill
 
 Prendi in input un testo (tipicamente l'output appena prodotto da un'altra
@@ -230,11 +247,12 @@ non "verificato".
 
 ## Quando essere invocato
 
-- **Auto-suggerito dalla skill `catalogo`** dopo che una skill installata
-  con `jurisdiction: IT` o `EU` produce output con citazioni normative.
 - **Su richiesta esplicita** dell'avvocato: *"verifica le fonti"*,
   *"controlla le citazioni"*, *"queste citazioni reggono?"*, *"passa
   l'output a verifica-fonti"*.
+- **Dopo una risposta di Claude con citazioni normative o
+  giurisprudenziali italiane / europee**, quando l'avvocato vuole un
+  controllo formale prima di usare il testo.
 - **Mai automaticamente su testi non legali** (es. una bozza di email
   generica) — sarebbe rumore inutile.
 
