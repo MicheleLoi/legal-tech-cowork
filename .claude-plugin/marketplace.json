@@ -7,7 +7,7 @@
     {
       "name": "mhc-l",
       "source": "./mhc-l",
-      "description": "Meta-plugin di adattamento italiano per skill legal-tech AI open source. Fork-and-extend di legal-builder-hub di Anthropic con layer italiano (adattamento + verifica fonti IT/EU) e bollettino ecosystem-monitored.",
+      "description": "Skill italiana di verifica delle fonti normative e giurisprudenziali (Cassazione, Corte Costituzionale, Consiglio di Stato, TAR, EUR-Lex, Garante Privacy, AGCM, ANAC, Banca d'Italia). Per skill legali generali usa il marketplace Anthropic — Claude parla italiano nativo.",
       "author": {
         "name": "Michele Loi"
       }
