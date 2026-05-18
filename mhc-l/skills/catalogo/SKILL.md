@@ -125,40 +125,60 @@ E per le validazioni di comunità:
 https://raw.githubusercontent.com/MicheleLoi/legal-tech-cowork/main/mhc-l/community_validations.json
 ```
 
-**Come scaricarli (in ordine di tentativo, fermati al primo che riesce):**
+**Come scaricarli (sequenza imperativa — esegui i passi in ordine, NON
+inferire la disponibilità di uno strumento, prova sempre prima):**
 
-1. **`WebFetch` online.** Se disponibile nella sandbox cowork, scarica
-   `bollettino.json` e `community_validations.json` dagli URL canonici
-   sopra. Cache temporanea per la sessione corrente. Questo è lo scenario
-   ideale — l'avvocato vede sempre la versione più recente del bollettino,
-   senza dover cliccare "Update".
+1. **Tenta `WebFetch` sui due URL canonici** (`bollettino.json` e
+   `community_validations.json`). Questo è il path primario e quello
+   che regge la promessa di prodotto: il bollettino vive online,
+   l'avvocato vede sempre la versione più recente senza reinstall né
+   clic su "Update". Cache temporanea per la sessione corrente.
 
-2. **Fallback bundled (sempre disponibile).** Se `WebFetch` fallisce
-   (errore di rete, dominio non whitelisted nella sandbox, capability
-   non disponibile), leggi il file `bollettino.json` **dentro il plugin
-   stesso** (path relativo al plugin folder: `bollettino.json` accanto a
-   `.claude-plugin/`). Questo file è bundled nel plugin alla build e
-   contiene l'ultima versione del bollettino disponibile al momento del
-   release del plugin. **Quando usi il bundled, dillo esplicitamente
-   all'avvocato:**
+   **Vincolo operativo cardine:** **devi sempre tentare `WebFetch`
+   realmente**. È vietato inferire a priori che `WebFetch` non sia
+   disponibile, ristretta, o bloccata nella sandbox cowork. L'unico
+   modo per saperlo è provare e leggere la risposta.
 
-   > *"Sto mostrando la copia bundled del bollettino, datata [`last_updated`
-   > del file bundled]. Per la versione più recente, vai sul pannello
-   > Plugins di Claude Desktop e clicca 'Update' accanto a MHC-L —
-   > rifarà la pull dal repo GitHub e aggiornerà la copia locale."*
+2. **Solo se `WebFetch` ritorna un errore esplicito** (errore di rete,
+   timeout, dominio bloccato, capability non disponibile dal runtime,
+   permission denied, 4xx/5xx HTTP, ecc.) → **cattura il messaggio
+   d'errore preciso** e fai fallback al bundled: leggi il file
+   `bollettino.json` **dentro il plugin stesso** (path relativo al
+   plugin folder: `bollettino.json` accanto a `.claude-plugin/`).
+   Questo file è bundled alla build del plugin e contiene la versione
+   del bollettino disponibile al momento del release.
 
-   Questo messaggio è obbligatorio: senza, l'avvocato pensa di vedere
-   dati freschi quando in realtà sono potenzialmente stale di settimane.
+   **Messaggio obbligatorio all'avvocato quando usi il bundled** (deve
+   citare l'errore preciso ricevuto, non solo dire "uso bundled"):
 
-3. **Bollettino locale in cartella di lavoro (opzionale, ultimo fallback).**
-   Se per qualche motivo neanche il bundled è leggibile, controlla se
-   c'è un `bollettino.json` nella cartella di lavoro connessa. Casi
-   edge — non documentare all'avvocato come scenario normale.
+   > *"Il download live del bollettino è fallito (`WebFetch` su
+   > `<URL>` → errore: `<descrizione errore ricevuto>`). Sto mostrando
+   > la copia bundled del bollettino, datata `<last_updated del file
+   > bundled>`. Per la versione più recente vai sul pannello Plugins
+   > di Claude Desktop e clicca 'Update' accanto a MHC-L — rifarà la
+   > pull dal repo GitHub."*
 
-**Rationale (per l'agent che legge):** la promessa di prodotto del README
-è "il bollettino vive online, no reinstall". Quella promessa regge solo
-se `WebFetch` funziona; se non funziona, scendiamo onestamente al
-bundled e lo dichiariamo. Mai mentire sulla freschezza dei dati.
+   Citare l'errore preciso serve a due cose: (a) l'avvocato sa che il
+   sistema ha tentato realmente e non si è auto-degradato; (b) se il
+   fallback diventa cronico, l'errore citato è il debug input per
+   capire perché.
+
+3. **Bollettino locale in cartella di lavoro (ultimo fallback, edge
+   case).** Se anche il bundled non è leggibile, controlla
+   `bollettino.json` nella cartella di lavoro connessa. Non documentare
+   all'avvocato come scenario normale.
+
+**Rationale (per l'agent che legge):** la promessa di prodotto del
+README è "il bollettino vive online, sempre aggiornato, no reinstall".
+Quella promessa regge solo se `WebFetch` viene **realmente tentata**
+ad ogni invocazione. Inferire "WebFetch non è disponibile" senza
+provare rompe la promessa silenziosamente: l'avvocato vede dati
+bundled stale credendo che il sistema abbia fatto il suo lavoro.
+Bug strutturale osservato 2026-05-18 (REV2.2 patch): l'agent cowork
+saltava `WebFetch` per inferenza preventiva e scattava direttamente
+al bundled senza informare l'avvocato dell'errore — diagnosi empirica
+ha rivelato che `WebFetch` funziona, era il check `"se disponibile"`
+ad essere too permissive.
 
 **Cosa fare se `entries` è vuoto.** Lo stato iniziale del bollettino è
 vuoto perché il catalogo cresce per accumulo automatico. Comunicalo
@@ -529,5 +549,17 @@ sopra per la logica di selezione. Gestito da questa skill:
    automaticamente.
 6. **Trattare `bollettino.json` come catalogo statico bundled.** Il
    bollettino vive online e si aggiorna per accumulo automatico —
-   sempre cerca di scaricarlo fresh prima di mostrarlo (con il
-   fallback bundled dichiarato esplicitamente se WebFetch fallisce).
+   tenta sempre `WebFetch` realmente, fallback bundled SOLO dopo un
+   errore esplicito ricevuto. Vedi Passo 1.
+
+7. **Inferire la disponibilità di `WebFetch` senza provarla.** È il
+   bug strutturale che la REV2.2 patch corregge (vedi Passo 1
+   Rationale). Anche se il runtime sembra ristretto, la regola è:
+   tenta, leggi la risposta, agisci sulla risposta — mai sull'ipotesi.
+
+8. **Mostrare il messaggio bundled senza citare l'errore preciso
+   ricevuto.** Il fallback bundled è onesto solo se trasparente: il
+   messaggio all'avvocato deve riportare il testo dell'errore
+   (descrizione del fallimento `WebFetch`) non solo dire "sto usando
+   bundled". Senza l'errore citato, l'avvocato non sa se il sistema
+   ha provato.
