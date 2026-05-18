@@ -1,4 +1,4 @@
-# Come installare MHC-L
+# Come installare e testare MHC-L
 
 *Per l'avvocato. Nessun comando terminale, nessun account GitHub, nessuna
 conoscenza tecnica richiesta.*
@@ -15,27 +15,29 @@ Costituzionale, Consiglio di Stato, TAR, Normattiva, EUR-Lex, Garante
 Privacy, AGCM, ANAC, Banca d'Italia.
 
 **Modalità avanzata opt-in.** Il plugin include anche un ecosistema
-opzionale di skill terze italiano-curate (bollettino + catalogo +
-installer + adattamento), che resta inerte finché non lo attivi
-esplicitamente. Vedi la sezione **Modalità avanzata** in fondo a
-questo documento. Se non ti serve, ignorala: il default copre l'80%
-dei casi.
+opzionale di skill terze italiano-curate (catalogo + installer +
+adattamento), che resta inerte finché non lo attivi esplicitamente.
+Vedi la sezione **Come testare la modalità avanzata** più sotto. Se
+non ti serve, ignorala: il default copre l'80% dei casi.
 
 Versione web della guida con screenshot:
 [`https://micheleloi.pro/mhc-l/istruzioni/`](https://micheleloi.pro/mhc-l/istruzioni/).
 
 ---
 
-## Versione testuale (5 click)
-
-### Prerequisiti
+## Prerequisiti
 
 - Claude Desktop installato (scaricabile da
   [claude.ai/download](https://claude.ai/download))
 - Piano Claude Pro o superiore (il piano gratuito non include plugin
   di terze parti su cowork)
 
-### I 5 click
+---
+
+## Installazione — percorso standard (GitHub marketplace)
+
+Questo è il percorso che useranno tutti gli avvocati. Cinque click in
+Claude Desktop.
 
 1. **Apri Claude Desktop**, vai sulla tab **Cowork** nella sidebar
    sinistra.
@@ -43,7 +45,7 @@ Versione web della guida con screenshot:
    in alto a destra.
 3. Nel menu che si apre clicca **"Crea plugin"** — sì, "Crea plugin",
    anche se non stai creando nulla: è il path UX counter-intuitivo per
-   "aggiungere marketplace esistente". (Noto gotcha dell'interfaccia
+   "aggiungere un marketplace esistente". (Noto gotcha dell'interfaccia
    Claude Desktop Pro standard a maggio 2026.)
 4. Nel dialog **"Aggiungi marketplace"** incolla:
 
@@ -55,34 +57,154 @@ Versione web della guida con screenshot:
 5. Nella lista che compare, accanto a **"mhc-l"**, clicca
    **"Add plugin"**.
 
-Fatto. Vedrai un messaggio di conferma. Il plugin è attivo.
+Fatto. Vedrai un messaggio di conferma. Dovrebbero comparire **4 skill**
+installate: `verifica-fonti`, `catalogo`, `skill-installer`,
+`adattamento-italiano`. Solo la prima è attiva di default; le altre tre
+restano inerti finché non le invochi (vedi sotto).
 
-### Installazione da percorso locale (alternativa)
+> **Nota durante lo sviluppo pre-1.0.** Il push delle nuove versioni su
+> GitHub avviene solo dopo verifica del fondatore. Finché nella UI di
+> Claude Desktop non vedi `mhc-l` versione **3.1.0**, il marketplace
+> remoto potrebbe puntare a una release precedente: in quel caso usa
+> il percorso "zip locale" qui sotto.
 
-Se hai una copia del repo già scaricata sul tuo computer (es. via
-git clone, o cartella sincronizzata via SwitchDrive / Dropbox /
-OneDrive), puoi installare il plugin puntando al percorso locale invece
-che all'URL GitHub. Al passo 4 sopra, incolla il percorso assoluto
-della cartella `legal-tech-cowork` (es. `/Users/<nome>/legal-tech-cowork`
-o `C:\Users\<nome>\legal-tech-cowork`) anziché l'URL. Il resto del
-flusso è identico.
+---
 
-### Primo utilizzo
+## Installazione — percorso alternativo (zip locale)
 
-In una conversazione Cowork, dopo che Claude ha prodotto una risposta
-con citazioni normative o giurisprudenziali, scrivi:
+Per chi ha già una copia del plugin sul proprio computer (fondatore,
+tester, copia ricevuta via SwitchDrive o e-mail).
 
-> *"Controlla le citazioni di questa risposta."*
+Path UI **diverso** dal precedente: si usa il pulsante **"Aggiungi
+plugin"** (non "Aggiungi marketplace").
 
-oppure
+1. Claude Desktop → tab **Cowork** → **Customize → Plugin → "+"** in
+   alto a destra.
+2. Clicca **"Aggiungi plugin"**.
+3. Seleziona il file zip del plugin sul tuo computer, ad esempio:
 
-> *"Passa l'output a verifica-fonti."*
+   ```
+   C:\Users\<nome>\...\mhc-l-3.1.0-plugin.zip
+   ```
 
-Riceverai un rapporto strutturato che elenca ogni citazione trovata,
-segnala formato anomalo, numerazione implausibile, possibili
-incoerenze contestuali o invenzioni, e indirizza ai registri
-authoritative (Normattiva, EUR-Lex, Italgiure, ecc.) per la verifica
-sostanziale.
+4. Claude Desktop estrae e installa il plugin. Comparirà nella lista
+   plugin con tag "Active".
+
+In alternativa allo zip, al passo 4 della procedura standard puoi
+incollare il **percorso assoluto della cartella locale** del repo
+(es. `C:\Users\<nome>\legal-tech-cowork`) al posto dell'URL GitHub: il
+resto del flusso è identico.
+
+---
+
+## Come testare il plugin
+
+Una volta installato, conviene fare un giro di test per verificare che
+il plugin risponda davvero. Tre prove, dalla più semplice (default)
+alla più articolata (advanced).
+
+### 1) Test della modalità default — `verifica-fonti`
+
+Esempio concreto:
+
+1. Apri una nuova conversazione **Cowork** (con il plugin `mhc-l`
+   attivo).
+2. Chiedi a Claude:
+
+   > *"Stendi un parere sulla nuova disciplina del whistleblowing nel
+   > d.lgs. 24/2023, citando giurisprudenza recente."*
+
+3. Claude produce un parere con citazioni (norme, sentenze di
+   Cassazione, provvedimenti del Garante, ecc.).
+4. Scrivi:
+
+   > *"verifica le fonti di questo parere"*
+
+   Varianti equivalenti: *"controlla le citazioni"*, *"queste citazioni
+   reggono?"*, *"passa l'output a verifica-fonti"*.
+5. **Atteso**: la skill `verifica-fonti` si attiva e restituisce un
+   rapporto strutturato citazione-per-citazione — quali sono
+   formalmente corrette, quali sono sospette (formato anomalo,
+   numerazione implausibile, possibile refuso), quali non si risolvono
+   a una norma reale.
+
+**Variante più diretta**: in qualsiasi conversazione incolla un tuo
+testo con citazioni e chiedi *"verifica queste fonti"*.
+
+**Come riconosci che la skill è davvero attiva.** La risposta di
+Claude include un **marker esplicito di modalità** a ogni turn (per
+esempio una riga iniziale che indica quale skill sta operando). Se
+non vedi alcun marker, la skill non si è attivata: riprova con un
+trigger più diretto come *"usa la skill verifica-fonti su questo
+testo"*.
+
+### 2) Test della modalità avanzata — `catalogo`
+
+Per chi vuole esplorare l'ecosistema italiano-curato di skill terze.
+
+1. In una conversazione Cowork qualsiasi, scrivi:
+
+   > *"mostrami il catalogo delle skill italiane"*
+
+   Trigger equivalenti: *"apri il bollettino"*, *"che skill posso
+   installare?"*, *"mostrami le skill legal-tech disponibili"*.
+2. **Atteso**: la skill `catalogo` si attiva, presenta il bollettino
+   curato (la lista già inclusa nel plugin) e — **prima** di scaricare
+   l'elenco aggiornato da GitHub — ti chiede un consenso esplicito.
+   Questo perché il fetch GitHub è una chiamata di rete: la skill non
+   esce dalla sandbox cowork senza tuo via libera.
+3. Se autorizzi, scarica l'elenco fresh e ti mostra le skill disponibili
+   con eventuali alert/novità. Se non autorizzi, usa l'elenco bundled
+   nel plugin.
+
+### 3) Test della modalità avanzata — `skill-installer` + `adattamento-italiano`
+
+1. Dal catalogo (test precedente), scegli una skill anglophone — per
+   esempio una skill US/UK di NDA review.
+2. Scrivi:
+
+   > *"installa la skill [nome]"*
+
+3. **Atteso**: `skill-installer` esegue silenziosamente cinque check di
+   sicurezza (allowlist sorgenti, verifica licenza, integrità
+   strutturale, scan euristico, freshness) e ti mostra solo una riga
+   per-tier (tier 1 ok / tier 2 ok / tier 2 WARN / REFUSE). Chiede
+   approvazione esplicita prima di scrivere qualsiasi file.
+4. Se l'installazione va a buon fine e la skill non dichiara una
+   giurisdizione italiana o europea (campo `jurisdiction` `[?]`,
+   `other`, `none`, oppure mancante), ti viene chiesto direttamente
+   sì/no se vuoi un adattamento italiano.
+5. Su **"sì"**: `adattamento-italiano` legge la skill installata,
+   traduce il prompt, mappa i riferimenti normativi originali agli
+   equivalenti italiani/EU plausibili, marca con `[VERIFICA]` ogni
+   riferimento che richiede controllo manuale, esegue un pre-flight
+   `verifica-fonti` e ti mostra un diff per approvazione esplicita
+   prima di sovrascrivere.
+
+Come per la modalità default, la presenza dei **marker di modalità**
+nelle risposte di Claude conferma che le skill stanno effettivamente
+operando.
+
+---
+
+## Cosa NON aspettarsi
+
+La modalità avanzata è onesta sui propri limiti:
+
+- **Latenza maggiore.** Adattamento e fetch GitHub richiedono chiamate
+  aggiuntive: qualche secondo in più rispetto al default. Normale.
+- **Rate-limit GitHub.** L'API raw di GitHub limita le fetch anonime a
+  ~60 richieste/ora. Se installi molte skill in poco tempo, può
+  sospendersi temporaneamente: aspetta, riprova.
+- **Possibili falsi positivi sui trigger impliciti.** Se chiedi cose
+  vagamente assimilabili a "mostrami qualcosa di skill", il `catalogo`
+  potrebbe attivarsi anche se non lo volevi. Non scrive nulla senza
+  conferma esplicita, quindi è recuperabile: basta dirgli di
+  fermarsi.
+- **`verifica-fonti` non garantisce la correttezza sostanziale.** Una
+  citazione formalmente corretta può comunque essere inapplicabile al
+  caso concreto. La verifica sostanziale finale resta del
+  professionista.
 
 ---
 
@@ -95,11 +217,17 @@ impostazioni del tuo account.
 
 ### Il plugin non risponde quando chiedo di verificare le fonti
 
-Vai su **Customize → Plugin** e verifica che accanto a MHC-L ci sia
+Vai su **Customize → Plugin** e verifica che accanto a `mhc-l` ci sia
 il tag "Active". Se attivo ma non risponde, prova a essere esplicito
 nella richiesta: *"usa la skill verifica-fonti su questo testo"*. Se
 persiste, apri una issue su
 `https://github.com/MicheleLoi/legal-tech-cowork/issues`.
+
+### Vedo `mhc-l` ma le skill non sono 4
+
+Probabile che il marketplace remoto sia su una versione precedente
+(2.x con la sola `verifica-fonti`). In attesa che la 3.1.0 sia pushata,
+installa via zip locale come descritto sopra.
 
 ---
 
@@ -109,10 +237,13 @@ Il plugin opera **dentro la sandbox Claude cowork**, isolata per
 conversazione. Le cartelle che colleghi a una conversazione sono
 visibili al plugin; nient'altro del tuo computer lo è.
 
-Il plugin **non invia dati** a server di terze parti oltre al normale
-traffico con Anthropic (le tue conversazioni cowork passano da lì
-come sempre). Nessuna telemetria, nessun tracking, nessun analytics,
-nessuna chiamata di rete fuori dal contesto cowork.
+In modalità default, il plugin **non invia dati** a server di terze
+parti oltre al normale traffico con Anthropic. Nessuna telemetria,
+nessun tracking, nessun analytics.
+
+In modalità avanzata, l'unica chiamata di rete esterna è la fetch del
+bollettino da GitHub raw — e avviene solo dopo tuo consenso esplicito,
+mai automaticamente.
 
 ---
 
@@ -125,21 +256,20 @@ numerazione anacronistica o un articolo del codice civile incoerente
 col concetto descritto, non lo segnala. Con `verifica-fonti` attiva,
 quando glielo chiedi (*"controlla le citazioni"*), produce un rapporto
 formale citazione-per-citazione con flag di formato, plausibilità e
-coerenza. Lavorano in due passi: prima Claude risponde, poi tu — se
-intendi usare le citazioni in un atto — gli chiedi il rapporto.
+coerenza.
 
 **Posso disinstallare il plugin?**
-Sì, da **Customize → Plugin → Remove** accanto a MHC-L.
+Sì, da **Customize → Plugin → Remove** accanto a `mhc-l`.
 
 **Il plugin funziona offline?**
-Sì. La skill `verifica-fonti` opera sulla knowledge interna di Claude
-+ il testo che le passi. Nessuna chiamata di rete necessaria.
+La modalità default sì: `verifica-fonti` opera sulla knowledge interna
+di Claude più il testo che le passi, nessuna chiamata di rete. La
+modalità avanzata richiede rete (solo se la invochi).
 
-**Posso usarla su testi non legali?**
+**Posso usare `verifica-fonti` su testi non legali?**
 Sì, ma sarebbe rumore: la skill cerca pattern di citazione normativa
-italiana ed europea. Su una bozza di email generica non ha nulla da
-segnalare. Usala dopo risposte di Claude che contengono riferimenti
-normativi o giurisprudenziali.
+italiana ed europea. Usala dopo risposte di Claude che contengono
+riferimenti normativi o giurisprudenziali.
 
 **Garantisce che le citazioni siano corrette?**
 No. Controlla formato, plausibilità numerica, coerenza contestuale e
@@ -148,62 +278,6 @@ responsabilità professionale finale resta dell'avvocato.
 
 ---
 
-## Modalità avanzata (opt-in)
-
-Il plugin ha **due modalità**. Quella descritta sopra — usa
-`verifica-fonti` su un testo per controllare le citazioni — copre il
-caso d'uso dell'80% degli avvocati. Per chi vuole anche un ecosistema
-italiano-curato di skill terze legal-tech, esiste la **modalità
-avanzata**, che si attiva solo se la chiedi esplicitamente.
-
-### Come si attiva
-
-In una conversazione Cowork con il plugin installato, scrivi a Claude
-qualcosa come:
-
-> *"Apri il bollettino delle skill italiane."*
-
-oppure
-
-> *"Cosa skill ci sono nel catalogo italiano?"*
-
-oppure
-
-> *"Mostrami le skill legal-tech disponibili."*
-
-Questo invoca il `bollettino` e Claude apre la pipeline guidata. Dal
-catalogo scegli una skill, lo `skill-installer` la installa applicando
-i check di sicurezza (allowlist, license, tier, heuristic) in modo
-silenzioso, e successivamente — se serve e lo chiedi tu come **secondo
-passo cosciente** — l'`adattamento-italiano` adatta il prompt al
-linguaggio giuridico italiano.
-
-### Cosa aspettarsi
-
-- **Prima invocazione lenta.** Il bollettino viene scaricato da GitHub
-  raw, e l'eventuale adattamento italiano richiede chiamate LLM
-  aggiuntive. Aspettati qualche secondo in più rispetto alla modalità
-  default.
-- **Rate-limit GitHub.** Se installi molte skill in poco tempo, la
-  fetch raw può temporaneamente sospendersi (limite anonimo ~60
-  richieste/ora). Aspetta, riprova.
-- **Niente persiste tra sessioni Cowork diverse** oltre allo stato
-  che Claude Desktop conserva per la conversazione corrente.
-
-### Non è necessario per la maggior parte degli avvocati
-
-Se ti interessa solo verificare le citazioni di un atto, la modalità
-default (`verifica-fonti` da sola) basta. La modalità avanzata è uno
-strato addizionale per il power-user — non c'è gating che ti spinge
-ad attivarla. Se non la invochi, non si attiva.
-
-### Disinstallarla?
-
-Non c'è da disinstallare nulla: la modalità avanzata è una pipeline
-inerte finché non la chiami. Se cambi idea, semplicemente non
-invocarla più.
-
----
-
-*DISTRIBUZIONE.md — v3.1.0 — 2026-05-18 (allineato a mhc-l 3.1.0:
-default `verifica-fonti` + modalità avanzata opt-in via bollettino).*
+*DISTRIBUZIONE.md — v3.1.0 — 2026-05-18 (onboarding riallineato post
+install-verification: default `verifica-fonti` + modalità avanzata
+opt-in via catalogo, con sezione "Come testare" step-by-step).*
