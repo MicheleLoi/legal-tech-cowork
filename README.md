@@ -1,212 +1,126 @@
-# MHC-L — meta-plugin di adattamento italiano per skill legal-tech AI open source
+# MHC-L — verifica fonti normative italiane ed europee
 
-[![License: MIT (parti originali)](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![License: Apache 2.0 (parti forkate)](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-*Plugin per Claude cowork. Monitora automaticamente l'ecosistema
-legal-tech AI open source, propone adattamenti italiani sotto conferma
-dell'avvocato, verifica le citazioni normative italiane ed europee
-contro registri authoritative.*
+*Plugin per Claude cowork. Una skill, una funzione: controllare che i
+riferimenti normativi e giurisprudenziali italiani/europei citati in un
+testo corrispondano a documenti reali e siano formalmente coerenti.*
 
 ---
 
-## Cosa è
+## Cosa fa il plugin
 
-MHC-L è un **fork-and-extend** di `legal-builder-hub`
-([anthropics/claude-for-legal](https://github.com/anthropics/claude-for-legal),
-Apache-2.0) con tre layer aggiunti originali nostri (MIT):
+Il plugin contiene **una sola skill**: `verifica-fonti`. Riceve un testo
+(tipicamente l'output di un'altra skill o una bozza dell'avvocato) e
+produce un rapporto di verifica delle citazioni normative italiane ed
+europee. Controlla:
 
-1. **Layer italiano (`adattamento-italiano`)** — skill invocabile
-   esplicitamente dall'avvocato per adattare una skill già installata
-   al diritto italiano. Genera una proposta di traduzione + mappatura
-   dei riferimenti normativi all'equivalente italiano/europeo (usando
-   `adaptation_prompt.md`), pre-flighta le citazioni con
-   `verifica-fonti`, e mostra il diff per Approva / Modifica /
-   Annulla. Si attiva (a) su richiesta diretta dell'avvocato
-   ("adatta `[X]` in italiano"), oppure (b) come risposta "sì" al
-   prompt che lo `skill-installer` mostra dopo aver installato una
-   skill non classificata come italiana/europea (REV2.1, 2026-05-18).
-   Mai automaticamente, mai come hook silenzioso.
+- **Formato** — la citazione segue uno dei pattern noti (codici italiani,
+  leggi, decreti, sentenze Cassazione, Corte Costituzionale, Consiglio
+  di Stato, TAR, regolamenti e direttive UE, sentenze CGUE, CEDU).
+- **Plausibilità numerica** — il numero di articolo o di sentenza è
+  coerente con i range noti (es. `art. 9999 c.c.` è impossibile, il
+  codice civile arriva ad art. 2969).
+- **Coerenza interna** — la norma citata corrisponde al contenuto
+  descritto (es. `art. 1382 c.c.` come "danno extracontrattuale" è un
+  refuso: la clausola penale è 1382, l'extracontrattuale è 2043).
+- **Plausibilità storica** — possibili citazioni inventate (numerazioni
+  che non esistevano all'epoca della sentenza).
 
-2. **Verifica fonti italiane ed europee (`verifica-fonti`)** — controllo
-   di coerenza, plausibilità e formato delle citazioni normative IT/EU.
-   Cita registri authoritative (Normattiva, Gazzetta Ufficiale,
-   Cassazione CED, Corte Cost., Cons. Stato, Garante Privacy, AGCM,
-   CONSOB, Banca d'Italia, EUR-Lex, InfoCuria CGUE, IATE) con URL
-   canonici. Pre-flight in fase di adattamento, auto-suggerita
-   sull'output runtime di skill IT/EU.
+Per ogni segnalazione indirizza ai registri authoritative: **Normattiva,
+Gazzetta Ufficiale, Cassazione/Italgiure, Consiglio di Stato e TAR
+(Giustizia Amministrativa), Corte Costituzionale, Garante Privacy,
+AGCM, CONSOB, Banca d'Italia, EUR-Lex, InfoCuria CGUE, IATE**.
 
-3. **Bollettino ecosystem-monitored** — catalogo curato in modo
-   automatico da una routine (`bollettino-research`, in MHC-Work) che
-   monitora mensilmente GitHub broadly nell'ecosistema legal-tech AI
-   open source (post-Mike Bommarito e oltre), applica una **threshold
-   policy esplicita** (license OSS, reputation minima, IT-relevance
-   heuristic) e auto-committa + auto-pusha le voci che passano.
-   Founder fuori dal runtime loop — la threshold policy è la
-   cristallizzazione del giudizio editoriale.
+## Come si usa
 
-L'avvocato installa **un solo plugin** (`mhc-l`) che contiene tutto.
+L'avvocato chiede a Claude qualcosa che cita normativa o giurisprudenza
+italiana. Quando Claude risponde, l'avvocato passa il testo a
+`verifica-fonti`:
 
-## Cosa NON è
+> *"Controlla le citazioni di questa risposta."*
 
-- **NON** è un'italianizzazione del plugin `legal` marketplace Anthropic
-  (quello consolidato a 9 comandi US-centric). MHC-L lavora a un livello
-  diverso: meta-plugin che gestisce skill di terze parti, non un singolo
-  plugin di skill predefinite.
-- **NON** è un servizio di consulenza legale. Le skill propongono
-  strumenti; l'avvocato porta il giudizio e mantiene la responsabilità
-  professionale di tutto ciò che esce in output.
-- **NON** sostituisce la verifica giurisprudenziale autorevole
-  (Italgiure, De Jure, EUR-Lex live). `verifica-fonti` controlla formato
-  e plausibilità contro knowledge interna, indirizza ai registri
-  authoritative; non sostituisce la consultazione live di chi è abilitato.
-- **NON** automatizza decisioni giuridiche. Tutto passa da conferme
-  esplicite dell'avvocato — il modello è dual control, non automazione
-  cieca.
+oppure
 
-## Come funziona (modello operativo)
+> *"Passa l'output a verifica-fonti."*
 
-1. **Bollettino bundled all'install, opzione live opzionale.** Il
-   file `bollettino.json` in questo repo è il catalogo, aggiornato
-   mensilmente dalla routine `bollettino-research` in MHC-Work. La
-   modalità di default consegna all'avvocato la copia bundled con il
-   plugin (sempre disponibile, no setup tecnico). La modalità live
-   (fetch fresh ad ogni apertura) richiede un'azione facoltativa di
-   configurazione dell'utente — istruzioni:
-   [`https://micheleloi.pro/mhc-l/istruzioni/`](https://micheleloi.pro/mhc-l/istruzioni/).
-2. **Skill discovery automatica.** La routine cerca su GitHub broadly
-   skill legal-tech AI open source, applica la threshold policy
-   esplicita (vedi `BOLLETTINO_FORMAT.md` § "Threshold policy") e
-   pubblica le voci qualificate.
-3. **Installazione con security gate.** Quando l'avvocato chiede di
-   installare, il pipeline `skill-installer` forkato (Apache-2.0
-   Anthropic) gestisce allowlist, fetch in subagent read-only,
-   raw-source display, structural trust check, license verification
-   pre+post fetch, freshness gate. Layer di sicurezza industrial-grade.
-4. **Adattamento italiano come secondo passo cosciente
-   dell'avvocato.** Dopo che lo `skill-installer` ha completato
-   l'install, l'avvocato può chiedere esplicitamente *"adatta `[X]`
-   in italiano"* (o usare `/adattamento-italiano [X]`). Per le skill
-   non classificate come italiane/europee, lo `skill-installer`
-   propone direttamente la scelta con un prompt sì/no (REV2.1,
-   2026-05-18). In entrambi i casi `adattamento-italiano` genera la
-   proposta, pre-flighta le citazioni normative con `verifica-fonti`,
-   e mostra il diff all'avvocato per Approva / Modifica / Annulla.
-   Hook automatici silenziosi sono stati rimossi per design.
-5. **Verifica fonti post-uso.** Dopo l'output di skill marcate IT o EU,
-   MHC-L suggerisce di passare il testo a `verifica-fonti` per un
-   controllo di coerenza delle citazioni runtime.
+Il rapporto segnala le citazioni con formato anomalo, numerazione
+implausibile, coerenza contestuale debole, o possibili invenzioni — con
+suggerimento di verifica sul registro autorevole. La verifica sostanziale
+finale resta del professionista.
 
-## Installazione (5 click)
+## Perché solo una skill (e non un meta-plugin di skill terze)
 
-Vedi **[DISTRIBUZIONE.md](./DISTRIBUZIONE.md)** per la guida + link al
-video walkthrough. In sintesi:
+Versioni precedenti del plugin (2.x) tentavano un meta-pattern: catalogo
++ skill-installer + adattamento italiano al volo per skill US-centric.
+Ratifica founder 2026-05-18 (strada B), riassunta:
 
-1. Claude Desktop → tab **Cowork**
-2. Sidebar **Customize → Plugin → "+"**
-3. **"Crea plugin"** (sì, "Crea plugin" — è il path UX
-   counter-intuitivo per "aggiungi marketplace esistente")
-4. Incolla URL: `https://github.com/MicheleLoi/legal-tech-cowork` → Add
-5. Accanto a "mhc-l", **"Add plugin"**
+1. **Install runtime troppo lento** — il flusso di installazione runtime
+   delle skill terze, anche con security gate, era pesante per l'avvocato
+   non-tech.
+2. **Non sono avvocato** — la curation editoriale di skill legali terze
+   richiede competenza giuridica che resta esterna al progetto.
+3. **Claude parla già italiano nativo** — non serve "tradurre" una skill
+   inglese: se l'avvocato scrive italiano a Claude, le skill Anthropic
+   ufficiali (in inglese) producono output in italiano direttamente.
 
-## Stato del catalogo
+Il valore aggiunto residuo è dove Claude non può supplire da solo: la
+verifica puntuale di citazioni normative italiane (formato, plausibilità,
+registri authoritative). Quello è `verifica-fonti`. Il resto del lavoro
+legale generale → marketplace ufficiale Anthropic.
 
-Il catalogo cresce per accumulo automatico. La routine
-`bollettino-research` in MHC-Work monitora mensilmente l'ecosistema
-legal-tech open source e pubblica le voci che superano la threshold
-policy. Vedi `BOLLETTINO_FORMAT.md` per lo schema, la threshold
-policy e il processo di ingresso.
+Riferimento decisione: MHC-Work `_org/decision_log.md` voce
+"Plugin Cowork mhc-l: ratifica strategica riduzione a verifica-fonti only"
+(2026-05-18).
 
-## Per chi è
+## Cosa NON fa
 
-Avvocato italiano che usa Claude per il lavoro professionale e vuole:
+- **Non cura skill terze.** Niente bollettino, catalogo, skill-installer.
+  Le skill legali generali stanno sul marketplace Anthropic.
+- **Non traduce skill upstream in italiano.** Non serve: Claude risponde
+  italiano nativo se gli parli italiano.
+- **Non garantisce la correttezza sostanziale.** Una citazione formalmente
+  corretta può comunque essere inapplicabile al caso concreto.
+- **Non consulta i registri live.** Il controllo è basato su formato,
+  plausibilità numerica, coerenza testuale e knowledge interna — i link
+  ai registri authoritative indirizzano l'avvocato alla verifica, non la
+  sostituiscono.
 
-- **Risparmiare tempo** sull'esplorazione manuale di skill legal-tech
-  esistenti senza dover monitorare lui stesso GitHub e l'ecosistema;
-- **Non rinunciare al diritto italiano** quando le skill sono nate in
-  contesto US-centric (la maggior parte sull'ecosistema);
-- **Mantenere il controllo finale** su ogni passaggio (niente
-  installazioni silenti, niente citazioni non verificabili, raw SKILL.md
-  sempre mostrato prima dell'install);
-- **Beneficiare del security gate Anthropic** (forkato Apache-2.0) senza
-  dover reinstallare separatamente `claude-for-legal` (che non è
-  marketplace-installable su Pro standard).
+## Installazione
 
-## Licensing — dual
-
-Questo plugin è un **fork-and-extend** di codice Anthropic open source.
-Le parti del codice sono coperte da due licenze distinte:
-
-- **Apache-2.0** (parti forkate da `anthropics/claude-for-legal`
-  legal-builder-hub): `skills/skill-installer/SKILL.md`,
-  `skills/skill-installer/references/allowlist.md`,
-  `skills/skill-installer/references/freshness.md`. Questi file
-  conservano in cima un commento Apache 2.0 + annotazione di
-  provenance ("Forked from anthropics/claude-for-legal..."). Vedi
-  `LICENSE-ANTHROPIC` per il testo integrale Apache 2.0.
-
-- **MIT** (parti originali nostre): `skills/adattamento-italiano/`,
-  `skills/verifica-fonti/`, `skills/catalogo/adaptation_prompt.md`,
-  configurazione bollettino (`bollettino.json` + threshold policy in
-  `BOLLETTINO_FORMAT.md`), documentazione (`README.md`,
-  `DISTRIBUZIONE.md`, `BUILD_NOTES.md`). Vedi `LICENSE` per il testo
-  MIT e l'elenco esplicito dei file.
-
-Vedi `NOTICE` per l'attribution Anthropic come richiesto da
-Apache 2.0 §4(d).
-
-## Contribuire
-
-- **Issue per suggerire una skill** → apri issue con link al repo; la
-  routine `bollettino-research` la valuta in modalità ad-hoc applicando
-  la stessa threshold policy.
-- **PR su `verifica-fonti`** (pattern di citazioni, registri normativi
-  mancanti, plausibilità numeriche) → benvenute.
-- **PR su `adaptation_prompt.md`** (mappature normative IT/EU mancanti
-  o da correggere) → benvenute.
-- **PR su documentazione** → benvenute.
-- **PR che aggiungono voci a `bollettino.json` a mano** → NON accettate.
-  Il bollettino passa dalla routine automatica. Per casi mirati, apri
-  issue e la routine la elabora in modalità ad-hoc.
-
----
-
-# MHC-L — meta-plugin for Italian adaptation of open-source legal-tech AI skills
-
-*Plugin for Claude cowork. Automatically monitors the open-source
-legal-tech AI ecosystem, proposes Italian adaptations under lawyer
-confirmation, verifies Italian and EU legal citations against
-authoritative registers.*
-
-## What it is
-
-MHC-L is a **fork-and-extend** of `legal-builder-hub`
-([anthropics/claude-for-legal](https://github.com/anthropics/claude-for-legal),
-Apache-2.0) with three originally-authored MIT layers added on top:
-Italian adaptation hook, IT/EU legal-citation verification, and an
-ecosystem-monitored bollettino populated by an automatic routine. One
-plugin for the lawyer, three concerns covered.
-
-## What it is NOT
-
-- Not an Italianization of the consolidated `legal` marketplace plugin
-  by Anthropic.
-- Not a legal advice service.
-- Not a substitute for authoritative case-law / statute consultation.
-- Not automation of legal judgment — every install passes through
-  explicit lawyer confirmation.
-
-## Install (5 clicks)
-
-See **[DISTRIBUZIONE.md](./DISTRIBUZIONE.md)** (Italian — that's the
-target audience). The URL to paste is
-`https://github.com/MicheleLoi/legal-tech-cowork`. Path:
-`Customize → Plugin → "+" → Crea plugin → marketplace URL`. Yes,
-"Crea plugin" is the counter-intuitive UX path for "add existing
-marketplace" — known Claude Desktop Pro quirk as of May 2026.
+Vedi **[DISTRIBUZIONE.md](./DISTRIBUZIONE.md)** per il flusso
+passo-passo (5 click in Claude Desktop, no terminale, no account
+GitHub). Versione web della guida con screenshot:
+[`https://micheleloi.pro/mhc-l/istruzioni/`](https://micheleloi.pro/mhc-l/istruzioni/).
 
 ## Licensing
 
-Dual: Apache-2.0 for forked parts (legal-builder-hub from Anthropic),
-MIT for originally-authored parts. See `LICENSE`, `LICENSE-ANTHROPIC`,
-and `NOTICE`.
+MIT. Vedi `LICENSE`.
+
+## Contribuire
+
+- **PR su `verifica-fonti`** (pattern di citazione mancanti, registri
+  normativi da aggiungere, plausibilità numeriche affinate) → benvenute.
+- **PR su documentazione** → benvenute.
+- **Issue** per segnalare false positive / false negative del controllo,
+  o nuovi pattern di citazione → benvenute.
+
+---
+
+# MHC-L — Italian and EU legal-citation verification
+
+*Claude cowork plugin. One skill: checks that Italian and EU legal
+references cited in a text correspond to real documents and are
+formally coherent. Reports format anomalies, implausible numbering,
+contextual inconsistencies, and possible hallucinated citations,
+directing the lawyer to authoritative registers (Normattiva, EUR-Lex,
+Italgiure, Corte Costituzionale, Garante Privacy, AGCM, Banca d'Italia,
+InfoCuria CGUE).*
+
+The 2.x meta-plugin scope (skill curation, installer, on-the-fly Italian
+adaptation) has been retired (2026-05-18): general legal skills are on
+Anthropic's official marketplace, Claude already replies in Italian
+natively when addressed in Italian. The residual value — Italian/EU
+citation verification — is what remains here.
+
+License: MIT.
