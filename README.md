@@ -116,10 +116,11 @@ usa solo il primo:
   d'uso che copre l'80% dei bisogni di verifica formale delle citazioni
   normative.
 - **Avanzato (opt-in).** L'avvocato che vuole esplorare un ecosistema
-  di skill legal-tech italiano-curate invoca esplicitamente il
-  **bollettino**. Da quel punto si attiva una pipeline orchestrata:
-  - il `catalogo` presenta le skill validate dalla community con un
-    flusso d'installazione guidato,
+  di skill legal-tech italiano-curate invoca esplicitamente la skill
+  **`catalogo`** (per esempio chiedendo *"apri il bollettino delle
+  skill italiane"*). Da quel punto si attiva una pipeline orchestrata:
+  - `catalogo` presenta il bollettino curato delle skill validate
+    dalla community con un flusso d'installazione guidato,
   - lo `skill-installer` installa la skill scelta applicando
     silenziosamente i check di sicurezza (allowlist, tier,
     heuristic, license),
