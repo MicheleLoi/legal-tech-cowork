@@ -1,6 +1,6 @@
 {
   "name": "mhc-l",
-  "version": "2.0.0",
+  "version": "2.5.0",
   "description": "Meta-plugin di adattamento italiano per skill legal-tech AI open source. Fork-and-extend di legal-builder-hub di Anthropic (Apache-2.0) con layer italiano (adattamento + verifica fonti IT/EU) e bollettino ecosystem-monitored popolato automaticamente. Avvocato come unica autorità giuridica del flusso.",
   "author": {
     "name": "Michele Loi"
