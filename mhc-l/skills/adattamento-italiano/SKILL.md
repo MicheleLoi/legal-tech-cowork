@@ -1,20 +1,35 @@
 ---
 name: adattamento-italiano
 description: >
-  Adatta una skill legal-tech già installata al diritto italiano:
-  traduce il prompt, mappa i riferimenti normativi originali agli
-  equivalenti italiani/europei dove plausibile, marca con [VERIFICA]
-  ogni riferimento da controllare, esegue pre-flight verifica-fonti
-  e mostra il diff per approvazione esplicita dell'avvocato. Si
-  attiva SOLO su richiesta esplicita dell'avvocato (secondo passo
-  cosciente dopo l'installazione) — non viene mai invocata
-  automaticamente dall'installer. Usa quando l'avvocato scrive
-  "adatta [nome] in italiano", "italianizza [nome]",
-  "/adattamento-italiano [nome]", o equivalenti.
+  Adatta una skill legal-tech già installata al diritto italiano
+  (componente della modalità AVANZATA opt-in del plugin mhc-l, non
+  default): traduce il prompt, mappa i riferimenti normativi originali
+  agli equivalenti italiani/europei dove plausibile, marca con
+  [VERIFICA] ogni riferimento da controllare, esegue pre-flight
+  verifica-fonti e mostra il diff per approvazione esplicita
+  dell'avvocato. Si attiva SOLO su richiesta esplicita dell'avvocato
+  (secondo passo cosciente dopo l'installazione via bollettino) — non
+  viene mai invocata automaticamente dall'installer né dal catalogo.
+  Usa quando l'avvocato scrive "adatta [nome] in italiano",
+  "italianizza [nome]", "/adattamento-italiano [nome]", o equivalenti.
 argument-hint: "[nome skill già installata, oppure niente per selezione interattiva]"
 ---
 
 # adattamento-italiano — adattamento on-demand di skill installate
+
+## Posizionamento: componente modalità avanzata opt-in
+
+Questa skill fa parte del workflow **avanzato opt-in** del plugin
+mhc-l (gateway: la skill `catalogo` / il bollettino). Non si attiva
+automaticamente in nessun caso: né all'apertura del plugin, né
+all'installazione di una skill terza, né su menzione generica di
+"diritto italiano". Si attiva **solo** se l'avvocato la invoca
+esplicitamente con una delle formulazioni indicate nel description.
+
+Riferimento decisione: MHC-Work `_org/decision_log.md` 2026-05-18
+(strada B + raffinamento founder advanced-via-bollettino).
+
+---
 
 ## Quando vieni invocata
 

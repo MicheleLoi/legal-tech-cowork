@@ -57,42 +57,93 @@ implausibile, coerenza contestuale debole, o possibili invenzioni — con
 suggerimento di verifica sul registro autorevole. La verifica sostanziale
 finale resta del professionista.
 
-## Perché solo una skill (e non un meta-plugin di skill terze)
+## Perché `verifica-fonti` è il default (e il resto è opt-in)
 
-Versioni precedenti del plugin (2.x) tentavano un meta-pattern: catalogo
-+ skill-installer + adattamento italiano al volo per skill US-centric.
-Ratifica founder 2026-05-18 (strada B), riassunta:
+Versioni precedenti del plugin (2.x) montavano un meta-pattern attivo
+di default: catalogo + skill-installer + adattamento italiano al volo
+per skill US-centric, tutto sempre on. Ratifica founder 2026-05-18
+(strada B), riassunta:
 
-1. **Install runtime troppo lento** — il flusso di installazione runtime
-   delle skill terze, anche con security gate, era pesante per l'avvocato
-   non-tech.
+1. **Install runtime troppo lento per il default** — il flusso di
+   installazione runtime delle skill terze, anche con security gate,
+   era pesante per l'avvocato non-tech all'apertura del plugin.
 2. **Non sono avvocato** — la curation editoriale di skill legali terze
-   richiede competenza giuridica che resta esterna al progetto.
-3. **Claude parla già italiano nativo** — non serve "tradurre" una skill
-   inglese: se l'avvocato scrive italiano a Claude, le skill Anthropic
-   ufficiali (in inglese) producono output in italiano direttamente.
+   richiede competenza giuridica che resta esterna al progetto: vale
+   come servizio aggiuntivo opzionale, non come gating obbligato.
+3. **Claude parla già italiano nativo** — non serve "tradurre" una
+   skill inglese per usarla: se l'avvocato scrive italiano a Claude,
+   le skill Anthropic ufficiali producono output in italiano
+   direttamente.
 
-Il valore aggiunto residuo è dove Claude non può supplire da solo: la
-verifica puntuale di citazioni normative italiane (formato, plausibilità,
-registri authoritative). Quello è `verifica-fonti`. Il resto del lavoro
-legale generale → marketplace ufficiale Anthropic.
+Il valore aggiunto residuo always-on è dove Claude non può supplire
+da solo: la verifica puntuale di citazioni normative italiane (formato,
+plausibilità, registri authoritative). Quello è `verifica-fonti`, ed è
+il default.
+
+Per chi vuole comunque un ecosistema curato di skill terze italiane,
+la modalità avanzata (sezione successiva) tiene viva quella pista
+come **opt-in attivabile via bollettino** — niente è attivo finché
+l'avvocato non lo chiede esplicitamente.
 
 Riferimento decisione: MHC-Work `_org/decision_log.md` voce
-"Plugin Cowork mhc-l: ratifica strategica riduzione a verifica-fonti only"
-(2026-05-18).
+"Plugin Cowork mhc-l: ratifica strategica riduzione a verifica-fonti
+only" (2026-05-18) + raffinamento founder in-session post UX test
+("default invariato + bollettino opt-in").
 
-## Cosa NON fa
+## Cosa NON fa (in modalità default)
 
-- **Non cura skill terze.** Niente bollettino, catalogo, skill-installer.
-  Le skill legali generali stanno sul marketplace Anthropic.
-- **Non traduce skill upstream in italiano.** Non serve: Claude risponde
-  italiano nativo se gli parli italiano.
+- **Non cura skill terze automaticamente.** In modalità default il plugin
+  non propone, scarica o installa skill esterne. Per la curation di skill
+  terze italiane c'è la modalità avanzata opt-in descritta sotto.
+- **Non traduce skill upstream in italiano automaticamente.** Claude
+  risponde italiano nativo se gli parli italiano. L'adattamento italiano
+  esplicito di skill terze è anch'esso parte della modalità avanzata
+  opt-in, non del default.
 - **Non garantisce la correttezza sostanziale.** Una citazione formalmente
   corretta può comunque essere inapplicabile al caso concreto.
 - **Non consulta i registri live.** Il controllo è basato su formato,
   plausibilità numerica, coerenza testuale e knowledge interna — i link
   ai registri authoritative indirizzano l'avvocato alla verifica, non la
   sostituiscono.
+
+## Modalità avanzata (opt-in)
+
+Il plugin opera a **due livelli**, e la maggior parte degli avvocati
+usa solo il primo:
+
+- **Default.** Una skill, `verifica-fonti`. Niente latenza extra,
+  niente chiamate di rete, niente curation di skill terze. È il caso
+  d'uso che copre l'80% dei bisogni di verifica formale delle citazioni
+  normative.
+- **Avanzato (opt-in).** L'avvocato che vuole esplorare un ecosistema
+  di skill legal-tech italiano-curate invoca esplicitamente il
+  **bollettino**. Da quel punto si attiva una pipeline orchestrata:
+  - il `catalogo` presenta le skill validate dalla community con un
+    flusso d'installazione guidato,
+  - lo `skill-installer` installa la skill scelta applicando
+    silenziosamente i check di sicurezza (allowlist, tier,
+    heuristic, license),
+  - l'`adattamento-italiano` — su richiesta esplicita successiva —
+    adatta al volo il prompt della skill terza al linguaggio
+    giuridico italiano se necessario.
+
+**Come si attiva.** L'avvocato dice a Claude qualcosa come *"apri il
+bollettino delle skill italiane"*, *"mostrami il catalogo"*, *"che
+skill posso installare?"*. Niente di tutto questo è automatico: senza
+una richiesta esplicita la pipeline avanzata resta inerte e il plugin
+si comporta come il singolo-skill default.
+
+**Trade-off onesto.** La modalità avanzata ha latenza più alta
+(adattamento richiede chiamate LLM aggiuntive) ed è soggetta al
+rate-limit di GitHub raw (il bollettino è fetchato online). È pensata
+per power-user che accettano questo costo in cambio di curation
+italiana. Per chi vuole solo verificare le citazioni di un atto, il
+default basta e avanza.
+
+Riferimento decisione: MHC-Work `_org/decision_log.md` voce
+"Plugin Cowork mhc-l: ratifica strategica riduzione a verifica-fonti
+only" (2026-05-18) + raffinamento founder in-session post UX test
+("default invariato + bollettino come gateway opt-in").
 
 ## Installazione
 
@@ -126,9 +177,11 @@ Italgiure, Corte Costituzionale, Garante Privacy, AGCM, Banca d'Italia,
 InfoCuria CGUE).*
 
 The 2.x meta-plugin scope (skill curation, installer, on-the-fly Italian
-adaptation) has been retired (2026-05-18): general legal skills are on
-Anthropic's official marketplace, Claude already replies in Italian
-natively when addressed in Italian. The residual value — Italian/EU
-citation verification — is what remains here.
+adaptation) is no longer always-on: it has been refactored as an
+**advanced opt-in** mode (2026-05-18). The default user experience is
+the single `verifica-fonti` skill — fast, no LLM adapter calls, no
+network. Power-users who want a curated Italian legal-tech skills
+ecosystem can invoke the bollettino explicitly to open the extended
+pipeline (catalogo + skill-installer + adattamento-italiano).
 
 License: MIT.

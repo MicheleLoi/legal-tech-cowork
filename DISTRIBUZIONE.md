@@ -7,12 +7,19 @@ conoscenza tecnica richiesta.*
 
 ## Cosa installi
 
-Un plugin per Claude cowork con **una skill**: `verifica-fonti`.
-Controlla che le citazioni normative e giurisprudenziali italiane ed
-europee in un testo siano formalmente corrette, plausibili e coerenti
-con il contesto. Fonti coperte: Cassazione, Corte Costituzionale,
-Consiglio di Stato, TAR, Normattiva, EUR-Lex, Garante Privacy, AGCM,
-ANAC, Banca d'Italia.
+Un plugin per Claude cowork. **Default**: una skill, `verifica-fonti`,
+che controlla che le citazioni normative e giurisprudenziali italiane
+ed europee in un testo siano formalmente corrette, plausibili e
+coerenti con il contesto. Fonti coperte: Cassazione, Corte
+Costituzionale, Consiglio di Stato, TAR, Normattiva, EUR-Lex, Garante
+Privacy, AGCM, ANAC, Banca d'Italia.
+
+**Modalità avanzata opt-in.** Il plugin include anche un ecosistema
+opzionale di skill terze italiano-curate (bollettino + catalogo +
+installer + adattamento), che resta inerte finché non lo attivi
+esplicitamente. Vedi la sezione **Modalità avanzata** in fondo a
+questo documento. Se non ti serve, ignorala: il default copre l'80%
+dei casi.
 
 Versione web della guida con screenshot:
 [`https://micheleloi.pro/mhc-l/istruzioni/`](https://micheleloi.pro/mhc-l/istruzioni/).
@@ -141,5 +148,62 @@ responsabilità professionale finale resta dell'avvocato.
 
 ---
 
-*DISTRIBUZIONE.md — v3.0.0 — 2026-05-18 (allineato a mhc-l 3.0.0,
-plugin singolo-skill `verifica-fonti`).*
+## Modalità avanzata (opt-in)
+
+Il plugin ha **due modalità**. Quella descritta sopra — usa
+`verifica-fonti` su un testo per controllare le citazioni — copre il
+caso d'uso dell'80% degli avvocati. Per chi vuole anche un ecosistema
+italiano-curato di skill terze legal-tech, esiste la **modalità
+avanzata**, che si attiva solo se la chiedi esplicitamente.
+
+### Come si attiva
+
+In una conversazione Cowork con il plugin installato, scrivi a Claude
+qualcosa come:
+
+> *"Apri il bollettino delle skill italiane."*
+
+oppure
+
+> *"Cosa skill ci sono nel catalogo italiano?"*
+
+oppure
+
+> *"Mostrami le skill legal-tech disponibili."*
+
+Questo invoca il `bollettino` e Claude apre la pipeline guidata. Dal
+catalogo scegli una skill, lo `skill-installer` la installa applicando
+i check di sicurezza (allowlist, license, tier, heuristic) in modo
+silenzioso, e successivamente — se serve e lo chiedi tu come **secondo
+passo cosciente** — l'`adattamento-italiano` adatta il prompt al
+linguaggio giuridico italiano.
+
+### Cosa aspettarsi
+
+- **Prima invocazione lenta.** Il bollettino viene scaricato da GitHub
+  raw, e l'eventuale adattamento italiano richiede chiamate LLM
+  aggiuntive. Aspettati qualche secondo in più rispetto alla modalità
+  default.
+- **Rate-limit GitHub.** Se installi molte skill in poco tempo, la
+  fetch raw può temporaneamente sospendersi (limite anonimo ~60
+  richieste/ora). Aspetta, riprova.
+- **Niente persiste tra sessioni Cowork diverse** oltre allo stato
+  che Claude Desktop conserva per la conversazione corrente.
+
+### Non è necessario per la maggior parte degli avvocati
+
+Se ti interessa solo verificare le citazioni di un atto, la modalità
+default (`verifica-fonti` da sola) basta. La modalità avanzata è uno
+strato addizionale per il power-user — non c'è gating che ti spinge
+ad attivarla. Se non la invochi, non si attiva.
+
+### Disinstallarla?
+
+Non c'è da disinstallare nulla: la modalità avanzata è una pipeline
+inerte finché non la chiami. Se cambi idea, semplicemente non
+invocarla più.
+
+---
+
+*DISTRIBUZIONE.md — v3.1.0 — 2026-05-18 (allineato a mhc-l 3.1.0:
+default `verifica-fonti` + modalità avanzata opt-in via bollettino).*

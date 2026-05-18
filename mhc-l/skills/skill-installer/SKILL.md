@@ -40,15 +40,30 @@ REV2.1 patch (2026-05-18) — active adaptation prompt for non-IT skill:
 name: skill-installer
 description: >
   Installs a community legal-tech skill from the bollettino (or from a
-  direct URL the lawyer provides). Runs all security checks (allowlist,
-  license verification, structural trust, heuristic scan) silently;
-  surfaces to the lawyer only a per-tier installation line and asks for
-  explicit approval before writing any file. After install, nudges the
-  lawyer to invoke `adattamento-italiano` as a separate, deliberate
-  request. Use when the lawyer says "installa la skill X", picks Install
-  from the catalogo browser, or provides a direct skill URL.
+  direct URL the lawyer provides). Component of the mhc-l plugin's
+  ADVANCED opt-in mode (not default). Runs all security checks
+  (allowlist, license verification, structural trust, heuristic scan)
+  silently; surfaces to the lawyer only a per-tier installation line and
+  asks for explicit approval before writing any file. After install,
+  nudges the lawyer to invoke `adattamento-italiano` as a separate,
+  deliberate request. NEVER auto-activates: only runs when invoked from
+  the catalogo pipeline (after the lawyer explicitly opened the
+  bollettino) or when the lawyer says "installa la skill X" / provides a
+  direct skill URL.
 argument-hint: "[skill name or registry URL]"
 ---
+
+<!--
+Posizionamento: componente modalità avanzata opt-in del plugin mhc-l.
+Gateway: la skill `catalogo` / il bollettino. Non auto-attivare. Non
+suggerire installazione di skill terze a meno che l'avvocato non sia
+già nella pipeline avanzata (ha esplicitamente aperto il catalogo /
+bollettino) o non chieda direttamente di installare una skill.
+
+Riferimento decisione: MHC-Work _org/decision_log.md 2026-05-18
+(strada B + raffinamento founder advanced-via-bollettino).
+-->
+
 
 # skill-installer (forked from legal-builder-hub, adattato per MHC-L)
 

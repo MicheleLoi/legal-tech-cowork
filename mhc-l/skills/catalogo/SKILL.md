@@ -1,16 +1,41 @@
 ---
 name: catalogo
 description: >
-  Catalogo curato delle skill legal-tech per l'avvocato italiano. Scarica il
+  Catalogo curato delle skill legal-tech per l'avvocato italiano (componente
+  della modalità AVANZATA opt-in del plugin mhc-l, non default). Scarica il
   bollettino mensile da GitHub, presenta le novità e gli avvisi importanti,
   installa una skill scelta dall'avvocato dopo averla adattata al diritto
-  italiano e fatto confermare l'adattamento dall'avvocato. Usa quando
-  l'avvocato dice "mostrami il catalogo", "ci sono novità", "installa la
-  skill X", "voglio vedere il bollettino", o entra nella conversazione
-  cercando una skill legal-tech.
+  italiano e fatto confermare l'adattamento dall'avvocato. NON si attiva
+  automaticamente: si attiva SOLO su invocazione esplicita dell'avvocato
+  ("mostrami il catalogo", "apri il bollettino delle skill italiane",
+  "che skill posso installare?", "ci sono novità nel bollettino?",
+  "/catalogo", o equivalenti).
 ---
 
 # MHC-L — Catalogo skill legal-tech (meta-skill)
+
+## Posizionamento: gateway modalità avanzata opt-in
+
+Questa skill è il **punto d'ingresso del workflow avanzato opt-in** del
+plugin mhc-l. Il plugin opera a due livelli:
+
+- **Default**: l'avvocato usa solo `verifica-fonti`. Niente catalogo,
+  niente bollettino, niente installer, niente adattamento.
+- **Avanzato (questa pipeline)**: l'avvocato chiede esplicitamente
+  *"mostrami il catalogo"*, *"apri il bollettino delle skill
+  italiane"*, *"che skill posso installare?"* — solo allora questa
+  skill si attiva e orchestra `skill-installer` + `adattamento-italiano`.
+
+**Regola di attivazione esplicita.** Non auto-aprire il catalogo
+quando l'avvocato chiede cose generiche legali. Non suggerire la
+modalità avanzata in modo proattivo. Apri la pipeline solo quando
+l'avvocato menziona esplicitamente catalogo / bollettino / "installare
+una skill" / "skill legal-tech italiane" o equivalenti.
+
+Riferimento decisione: MHC-Work `_org/decision_log.md` 2026-05-18
+(strada B + raffinamento founder advanced-via-bollettino).
+
+---
 
 ## Cosa fa questa skill
 
