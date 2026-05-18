@@ -1,0 +1,34 @@
+MHC-L — legal-tech-cowork
+=========================
+
+This software incorporates code from anthropics/claude-for-legal
+(legal-builder-hub plugin), Copyright Anthropic PBC, licensed under
+Apache License 2.0. See LICENSE-ANTHROPIC for the full license text.
+
+Original source: https://github.com/anthropics/claude-for-legal
+
+Forked snapshot: 2026-05-17 (commit SHA not recorded in the local
+working copy at fork time; see _tmp_cfl_survey/ in the MHC-Work
+repository for the working snapshot used).
+
+----------------------------------------------------------------------
+
+Modifications made by Michele Loi (MHC-L project) on top of the
+upstream legal-builder-hub code:
+
+- Reframing of the installer pipeline from "Anthropic firm-builder
+  hub" to "meta-plugin ecosystem monitor + Italian adaptation layer".
+- Integration with two new skills (adattamento-italiano,
+  verifica-fonti) authored by Michele Loi and licensed under MIT
+  (see LICENSE).
+- Bollettino schema and threshold policy authored by Michele Loi
+  (MIT).
+
+The combined work is distributed under both licenses: Apache-2.0
+applies to files inheriting from legal-builder-hub (which carry the
+original Anthropic copyright header at the top of the file and a
+"Forked from anthropics/claude-for-legal" annotation below it); MIT
+applies to files authored originally for this project.
+
+When in doubt about a single file's licensing, read the header at
+the top of the file.
