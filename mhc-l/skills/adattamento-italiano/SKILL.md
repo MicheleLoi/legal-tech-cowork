@@ -18,38 +18,61 @@ argument-hint: "[nome skill già installata, oppure niente per selezione interat
 
 ## Quando vieni invocata
 
-Su **richiesta esplicita dell'avvocato**, dopo che ha installato una
-skill in versione originale. È un *secondo passo cosciente* — il
-`skill-installer` ha appena installato la skill in inglese e ha
-mostrato un nudge che invitava l'avvocato a chiamarti se voleva
-l'adattamento italiano. Se l'avvocato non ha mai chiesto, tu non
-devi mai partire.
+Su **richiesta esplicita dell'avvocato**, in uno dei due percorsi
+seguenti — entrambi costituiscono richiesta esplicita:
+
+**(a) Diretto:** l'avvocato scrive "adatta `[X]` in italiano",
+"italianizza `[X]`", `/adattamento-italiano [X]`, o equivalenti.
+Puoi essere chiamata così in qualunque momento, anche a distanza
+di tempo dall'installazione.
+
+**(b) Risposta al prompt Step 7 dello skill-installer:** lo
+skill-installer ha appena installato una skill con
+`jurisdiction ∈ {[?], other, none}` o campo assente, ha mostrato
+il prompt attivo "Vuoi che la adatti subito? (sì / no)", e
+l'avvocato ha risposto "sì" in quella stessa conversazione.
+Questo è un secondo passo cosciente nella continuazione diretta
+del dialogo di installazione — non un hook automatico.
+
+In entrambi i casi, **se l'avvocato non ha mai chiesto, tu non
+devi mai partire.**
 
 **Non sei un hook.** Non vieni mai invocata automaticamente dal
-`skill-installer` né da alcuna altra skill. La REV2 cascade refactor
-(2026-05-18) ha rimosso il vecchio Step 6.5 dell'installer che ti
-gateava su `jurisdiction: IT|EU` — quel design assumeva
-hook-orchestration che cowork non supporta, e gating su
-`jurisdiction` significava che non scattavi mai per le skill
-generiche (la maggioranza) che l'avvocato voleva comunque in
-italiano. Il nuovo design ti rende invocabile esplicitamente
-dall'avvocato per qualsiasi skill installata, senza gating.
+`skill-installer` né da alcuna altra skill — né a runtime futuro,
+né in modo inferito da messaggi precedenti. La REV2 cascade
+refactor (2026-05-18) ha rimosso il vecchio Step 6.5 dell'installer
+che ti gateava su `jurisdiction: IT|EU` — quel design assumeva
+hook-orchestration che cowork non supporta. La REV2.1 (2026-05-18)
+ha aggiunto il prompt attivo per skill non-IT: chiede esplicitamente
+all'avvocato, e la tua invocazione segue solo da un "sì" fresco in
+quella conversazione.
 
 ### Rationale (per l'agent che legge)
 
-Questa skill si attiva solo su richiesta esplicita dell'avvocato
-(secondo passo cosciente dopo l'installazione). Non viene mai
-invocata automaticamente dall'installer — l'avvocato deve scrivere
-esplicitamente "adatta `[X]` in italiano" o usare
-`/adattamento-italiano [X]`. La ragione di design è duplice:
-(a) cowork non supporta in modo affidabile l'invocazione hook
-skill-to-skill che il vecchio Step 6.5 assumeva; (b) gating su
-`jurisdiction: IT|EU` lasciava fuori il caso comune di skill
-generiche che l'avvocato voleva in italiano comunque. Renderlo
-deliberato chiarisce anche la divisione di responsabilità:
-l'installazione è di sicurezza tecnica, l'adattamento è di
-contenuto giuridico — due decisioni distinte, due richieste
-distinte.
+La distinzione cardine introdotta da REV2 e precisata da REV2.1:
+**hook automatico (vietato in cowork) ≠ risposta a prompt esplicito
+(ammessa perché è dialogo deliberato).**
+
+- **Vecchio Step 6.5** (rimosso in REV2): l'installer gateava su
+  `jurisdiction: IT|EU` e ti invocava come hook — orchestrazione
+  automatica che cowork non supporta in modo affidabile, e che per
+  giunta non scattava mai per le skill generiche (la maggioranza)
+  che l'avvocato voleva in italiano.
+- **REV2:** nudge passivo unconditional ("scrivi 'adatta X in
+  italiano' per adattarla"). Risolve il hook problem, ma test
+  empirico 2026-05-18 mostra che per skill `jurisdiction: [?]`
+  l'agente interpretava correttamente l'assenza di hook trigger e
+  concludeva che l'adattamento "non era stato attivato" — UX
+  fallisce per il caso più comune dell'ecosistema anglofono.
+- **REV2.1:** per `jurisdiction ∈ {[?], other, none, assente}`
+  lo skill-installer chiede attivamente "sì / no" all'avvocato al
+  termine dell'installazione. La tua invocazione è la risposta a
+  quel prompt — dialogo, non hook. La decisione dell'avvocato è
+  esplicita, fresca, nella stessa conversazione.
+
+La ragione di fondo rimane invariata: l'installazione è di sicurezza
+tecnica, l'adattamento è di contenuto giuridico — due decisioni
+distinte, due momenti distinti, entrambi deliberati.
 
 ---
 

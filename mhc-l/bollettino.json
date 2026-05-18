@@ -3,7 +3,7 @@
   "_note_it": "Stato iniziale: vuoto. Il bollettino cresce automaticamente tramite la routine 'bollettino-research' eseguita in MHC-Work che applica una threshold policy esplicita (license OSS, reputation minima, IT-relevance heuristic) e auto-committa + auto-pusha. Founder fuori dal runtime loop. Non aggiungere voci a mano qui salvo eccezioni documentate.",
   "_note_en": "Initial state: empty. The bollettino grows automatically via the 'bollettino-research' routine running in MHC-Work which applies an explicit threshold policy (OSS license, minimum reputation, IT-relevance heuristic) and auto-commits + auto-pushes. Founder out of runtime loop. Do not add entries manually here unless documented exception.",
   "_field_notes": {
-    "jurisdiction": "IT|EU|other|none — only IT and EU trigger auto-invocation of verifica-fonti after install and at runtime",
+    "jurisdiction": "IT|EU|other|none|[?] — only IT and EU skip the active adaptation prompt at install (assumed aligned); other|none|[?]|missing all trigger the active sì/no prompt to propose Italian adaptation at Step 7 of skill-installer. Verifica-fonti auto-invocation at runtime still governed by jurisdiction IT/EU only.",
     "italian_adaptation_status": "pending|ready|stale — pending=never adapted, ready=adapted template generated and validated at least once, stale=upstream skill changed after adaptation",
     "tier": "1 = Anthropic-official (publisher anthropics/*); 2 = community vetted (publisher terzo, passa threshold policy). REFUSE entries are filtered upstream by bollettino-research routine (license assente, hook shell sospetto, injection pattern) and never reach this file. Drives the per-tier line shown to the lawyer by skill-installer."
   },

@@ -20,6 +20,21 @@ REV2 cascade refactor (2026-05-18) — silent installer:
   - Rationale: empirical test 2026-05-17 surfaced that exposing 5
     technical tables to a non-tech lawyer audience was unfit; and that
     the hook orchestration assumed by Step 6.5 does not work in cowork.
+
+REV2.1 patch (2026-05-18) — active adaptation prompt for non-IT skill:
+  - Step 7 post-install nudge is now BRANCHED on bollettino_entry.jurisdiction.
+  - jurisdiction ∈ {IT, EU} → passive nudge (unchanged from REV2).
+  - jurisdiction ∈ {[?], other, none, absent/null} → ACTIVE sì/no prompt
+    asking the lawyer directly whether to adapt the skill now.
+  - On "sì": agent reads adattamento-italiano/SKILL.md and follows its
+    Step 1-6 on the just-installed skill (response-to-prompt, NOT hook).
+  - On "no": falls back to the passive nudge formula.
+  - Rationale: empirical test 2026-05-18 showed that jurisdiction-unknown
+    skills (the common anglophone ecosystem case) were silently skipping
+    adaptation because the agent (correctly) found no hook trigger, then
+    inferred the adaptation process "was not activated automatically".
+    The active prompt closes this UX gap without violating the no-hook
+    doctrine: it is dialogue, not orchestration.
 -->
 ---
 name: skill-installer
@@ -291,6 +306,46 @@ Copy the fetched skill directory to:
 
 `~/.claude/plugins/config/mhc-l/installed_skills/<skill-name>/`
 
+#### Post-install: jurisdiction-branched adaptation prompt
+
+After writing files and the install log record (see below), read
+`bollettino_entry.jurisdiction`. Treat a missing or null `jurisdiction`
+field as equivalent to `[?]`.
+
+**Branch A — `jurisdiction ∈ {IT, EU}`**
+
+Emit the passive nudge (see "Post-install nudge to lawyer" section
+below). The skill is assumed already aligned to Italian/EU law; no
+adaptation prompt is shown.
+
+**Branch B — `jurisdiction ∈ {[?], other, none}` OR field absent/null**
+
+Emit the active adaptation prompt:
+
+> Skill `[nome]` installata. La skill non è classificata per il diritto
+> italiano (jurisdiction: `[jurisdiction_value]`).
+>
+> Vuoi che la adatti subito al diritto italiano? (sì / no)
+
+Wait for an explicit `sì` or `no` typed by the lawyer in this exchange.
+Do not infer the answer from earlier messages. Do not assume silence
+means "no" — ask again if the response is ambiguous.
+
+- **On `sì`**: read
+  `~/.claude/plugins/marketplace/mhc-l/skills/adattamento-italiano/SKILL.md`
+  and follow its Step 1-6 on the skill just installed (`[nome]`).
+  This is a response to an explicit prompt — not a hook, not automatic
+  orchestration. The adattamento-italiano Step 1 "Caso A — argomento
+  fornito" applies: the skill name is already known from this install.
+
+- **On `no`**: emit the passive nudge as fallback:
+  > Puoi sempre richiederlo in seguito scrivendo: "adatta `[nome]` in
+  > italiano" oppure `/adattamento-italiano [nome]`.
+
+**`jurisdiction_value` substitution rule:** substitute the literal
+value found in the bollettino entry (e.g., `[?]`, `other`, `none`).
+If the field is absent or null, substitute `non specificato`.
+
 #### Freshness gate preamble (injected at install)
 
 Prepend the standard preamble below to the installed `SKILL.md`,
@@ -362,18 +417,21 @@ Append to `~/.claude/plugins/config/mhc-l/install-log.yaml`:
   `repo LICENSE`, `SKILL.md frontmatter`, `LICENSE file post-fetch`,
   or `not found`
 
-#### Post-install nudge to lawyer
+#### Post-install nudge to lawyer (Branch A / fallback)
 
-After confirmation of successful install, emit:
+Used in two cases: (a) `jurisdiction ∈ {IT, EU}` — passive path,
+shown unconditionally; (b) `jurisdiction` non-IT, lawyer answered
+"no" to the active prompt — shown as fallback.
 
 > Skill `[nome]` installata in versione originale (inglese). Per
 > adattarla al diritto italiano e verificare le citazioni normative,
 > scrivi: "adatta `[nome]` in italiano" o usa `/adattamento-italiano
 > [nome]`.
 
-This is the cue that surfaces adaptation as a deliberate, optional
-second step — not automatic, not gated on `jurisdiction`. The lawyer
-decides per-skill whether to invoke it.
+This nudge surfaces adaptation as a deliberate, optional second step.
+For non-IT/EU skills the active prompt (Branch B above) is the primary
+path; this nudge is only shown if the lawyer declines at the prompt or
+if the skill is already IT/EU-classified.
 
 ### Step 8 — Verify
 
@@ -410,8 +468,15 @@ internal verdict.
   verification details to the lawyer (REV2 change — those go to the
   install log, not to the lawyer prompt).
 - Invoke `adattamento-italiano` automatically (REV2 change — adaptation
-  is a separate deliberate request from the lawyer, surfaced via the
-  Step 7 post-install nudge).
+  is never triggered without an explicit lawyer action). REV2.1
+  clarification: the Step 7 Branch B active prompt asks the lawyer
+  directly ("sì / no"). A "sì" answer IS a lawyer action — it is
+  response-to-prompt, not hook orchestration. The cardinal distinction
+  introduced by REV2.1: **hook automatico (vietato in cowork) ≠
+  risposta a prompt esplicito (ammessa perché è dialogo)**. The agent
+  invokes `adattamento-italiano` ONLY as a direct consequence of a
+  fresh "sì" in this exchange — never at a future runtime, never
+  inferred from earlier messages, never triggered by jurisdiction alone.
 - Install in restrictive mode from an unlisted registry, publisher,
   or with unlisted MCP connectors.
 - Vet skills for legal accuracy — that's substance review; the lawyer

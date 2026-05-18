@@ -105,7 +105,7 @@ else:
   "skill_path": "skills/nome-skill/SKILL.md",
 
   "area": "commerciale | privacy | lavoro | societario | contenzioso | ip | regolatorio | altro",
-  "jurisdiction": "none | IT | EU | other",
+  "jurisdiction": "none | IT | EU | other | [?]",
   "tier": 1,
 
   "publisher": {
@@ -166,9 +166,32 @@ Categoria operativa. Una sola; se ne servono due, scegliere la primaria.
 - `none` → skill che non opera su diritto specifico (es. utility tooling)
 - `IT` → skill esplicitamente italiana (rara, per ora)
 - `EU` → skill su diritto UE (GDPR, AI Act, Reg. macchine, ecc.)
-- `other` → skill su diritto straniero (US, UK, ecc.) non adattabile
+- `other` → skill su diritto straniero (US, UK, ecc.) non classificabile
+  come IT/EU
+- `[?]` → la routine `bollettino-research` non ha potuto classificare
+  la giurisdizione della skill (caso comune nell'ecosistema anglofono
+  generico: skill di utilità legale non riconducibile a un ordinamento
+  specifico). Non equivale a "inapplicabile al diritto italiano" —
+  significa semplicemente "giurisdizione ignota al momento del
+  bollettino".
 
-**Solo `IT` e `EU` triggerano l'auto-suggerimento di `verifica-fonti`.**
+**Comportamento al momento dell'installazione (skill-installer Step 7):**
+
+| Valore `jurisdiction` | Comportamento Step 7 |
+|-----------------------|----------------------|
+| `IT` o `EU`           | Nudge passivo (skill già allineata o presumibilmente allineata) |
+| `other`, `none`, `[?]`, campo assente | **Prompt attivo sì/no**: "Vuoi che la adatti subito al diritto italiano?" Su "sì": l'agente invoca `adattamento-italiano` come risposta a prompt (non hook). Su "no": fallback al nudge passivo. |
+
+**`IT` e `EU` NON sono i soli casi speciali — sono quelli che saltano
+il prompt.** Il caso di default per l'ecosistema anglofono è non-IT
+(`[?]` / `other` / `none`), e questo trigghera il prompt attivo.
+
+**Effetto su `verifica-fonti` a runtime:**
+Solo `IT` e `EU` triggerano l'auto-invocazione di `verifica-fonti`
+sugli output della skill a runtime. `other`, `none`, `[?]` non la
+triggerano — indipendentemente dall'adattamento italiano eventualmente
+applicato al momento dell'installazione.
+
 Errori di tagging qui producono falsi positivi (verifica suggerita su
 output non-IT/EU) o falsi negativi (citazioni IT non controllate). La
 routine di ricerca include uno step di review umana del founder su
@@ -219,8 +242,10 @@ Una indicazione breve di scenario d'uso. Non un'attestazione di idoneità —
 un suggerimento di contesto.
 
 ### `italian_adaptation_status`
-Tracking dello stato dell'adattamento italiano per questa voce
-(rilevante solo se `jurisdiction` è `IT` o `EU`):
+Tracking dello stato dell'adattamento italiano per questa voce.
+Rilevante per qualsiasi `jurisdiction` — incluso `[?]`, `other`, `none`:
+con REV2.1, l'adattamento viene proposto attivamente anche per skill
+non classificate IT/EU, e il campo va aggiornato di conseguenza.
 
 - `pending` — voce mai adattata da nessun avvocato (nessun template di
   adattamento riusabile disponibile). Stato di default per voci nuove.
@@ -232,8 +257,11 @@ Tracking dello stato dell'adattamento italiano per questa voce
   validato (cambio commit SHA significativo). Il template è da
   rigenerare alla prossima install.
 
-Per skill con `jurisdiction: none` o `other`, il campo resta `pending`
-e non è rilevante (non si adatta).
+Nota: per skill con `jurisdiction: none` il campo `pending` indica
+che non è stato proposto o eseguito adattamento. Con REV2.1 anche
+queste skill ricevono il prompt attivo al momento dell'installazione
+— se l'avvocato approva, il campo andrà aggiornato a `ready` o
+`stale` come per qualsiasi altra skill.
 
 ### `critical_alert` + sotto-campi
 Quando `true`, la voce compare nel **Pannello B "Avvisi importanti"** del
