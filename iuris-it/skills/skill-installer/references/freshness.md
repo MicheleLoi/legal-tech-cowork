@@ -3,8 +3,9 @@ Copyright Anthropic PBC. Licensed under the Apache License, Version 2.0
 (see LICENSE-ANTHROPIC in the repository root).
 
 Forked from anthropics/claude-for-legal legal-builder-hub @ 2026-05-17
-snapshot. Modified by the MHC-L project: cosmetic renaming of "builder-hub"
-references to MHC-L. Substantive content unchanged.
+snapshot. Modified by the iuris-it plugin (formerly named mhc-l until
+2026-05-19): cosmetic renaming of "builder-hub" references to the
+hosting plugin's name. Substantive content unchanged.
 -->
 
 # Freshness Fields for Community Skill Authors

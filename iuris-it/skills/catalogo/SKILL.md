@@ -2,7 +2,7 @@
 name: catalogo
 description: >
   Catalogo curato delle skill legal-tech per l'avvocato italiano (componente
-  della modalità AVANZATA opt-in del plugin mhc-l, non default). Scarica il
+  della modalità AVANZATA opt-in del plugin iuris-it, non default). Scarica il
   bollettino mensile da GitHub, presenta le novità e gli avvisi importanti,
   installa una skill scelta dall'avvocato dopo averla adattata al diritto
   italiano e fatto confermare l'adattamento dall'avvocato. NON si attiva
@@ -12,12 +12,12 @@ description: >
   "/catalogo", o equivalenti).
 ---
 
-# MHC-L — Catalogo skill legal-tech (meta-skill)
+# iuris-it — Catalogo skill legal-tech (meta-skill)
 
 ## Posizionamento: gateway modalità avanzata opt-in
 
 Questa skill è il **punto d'ingresso del workflow avanzato opt-in** del
-plugin mhc-l. Il plugin opera a due livelli:
+plugin iuris-it. Il plugin opera a due livelli:
 
 - **Default**: l'avvocato usa solo `verifica-fonti`. Niente catalogo,
   niente bollettino, niente installer, niente adattamento.
@@ -88,7 +88,7 @@ esplicita:
 > Esiste anche una modalità "live" opzionale (catalogo aggiornato in
 > tempo reale ad ogni apertura) che richiede una piccola
 > configurazione di Claude Desktop — istruzioni su
-> [`https://micheleloi.pro/mhc-l/istruzioni/`](https://micheleloi.pro/mhc-l/istruzioni/).
+> [`https://micheleloi.pro/iuris-it/istruzioni/`](https://micheleloi.pro/iuris-it/istruzioni/).
 > Non è necessaria, è un'opzione.
 >
 > **Catena di responsabilità.** Il founder garantisce solo la
@@ -110,17 +110,17 @@ Attendi una conferma esplicita (l'avvocato scrive "sì", "confermo", "ok",
 **Come capisci se è il primo uso (stato globale di plugin, con fallback):**
 
 1. **Primaria — stato globale di plugin:** controlla se esiste il file
-   `~/.claude/plugins/config/mhc-l/state.json` (path standard per state
+   `~/.claude/plugins/config/iuris-it/state.json` (path standard per state
    durevole di plugin in Claude Desktop). Se non esiste, è il primo uso
    *dell'installazione del plugin* (non del progetto). Crealo dopo la
    conferma con `{"disclaimer_accepted": true, "accepted_on": "YYYY-MM-DD"}`.
    Da questa scrittura in poi, in qualunque cartella di lavoro l'avvocato
-   apra cowork con MHC-L installato, il disclaimer non si ripresenta.
+   apra cowork con iuris-it installato, il disclaimer non si ripresenta.
 
 2. **Fallback — stato per cartella di lavoro:** se la scrittura in
-   `~/.claude/plugins/config/mhc-l/state.json` fallisce (permission
+   `~/.claude/plugins/config/iuris-it/state.json` fallisce (permission
    denied dalla sandbox cowork, path non scrivibile, ecc.), ripiega su
-   un file `.mhc-l-state.json` nella cartella di lavoro connessa con la
+   un file `.iuris-it-state.json` nella cartella di lavoro connessa con la
    stessa chiave `{"disclaimer_accepted": true, ...}`. Conseguenza: in
    cartelle nuove il disclaimer ricomparirà. Meno elegante ma corretto.
 
@@ -148,13 +148,13 @@ heuristic). L'avvocato vede sempre la versione più recente senza reinstall.
 **URL canonico** (da configurare al rilascio sostituendo `MicheleLoi`):
 
 ```
-https://raw.githubusercontent.com/MicheleLoi/legal-tech-cowork/main/mhc-l/bollettino.json
+https://raw.githubusercontent.com/MicheleLoi/legal-tech-cowork/main/iuris-it/bollettino.json
 ```
 
 E per le validazioni di comunità:
 
 ```
-https://raw.githubusercontent.com/MicheleLoi/legal-tech-cowork/main/mhc-l/community_validations.json
+https://raw.githubusercontent.com/MicheleLoi/legal-tech-cowork/main/iuris-it/community_validations.json
 ```
 
 **Come scaricarli (sequenza imperativa — esegui i passi in ordine, NON
@@ -193,7 +193,7 @@ inferire la disponibilità di uno strumento, prova sempre prima):**
    > *"Catalogo installato con il plugin (versione del giorno:
    > `<last_updated>`). Per attivare la modalità live (catalogo
    > aggiornato in tempo reale ad ogni apertura) vedi
-   > [`https://micheleloi.pro/mhc-l/istruzioni/`](https://micheleloi.pro/mhc-l/istruzioni/)."*
+   > [`https://micheleloi.pro/iuris-it/istruzioni/`](https://micheleloi.pro/iuris-it/istruzioni/)."*
 
    **Vincoli sul messaggio:**
    - NON mostrare l'errore tecnico ricevuto da `WebFetch` (es. *"egress
@@ -258,7 +258,7 @@ onestamente:
 Mostrato quando l'avvocato dice "mostrami il catalogo", "ci sono novità",
 "cosa c'è di nuovo", o all'inizio di una conversazione se è la prima dopo
 un aggiornamento del bollettino (confronta `last_updated` del bollettino
-con `last_seen` in `.mhc-l-state.json`).
+con `last_seen` in `.iuris-it-state.json`).
 
 Per **ogni voce in `entries`**, presenta in questo formato (italiano sobrio
 forense, non consumer-marketing):
@@ -302,7 +302,7 @@ Avviso del curatore: [founder_disclaimer in 1 riga]
 
 Mostrato **sempre per primo** se ci sono voci in `entries` marcate
 `critical_alert: true` E **già installate** dall'avvocato (controlla
-`.mhc-l-state.json` → `installed_skills`).
+`.iuris-it-state.json` → `installed_skills`).
 
 Formato:
 
@@ -379,20 +379,20 @@ volta un nudge:
 > [nome]`."*
 
 Se l'avvocato non chiede l'adattamento, la skill resta in versione
-originale (inglese) — può essere usata così, ma MHC-L non proporrà
+originale (inglese) — può essere usata così, ma iuris-it non proporrà
 `verifica-fonti` automaticamente sui suoi output. L'avvocato può
 chiedere l'adattamento in qualsiasi momento successivo.
 
 ### 3.3 — Cosa fai tu (catalogo) dopo l'installazione
 
 Lo `skill-installer` ti restituisce l'esito (`installed` / `cancelled` /
-`refused_by_security_gate`). Aggiorna `.mhc-l-state.json` di
+`refused_by_security_gate`). Aggiorna `.iuris-it-state.json` di
 conseguenza (`installed_skills` solo se esito `installed`). Comunica
 all'avvocato:
 
 - **Installata**: ripeti il nudge sull'adattamento italiano (vedi 3.2)
   + invito a rileggere i file in
-  `~/.claude/plugins/config/mhc-l/installed_skills/<nome>/` e provarla
+  `~/.claude/plugins/config/iuris-it/installed_skills/<nome>/` e provarla
   su una pratica a basso rischio prima dell'uso professionale.
 - **Cancellata dall'avvocato**: *"Installazione annullata. La skill
   `<nome>` resta non installata."*
@@ -459,7 +459,7 @@ all'avvocato di passare l'output a `verifica-fonti`:
 > coerenza? (sì / no / mostra prima cosa controlla)"*
 
 Se l'avvocato dice sì, invoca `verifica-fonti` passando l'intero output
-come input. Se dice no, registra il "no" in `.mhc-l-state.json` →
+come input. Se dice no, registra il "no" in `.iuris-it-state.json` →
 `last_verifica_skipped: true` per non riproporlo subito alla prossima
 risposta della stessa skill (rispetta il "no" per 3 turni).
 
@@ -540,9 +540,9 @@ Per skill con `jurisdiction: none` o `other`, il campo è sempre `pending`
 
 Due possibili sedi, in ordine di preferenza:
 
-1. **Primaria (globale al plugin):** `~/.claude/plugins/config/mhc-l/state.json`.
+1. **Primaria (globale al plugin):** `~/.claude/plugins/config/iuris-it/state.json`.
    Una sola volta per installazione; si applica a tutti i progetti.
-2. **Fallback (per cartella di lavoro):** `.mhc-l-state.json` nella
+2. **Fallback (per cartella di lavoro):** `.iuris-it-state.json` nella
    cartella connessa. Si applica solo a quel progetto.
 
 Schema identico in entrambi i casi. Vedi sezione "Disclaimer globale"
@@ -591,7 +591,7 @@ sopra per la logica di selezione. Gestito da questa skill:
    industrial-grade.
 2. **Scrivere file di skill installata direttamente da catalogo.** Lo
    `skill-installer` è il solo che scrive in
-   `~/.claude/plugins/config/mhc-l/installed_skills/`.
+   `~/.claude/plugins/config/iuris-it/installed_skills/`.
 3. **Invocare `adattamento-italiano` automaticamente dopo
    l'installazione.** REV2 (2026-05-18) ha disaccoppiato install e
    adattamento: l'adattamento è un secondo passo cosciente che

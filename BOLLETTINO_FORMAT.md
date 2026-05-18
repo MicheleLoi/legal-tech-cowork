@@ -157,7 +157,7 @@ SKILL.md — riassume cosa l'avvocato ottiene se la installa.
 ### `repo_url` + `skill_path`
 Dove vive il codice originale. `repo_url` punta alla root del repo
 GitHub; `skill_path` è il percorso relativo dal repo alla `SKILL.md`.
-MHC-L compone l'URL raw GitHub per scaricare.
+iuris-it compone l'URL raw GitHub per scaricare.
 
 ### `area`
 Categoria operativa. Una sola; se ne servono due, scegliere la primaria.

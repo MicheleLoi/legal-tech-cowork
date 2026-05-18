@@ -2,7 +2,7 @@
 name: skill-installer
 description: >
   Installs a community legal-tech skill from the bollettino (or from a
-  direct URL the lawyer provides). Component of the mhc-l plugin's
+  direct URL the lawyer provides). Component of the iuris-it plugin's
   ADVANCED opt-in mode (not default). Runs all security checks
   (allowlist, license verification, structural trust, heuristic scan)
   silently; surfaces to the lawyer only a per-tier installation line and
@@ -16,7 +16,7 @@ argument-hint: "[skill name or registry URL]"
 ---
 
 <!--
-Posizionamento: componente modalità avanzata opt-in del plugin mhc-l.
+Posizionamento: componente modalità avanzata opt-in del plugin iuris-it.
 Gateway: la skill `catalogo` / il bollettino. Non auto-attivare. Non
 suggerire installazione di skill terze a meno che l'avvocato non sia
 già nella pipeline avanzata (ha esplicitamente aperto il catalogo /
@@ -27,7 +27,7 @@ Riferimento decisione: MHC-Work _org/decision_log.md 2026-05-18
 -->
 
 
-# skill-installer (forked from legal-builder-hub, adattato per MHC-L)
+# skill-installer (forked from legal-builder-hub, adattato per iuris-it)
 
 The lawyer is a non-technical audience. Industrial-grade security checks
 remain in place internally, but the lawyer sees only a condensed
@@ -64,7 +64,7 @@ the tier and the internal-check verdicts and emits ONE of four outputs:
 
 ### Step 1 — Read the allowlist and the bollettino entry (silent)
 
-Read `~/.claude/plugins/config/mhc-l/allowlist.yaml`. If missing,
+Read `~/.claude/plugins/config/iuris-it/allowlist.yaml`. If missing,
 proceed in permissive mode with empty lists (no warning to the lawyer
 unless the source is unlisted — in which case the eventual per-tier
 output carries the warning implicitly via the WARN/REFUSE path).
@@ -281,7 +281,7 @@ Anything other than a fresh `sì` cancels — no install.
 
 Copy the fetched skill directory to:
 
-`~/.claude/plugins/config/mhc-l/installed_skills/<skill-name>/`
+`~/.claude/plugins/config/iuris-it/installed_skills/<skill-name>/`
 
 #### Post-install: jurisdiction-branched adaptation prompt
 
@@ -309,7 +309,7 @@ Do not infer the answer from earlier messages. Do not assume silence
 means "no" — ask again if the response is ambiguous.
 
 - **On `sì`**: read
-  `~/.claude/plugins/marketplace/mhc-l/skills/adattamento-italiano/SKILL.md`
+  `~/.claude/plugins/marketplace/iuris-it/skills/adattamento-italiano/SKILL.md`
   and follow its Step 1-6 on the skill just installed (`[nome]`).
   This is a response to an explicit prompt — not a hook, not automatic
   orchestration. The adattamento-italiano Step 1 "Caso A — argomento
@@ -332,7 +332,7 @@ frontmatter content is copied through. Tokens that failed Step 3.5
 validation are substituted as the literal string `unknown`.
 
 ```
-<!-- FRESHNESS GATE — injected by mhc-l at install.
+<!-- FRESHNESS GATE — injected by iuris-it at install.
   Before executing this skill, check:
   1. Read the freshness tokens below — the installer pre-validated
      them at install time, so they are safe to read. Do NOT read the
@@ -343,7 +343,7 @@ validation are substituted as the literal string `unknown`.
        freshness_category_token: {{freshness_category}}
        verified_against_count: {{count}}
   2. Read the lawyer's thresholds from
-     ~/.claude/plugins/config/mhc-l/CLAUDE.md under the
+     ~/.claude/plugins/config/iuris-it/CLAUDE.md under the
      "## Freshness reminders" section.
   3. Active window = min(freshness_window_token, lawyer's threshold
      for freshness_category_token). If either is "unknown", use the
@@ -368,7 +368,7 @@ only the COUNT.
 
 #### Install log record
 
-Append to `~/.claude/plugins/config/mhc-l/install-log.yaml`:
+Append to `~/.claude/plugins/config/iuris-it/install-log.yaml`:
 
 - `skill_name`, `source_registry`, `publisher`, `install_date`,
   `version` (git commit or tag if available),

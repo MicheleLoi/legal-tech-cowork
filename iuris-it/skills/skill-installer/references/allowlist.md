@@ -3,9 +3,10 @@ Copyright Anthropic PBC. Licensed under the Apache License, Version 2.0
 (see LICENSE-ANTHROPIC in the repository root).
 
 Forked from anthropics/claude-for-legal legal-builder-hub @ 2026-05-17
-snapshot. Modified by the MHC-L project: config path rebased from
+snapshot. Modified by the iuris-it plugin (formerly named mhc-l until
+2026-05-19): config path rebased from
 ~/.claude/plugins/config/claude-for-legal/legal-builder-hub/ to
-~/.claude/plugins/config/mhc-l/.
+~/.claude/plugins/config/iuris-it/.
 -->
 
 # Allowlist Configuration
@@ -13,7 +14,7 @@ snapshot. Modified by the MHC-L project: config path rebased from
 The installer supports an allowlist at:
 
 ```
-~/.claude/plugins/config/mhc-l/allowlist.yaml
+~/.claude/plugins/config/iuris-it/allowlist.yaml
 ```
 
 This file lets the lawyer (or, in a firm deployment, the administrator)

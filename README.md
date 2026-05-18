@@ -1,4 +1,4 @@
-# MHC-L — verifica fonti normative italiane ed europee
+# iuris-it — verifica fonti normative italiane ed europee
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -87,7 +87,8 @@ l'avvocato non lo chiede esplicitamente.
 
 Riferimento decisione: MHC-Work `_org/decision_log.md` voce
 "Plugin Cowork mhc-l: ratifica strategica riduzione a verifica-fonti
-only" (2026-05-18) + raffinamento founder in-session post UX test
+only" (2026-05-18, plugin allora denominato `mhc-l`, rinominato
+`iuris-it` 2026-05-19) + raffinamento founder in-session post UX test
 ("default invariato + bollettino opt-in").
 
 ## Cosa NON fa (in modalità default)
@@ -143,7 +144,8 @@ default basta e avanza.
 
 Riferimento decisione: MHC-Work `_org/decision_log.md` voce
 "Plugin Cowork mhc-l: ratifica strategica riduzione a verifica-fonti
-only" (2026-05-18) + raffinamento founder in-session post UX test
+only" (2026-05-18, plugin allora denominato `mhc-l`, rinominato
+`iuris-it` 2026-05-19) + raffinamento founder in-session post UX test
 ("default invariato + bollettino come gateway opt-in").
 
 ## Installazione
@@ -151,7 +153,7 @@ only" (2026-05-18) + raffinamento founder in-session post UX test
 Vedi **[DISTRIBUZIONE.md](./DISTRIBUZIONE.md)** per il flusso
 passo-passo (5 click in Claude Desktop, no terminale, no account
 GitHub). Versione web della guida con screenshot:
-[`https://micheleloi.pro/mhc-l/istruzioni/`](https://micheleloi.pro/mhc-l/istruzioni/).
+[`https://micheleloi.pro/iuris-it/istruzioni/`](https://micheleloi.pro/iuris-it/istruzioni/).
 
 ## Licensing
 
@@ -167,7 +169,7 @@ MIT. Vedi `LICENSE`.
 
 ---
 
-# MHC-L — Italian and EU legal-citation verification
+# iuris-it — Italian and EU legal-citation verification
 
 *Claude cowork plugin. One skill: checks that Italian and EU legal
 references cited in a text correspond to real documents and are

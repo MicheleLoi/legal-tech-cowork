@@ -1,4 +1,4 @@
-# Come installare e testare MHC-L
+# Come installare e testare iuris-it
 
 *Per l'avvocato. Nessun comando terminale, nessun account GitHub, nessuna
 conoscenza tecnica richiesta.*
@@ -21,7 +21,7 @@ Vedi la sezione **Come testare la modalità avanzata** più sotto. Se
 non ti serve, ignorala: il default copre l'80% dei casi.
 
 Versione web della guida con screenshot:
-[`https://micheleloi.pro/mhc-l/istruzioni/`](https://micheleloi.pro/mhc-l/istruzioni/).
+[`https://micheleloi.pro/iuris-it/istruzioni/`](https://micheleloi.pro/iuris-it/istruzioni/).
 
 ---
 
@@ -54,7 +54,7 @@ Claude Desktop.
    ```
 
    Premi **"Add"**.
-5. Nella lista che compare, accanto a **"mhc-l"**, clicca
+5. Nella lista che compare, accanto a **"iuris-it"**, clicca
    **"Add plugin"**.
 
 Fatto. Vedrai un messaggio di conferma. Dovrebbero comparire **4 skill**
@@ -64,7 +64,7 @@ restano inerti finché non le invochi (vedi sotto).
 
 > **Nota durante lo sviluppo pre-1.0.** Il push delle nuove versioni su
 > GitHub avviene solo dopo verifica del fondatore. Finché nella UI di
-> Claude Desktop non vedi `mhc-l` versione **3.1.0**, il marketplace
+> Claude Desktop non vedi `iuris-it` versione **3.2.0**, il marketplace
 > remoto potrebbe puntare a una release precedente: in quel caso usa
 > il percorso "zip locale" qui sotto.
 
@@ -84,7 +84,7 @@ plugin"** (non "Aggiungi marketplace").
 3. Seleziona il file zip del plugin sul tuo computer, ad esempio:
 
    ```
-   C:\Users\<nome>\...\mhc-l-3.1.0-plugin.zip
+   C:\Users\<nome>\...\iuris-it-3.2.0-plugin.zip
    ```
 
 4. Claude Desktop estrae e installa il plugin. Comparirà nella lista
@@ -107,7 +107,7 @@ alla più articolata (advanced).
 
 Esempio concreto:
 
-1. Apri una nuova conversazione **Cowork** (con il plugin `mhc-l`
+1. Apri una nuova conversazione **Cowork** (con il plugin `iuris-it`
    attivo).
 2. Chiedi a Claude:
 
@@ -217,16 +217,16 @@ impostazioni del tuo account.
 
 ### Il plugin non risponde quando chiedo di verificare le fonti
 
-Vai su **Customize → Plugin** e verifica che accanto a `mhc-l` ci sia
+Vai su **Customize → Plugin** e verifica che accanto a `iuris-it` ci sia
 il tag "Active". Se attivo ma non risponde, prova a essere esplicito
 nella richiesta: *"usa la skill verifica-fonti su questo testo"*. Se
 persiste, apri una issue su
 `https://github.com/MicheleLoi/legal-tech-cowork/issues`.
 
-### Vedo `mhc-l` ma le skill non sono 4
+### Vedo `iuris-it` ma le skill non sono 4
 
 Probabile che il marketplace remoto sia su una versione precedente
-(2.x con la sola `verifica-fonti`). In attesa che la 3.1.0 sia pushata,
+(2.x con la sola `verifica-fonti`). In attesa che la 3.2.0 sia pushata,
 installa via zip locale come descritto sopra.
 
 ---
@@ -259,7 +259,7 @@ formale citazione-per-citazione con flag di formato, plausibilità e
 coerenza.
 
 **Posso disinstallare il plugin?**
-Sì, da **Customize → Plugin → Remove** accanto a `mhc-l`.
+Sì, da **Customize → Plugin → Remove** accanto a `iuris-it`.
 
 **Il plugin funziona offline?**
 La modalità default sì: `verifica-fonti` opera sulla knowledge interna
@@ -278,6 +278,7 @@ responsabilità professionale finale resta dell'avvocato.
 
 ---
 
-*DISTRIBUZIONE.md — v3.1.0 — 2026-05-18 (onboarding riallineato post
-install-verification: default `verifica-fonti` + modalità avanzata
-opt-in via catalogo, con sezione "Come testare" step-by-step).*
+*DISTRIBUZIONE.md — v3.2.0 — 2026-05-19 (rename plugin mhc-l → iuris-it;
+onboarding riallineato post install-verification: default `verifica-fonti`
++ modalità avanzata opt-in via catalogo, con sezione "Come testare"
+step-by-step).*

@@ -1,6 +1,6 @@
 # Prompt di adattamento italiano per skill legal-tech internazionali
 
-*Questo file è il cuore tecnico-giuridico del plugin MHC-L. È il prompt che
+*Questo file è il cuore tecnico-giuridico del plugin iuris-it. È il prompt che
 la skill `catalogo` usa quando l'avvocato chiede di installare una skill dal
 bollettino. Lo scopo è trasformare una skill scritta tipicamente in inglese
 con assunti US-centric (Delaware corporate, FRCP, US case law, $-denominated
@@ -12,7 +12,7 @@ inventare contenuto giuridico** e **lasciando all'avvocato l'ultima parola**.*
 ## Istruzioni operative per Claude (quando questo prompt è caricato)
 
 Hai ricevuto come input il contenuto di una `SKILL.md` originale (tipicamente
-in inglese) di una skill legal-tech presa dal bollettino MHC-L. Produci la
+in inglese) di una skill legal-tech presa dal bollettino iuris-it. Produci la
 **versione italiana adattata** seguendo le regole sotto. **Non installare
 ancora nulla** — il tuo output qui è la **proposta** che verrà mostrata
 all'avvocato per conferma.
@@ -122,9 +122,9 @@ In testa alla SKILL.md adattata, aggiungi:
 adattamento_italiano: true
 adattato_da_originale: <repo_url originale>
 adattato_il: YYYY-MM-DD
-adattato_da: MHC-L meta-skill v1.0.0
+adattato_da: iuris-it meta-skill v1.0.0
 nota_disclaimer: >
-  Adattamento al diritto italiano proposto dalla meta-skill MHC-L e confermato
+  Adattamento al diritto italiano proposto dalla meta-skill iuris-it e confermato
   dall'avvocato in fase di installazione. I riferimenti normativi italiani ed
   europei sono marcati [VERIFICA] dove richiedono conferma. La responsabilità
   giuridica resta dell'avvocato.
@@ -211,7 +211,7 @@ In questi casi, **non forzare l'adattamento**. Produci un output che dice:
 
 > *"Questa skill non è adattabile al contesto italiano per le seguenti
 > ragioni: [elenco]. L'avvocato può comunque installarla nella versione
-> originale inglese — in tal caso, la meta-skill MHC-L NON proporrà
+> originale inglese — in tal caso, la meta-skill iuris-it NON proporrà
 > verifica-fonti perché la skill non opera su diritto italiano/europeo.
 > Confermi che vuoi procedere con l'installazione nella versione originale?"*
 

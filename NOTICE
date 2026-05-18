@@ -1,5 +1,5 @@
-MHC-L — legal-tech-cowork
-=========================
+iuris-it — legal-tech-cowork
+============================
 
 This software incorporates code from anthropics/claude-for-legal
 (legal-builder-hub plugin), Copyright Anthropic PBC, licensed under
@@ -13,8 +13,8 @@ repository for the working snapshot used).
 
 ----------------------------------------------------------------------
 
-Modifications made by Michele Loi (MHC-L project) on top of the
-upstream legal-builder-hub code:
+Modifications made by Michele Loi (iuris-it plugin, formerly named
+mhc-l until 2026-05-19) on top of the upstream legal-builder-hub code:
 
 - Reframing of the installer pipeline from "Anthropic firm-builder
   hub" to "meta-plugin ecosystem monitor + Italian adaptation layer".
