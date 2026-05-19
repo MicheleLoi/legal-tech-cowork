@@ -119,12 +119,19 @@ usa solo il primo:
 - **Avanzato (opt-in).** L'avvocato che vuole esplorare un ecosistema
   di skill legal-tech italiano-curate invoca esplicitamente la skill
   **`catalogo`** (per esempio chiedendo *"apri il bollettino delle
-  skill italiane"*). Da quel punto si attiva una pipeline orchestrata:
-  - `catalogo` presenta il bollettino curato delle skill validate
-    dalla community con un flusso d'installazione guidato,
-  - lo `skill-installer` installa la skill scelta applicando
-    silenziosamente i check di sicurezza (allowlist, tier,
-    heuristic, license),
+  skill italiane"*). Da quel punto si attiva una pipeline orchestrata
+  via **trigger semantici, niente setup utente richiesto**:
+  - `catalogo` punta all'avvocato l'URL del bollettino curato e gli
+    suggerisce il fraseggio per chiedere a Claude di aprirlo
+    (l'apertura avviene via `WebFetch` standard di Claude su
+    richiesta esplicita dell'avvocato, non in background dalla skill),
+  - lo `skill-installer` auditeggia la skill scelta applicando
+    silenziosamente i 5 controlli di sicurezza (allowlist licenze,
+    tier, heuristic, license, freshness) sul `SKILL.md` letto in
+    contesto via la stessa richiesta esplicita;
+  - l'installazione effettiva la fa l'avvocato manualmente tramite
+    Claude Desktop → Customize → Plugin → Crea plugin → URL della
+    skill → Add;
   - l'`adattamento-italiano` — su richiesta esplicita successiva —
     adatta al volo il prompt della skill terza al linguaggio
     giuridico italiano se necessario.
@@ -136,24 +143,54 @@ una richiesta esplicita la pipeline avanzata resta inerte e il plugin
 si comporta come il singolo-skill default.
 
 **Trade-off onesto.** La modalità avanzata ha latenza più alta
-(adattamento richiede chiamate LLM aggiuntive) ed è soggetta al
-rate-limit di GitHub raw (il bollettino è fetchato online). È pensata
-per power-user che accettano questo costo in cambio di curation
+(adattamento richiede chiamate LLM aggiuntive). È pensata per
+power-user che accettano questo costo in cambio di curation
 italiana. Per chi vuole solo verificare le citazioni di un atto, il
 default basta e avanza.
+
+## Doctrine pointer (3.3.0)
+
+A partire dalla versione 3.3.0 il plugin adotta la **doctrine
+pointer**: le skill avanzate (`catalogo`, `skill-installer`) **non
+fanno `WebFetch` autonomous in background**. Quando serve leggere il
+bollettino o il `SKILL.md` di una skill terza candidata, la skill
+suggerisce all'avvocato il fraseggio per chiedere a Claude di aprire
+l'URL pubblico — Claude usa il proprio `WebFetch` tool standard
+(user-initiated, non skill-mediated) e il contenuto entra nel
+contesto della conversazione. A quel punto le skill processano il
+contenuto già letto.
+
+In pratica:
+
+- **Niente configurazione di rete in Claude Desktop.** Funziona
+  out-of-box: l'avvocato non deve configurare nessuna egress allowlist.
+- **Il gate è la richiesta esplicita dell'avvocato.** Nessuna skill
+  apre URL nascostamente. L'avvocato vede sempre cosa sta per essere
+  letto e decide se chiedere l'apertura.
+- **L'installazione di skill terze passa dall'UI nativa di Claude
+  Desktop** (Customize → Plugin → Crea plugin → URL → Add). Lo
+  `skill-installer` audita il `SKILL.md` letto in contesto prima
+  dell'installazione; non scrive file direttamente.
+
+Razionale completo: test empirico founder 2026-05-19 ha mostrato che
+`WebFetch` invocato esplicitamente dall'utente (*"apri https://..."*)
+bypassa la sandbox proxy, mentre skill agent autonomous fetch è
+soggetto a restrizioni di rete. La doctrine pointer elimina la
+dipendenza da configurazione utente — non c'è più una "modalità
+live" da attivare né un "fallback bundled". C'è una sola modalità.
 
 Riferimento decisione: MHC-Work `_org/decision_log.md` voce
 "Plugin Cowork mhc-l: ratifica strategica riduzione a verifica-fonti
 only" (2026-05-18, plugin allora denominato `mhc-l`, rinominato
 `iuris-it` 2026-05-19) + raffinamento founder in-session post UX test
-("default invariato + bollettino come gateway opt-in").
+("default invariato + bollettino come gateway opt-in") + doctrine
+pointer 2026-05-19 (refactor 3.3.0).
 
 ## Installazione
 
 Vedi **[DISTRIBUZIONE.md](./DISTRIBUZIONE.md)** per il flusso
 passo-passo (5 click in Claude Desktop, no terminale, no account
-GitHub). Versione web della guida con screenshot:
-[`https://micheleloi.pro/iuris-it/istruzioni/`](https://micheleloi.pro/iuris-it/istruzioni/).
+GitHub).
 
 ## Licensing
 
@@ -186,5 +223,15 @@ the single `verifica-fonti` skill — fast, no LLM adapter calls, no
 network. Power-users who want a curated Italian legal-tech skills
 ecosystem can invoke the bollettino explicitly to open the extended
 pipeline (catalogo + skill-installer + adattamento-italiano).
+
+Pointer doctrine (3.3.0, 2026-05-19): advanced-mode skills never
+perform autonomous `WebFetch` in the background. When a public URL
+(the bollettino, a third-party `SKILL.md`) needs to be read, the skill
+points the lawyer to the URL and the exact phrasing to ask Claude to
+open it — Claude reads it via its standard user-initiated `WebFetch`
+tool, the content enters context, and the skill processes it. No
+network configuration required on the lawyer's side. Actual install
+of third-party skills happens through Claude Desktop's native plugin
+UI; the skill-installer only audits the SKILL.md and logs the result.
 
 License: MIT.

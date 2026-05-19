@@ -20,8 +20,11 @@ adattamento), che resta inerte finché non lo attivi esplicitamente.
 Vedi la sezione **Come testare la modalità avanzata** più sotto. Se
 non ti serve, ignorala: il default copre l'80% dei casi.
 
-Versione web della guida con screenshot:
-[`https://micheleloi.pro/iuris-it/istruzioni/`](https://micheleloi.pro/iuris-it/istruzioni/).
+**Doctrine pointer (3.3.0).** La modalità avanzata funziona via
+trigger semantici, **niente configurazione di rete da impostare in
+Claude Desktop**. Le skill avanzate non fanno fetch in background: ti
+indicano l'URL da aprire e il fraseggio per chiedermi di aprirlo io,
+e il contenuto entra in chat. Out-of-box, niente setup.
 
 ---
 
@@ -64,7 +67,7 @@ restano inerti finché non le invochi (vedi sotto).
 
 > **Nota durante lo sviluppo pre-1.0.** Il push delle nuove versioni su
 > GitHub avviene solo dopo verifica del fondatore. Finché nella UI di
-> Claude Desktop non vedi `iuris-it` versione **3.2.0**, il marketplace
+> Claude Desktop non vedi `iuris-it` versione **3.3.0**, il marketplace
 > remoto potrebbe puntare a una release precedente: in quel caso usa
 > il percorso "zip locale" qui sotto.
 
@@ -84,7 +87,7 @@ plugin"** (non "Aggiungi marketplace").
 3. Seleziona il file zip del plugin sul tuo computer, ad esempio:
 
    ```
-   C:\Users\<nome>\...\iuris-it-3.2.0-plugin.zip
+   C:\Users\<nome>\...\iuris-it-3.3.0-plugin.zip
    ```
 
 4. Claude Desktop estrae e installa il plugin. Comparirà nella lista
@@ -148,14 +151,16 @@ Per chi vuole esplorare l'ecosistema italiano-curato di skill terze.
 
    Trigger equivalenti: *"apri il bollettino"*, *"che skill posso
    installare?"*, *"mostrami le skill legal-tech disponibili"*.
-2. **Atteso**: la skill `catalogo` si attiva, presenta il bollettino
-   curato (la lista già inclusa nel plugin) e — **prima** di scaricare
-   l'elenco aggiornato da GitHub — ti chiede un consenso esplicito.
-   Questo perché il fetch GitHub è una chiamata di rete: la skill non
-   esce dalla sandbox cowork senza tuo via libera.
-3. Se autorizzi, scarica l'elenco fresh e ti mostra le skill disponibili
-   con eventuali alert/novità. Se non autorizzi, usa l'elenco bundled
-   nel plugin.
+2. **Atteso**: la skill `catalogo` si attiva e ti punta all'URL del
+   bollettino pubblico su GitHub, suggerendoti il fraseggio per
+   chiedermi di aprirlo. La skill **non apre l'URL da sola** — è una
+   tua richiesta esplicita che autorizza il fetch.
+3. Scrivi (come suggerito):
+
+   > *"apri questo URL e mostrami le skill disponibili"*
+
+   Claude apre l'URL tramite `WebFetch` standard e ti presenta le
+   novità del mese, eventuali alert su licenze o publisher.
 
 ### 3) Test della modalità avanzata — `skill-installer` + `adattamento-italiano`
 
@@ -163,23 +168,30 @@ Per chi vuole esplorare l'ecosistema italiano-curato di skill terze.
    esempio una skill US/UK di NDA review.
 2. Scrivi:
 
-   > *"installa la skill [nome]"*
+   > *"audita la skill [nome]"*
 
-3. **Atteso**: `skill-installer` esegue silenziosamente cinque check di
+   (o equivalente: *"controlla la skill [nome]"*, *"installa la skill
+   [nome]"* — quest'ultima viene interpretata come "fammi prima un
+   audit").
+3. **Atteso**: `skill-installer` ti punta all'URL del `SKILL.md` della
+   skill candidata e ti chiede di farlo aprire a Claude. Una volta che
+   il contenuto è in chat, esegue silenziosamente cinque check di
    sicurezza (allowlist sorgenti, verifica licenza, integrità
-   strutturale, scan euristico, freshness) e ti mostra solo una riga
-   per-tier (tier 1 ok / tier 2 ok / tier 2 WARN / REFUSE). Chiede
-   approvazione esplicita prima di scrivere qualsiasi file.
-4. Se l'installazione va a buon fine e la skill non dichiara una
-   giurisdizione italiana o europea (campo `jurisdiction` `[?]`,
-   `other`, `none`, oppure mancante), ti viene chiesto direttamente
-   sì/no se vuoi un adattamento italiano.
-5. Su **"sì"**: `adattamento-italiano` legge la skill installata,
-   traduce il prompt, mappa i riferimenti normativi originali agli
-   equivalenti italiani/EU plausibili, marca con `[VERIFICA]` ogni
-   riferimento che richiede controllo manuale, esegue un pre-flight
-   `verifica-fonti` e ti mostra un diff per approvazione esplicita
-   prima di sovrascrivere.
+   strutturale, scan euristico, freshness) e ti mostra una sola riga
+   per-tier (tier 1 ok / tier 2 ok / tier 2 WARN / REFUSE).
+4. Se l'audit è positivo, ti indica come **installare la skill
+   manualmente** in Claude Desktop: Customize → Plugin → Crea plugin
+   → incolla l'URL della skill → Add. La skill `skill-installer` non
+   installa file da sola: l'install vero passa dall'UI nativa.
+5. Se la skill non dichiara una giurisdizione italiana o europea
+   (campo `jurisdiction` `[?]`, `other`, `none`, oppure mancante),
+   ti propone l'adattamento italiano come secondo passo.
+6. Se chiedi l'adattamento, `adattamento-italiano` legge la skill
+   (ormai installata in Claude Desktop), traduce il prompt, mappa i
+   riferimenti normativi originali agli equivalenti italiani/EU
+   plausibili, marca con `[VERIFICA]` ogni riferimento che richiede
+   controllo manuale, esegue un pre-flight `verifica-fonti` e ti
+   mostra un diff per approvazione esplicita prima di sovrascrivere.
 
 Come per la modalità default, la presenza dei **marker di modalità**
 nelle risposte di Claude conferma che le skill stanno effettivamente
@@ -191,16 +203,17 @@ operando.
 
 La modalità avanzata è onesta sui propri limiti:
 
-- **Latenza maggiore.** Adattamento e fetch GitHub richiedono chiamate
+- **Latenza maggiore.** L'adattamento richiede chiamate LLM
   aggiuntive: qualche secondo in più rispetto al default. Normale.
-- **Rate-limit GitHub.** L'API raw di GitHub limita le fetch anonime a
-  ~60 richieste/ora. Se installi molte skill in poco tempo, può
-  sospendersi temporaneamente: aspetta, riprova.
+- **Niente fetch in background.** Per design la modalità avanzata
+  non legge URL pubblici nascostamente. Ogni apertura di bollettino o
+  `SKILL.md` candidato passa da una tua richiesta esplicita ("apri
+  questo URL..."). Se non la fai, la pipeline resta in attesa.
 - **Possibili falsi positivi sui trigger impliciti.** Se chiedi cose
   vagamente assimilabili a "mostrami qualcosa di skill", il `catalogo`
-  potrebbe attivarsi anche se non lo volevi. Non scrive nulla senza
-  conferma esplicita, quindi è recuperabile: basta dirgli di
-  fermarsi.
+  potrebbe attivarsi anche se non lo volevi. Non scarica nulla senza
+  che tu chieda esplicitamente di aprire l'URL, quindi è recuperabile:
+  basta non dare il via libera al fetch.
 - **`verifica-fonti` non garantisce la correttezza sostanziale.** Una
   citazione formalmente corretta può comunque essere inapplicabile al
   caso concreto. La verifica sostanziale finale resta del
@@ -226,7 +239,7 @@ persiste, apri una issue su
 ### Vedo `iuris-it` ma le skill non sono 4
 
 Probabile che il marketplace remoto sia su una versione precedente
-(2.x con la sola `verifica-fonti`). In attesa che la 3.2.0 sia pushata,
+(2.x con la sola `verifica-fonti`). In attesa che la 3.3.0 sia pushata,
 installa via zip locale come descritto sopra.
 
 ---
@@ -241,9 +254,11 @@ In modalità default, il plugin **non invia dati** a server di terze
 parti oltre al normale traffico con Anthropic. Nessuna telemetria,
 nessun tracking, nessun analytics.
 
-In modalità avanzata, l'unica chiamata di rete esterna è la fetch del
-bollettino da GitHub raw — e avviene solo dopo tuo consenso esplicito,
-mai automaticamente.
+In modalità avanzata, le uniche chiamate di rete esterne sono le
+letture di URL pubblici GitHub (bollettino, `SKILL.md` di skill
+candidate) — e avvengono **solo dopo tua richiesta esplicita** ("apri
+questo URL..."), tramite il `WebFetch` standard di Claude, mai dalla
+skill in background.
 
 ---
 
@@ -278,7 +293,7 @@ responsabilità professionale finale resta dell'avvocato.
 
 ---
 
-*DISTRIBUZIONE.md — v3.2.0 — 2026-05-19 (rename plugin mhc-l → iuris-it;
-onboarding riallineato post install-verification: default `verifica-fonti`
-+ modalità avanzata opt-in via catalogo, con sezione "Come testare"
-step-by-step).*
+*DISTRIBUZIONE.md — v3.3.0 — 2026-05-19 (doctrine pointer: le skill
+avanzate non fanno WebFetch autonomous; l'avvocato chiede a Claude di
+aprire URL pubblici esplicitamente; niente configurazione di rete
+richiesta; install di skill terze via UI nativa Claude Desktop).*
