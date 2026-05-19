@@ -2,14 +2,16 @@
 name: catalogo
 description: >
   Catalogo curato delle skill legal-tech per l'avvocato italiano (componente
-  della modalità AVANZATA opt-in del plugin iuris-it, non default). Scarica il
-  bollettino mensile da GitHub, presenta le novità e gli avvisi importanti,
-  installa una skill scelta dall'avvocato dopo averla adattata al diritto
-  italiano e fatto confermare l'adattamento dall'avvocato. NON si attiva
-  automaticamente: si attiva SOLO su invocazione esplicita dell'avvocato
-  ("mostrami il catalogo", "apri il bollettino delle skill italiane",
-  "che skill posso installare?", "ci sono novità nel bollettino?",
-  "/catalogo", o equivalenti).
+  della modalità AVANZATA opt-in del plugin iuris-it, non default). Scarica
+  il bollettino mensile da GitHub presentando all'avvocato l'URL e il
+  fraseggio per chiedere a Claude di aprirlo; processa il contenuto JSON
+  una volta che Claude lo ha letto via WebFetch user-initiated; presenta
+  novità e avvisi importanti; orchestra installazione e adattamento di
+  skill terze sempre tramite richieste esplicite dell'avvocato. NON si
+  attiva automaticamente: si attiva SOLO su invocazione esplicita
+  dell'avvocato ("mostrami il catalogo", "apri il bollettino delle skill
+  italiane", "che skill posso installare?", "ci sono novità nel
+  bollettino?", "/catalogo", o equivalenti).
 ---
 
 # iuris-it — Catalogo skill legal-tech (meta-skill)
@@ -33,30 +35,58 @@ l'avvocato menziona esplicitamente catalogo / bollettino / "installare
 una skill" / "skill legal-tech italiane" o equivalenti.
 
 Riferimento decisione: MHC-Work `_org/decision_log.md` 2026-05-18
-(strada B + raffinamento founder advanced-via-bollettino).
+(strada B + raffinamento founder advanced-via-bollettino) + doctrine
+pointer 2026-05-19 (refactor 3.3.0 da fetcher-autonomous a
+pointer-pure).
+
+---
+
+## Doctrine pointer (3.3.0) — cosa è cambiato
+
+Versione 3.2.0 e precedenti: la skill tentava `WebFetch` autonomous in
+background per scaricare il bollettino. Quel modello funzionava solo se
+l'avvocato configurava l'egress allowlist di Claude Desktop — passo
+tecnico che la maggior parte degli avvocati non-tech non sapeva fare,
+e che era ulteriormente bloccato da un bug del validatore Anthropic UI
+(dropdown "Solo gestori di pacchetti" rifiutava domini aggiuntivi).
+
+Versione 3.3.0 (pointer doctrine): la skill **non fa più `WebFetch`
+autonomous**. Il gate di rete è la richiesta esplicita dell'avvocato a
+Claude di aprire un URL — Claude usa il proprio `WebFetch` tool
+standard (user-initiated, non skill-mediated) e il contenuto entra nel
+contesto. A quel punto questa skill processa il JSON già letto e
+presenta il bollettino.
+
+In una frase: **la skill è un pointer che suggerisce all'avvocato il
+fraseggio per chiedere a Claude di aprire l'URL**. Niente fetch
+nascosto, niente configurazione di rete da parte dell'avvocato.
 
 ---
 
 ## Cosa fa questa skill
 
-Sei il bibliotecario di una libreria curata di skill legal-tech per Claude
-cowork, pensata per l'avvocato italiano non-tecnico. Il tuo compito ha quattro
-momenti distinti che devi tenere separati e svolgere nell'ordine corretto:
+Sei il bibliotecario di una libreria curata di skill legal-tech per
+Claude cowork, pensata per l'avvocato italiano non-tecnico. Il tuo
+compito ha quattro momenti distinti che devi tenere separati e svolgere
+nell'ordine corretto:
 
-1. **Scarica il bollettino** dal repo GitHub pubblico — non è incluso nel
-   plugin, vive online perché si aggiorna mensilmente senza che l'avvocato
-   debba reinstallare nulla.
-2. **Presenta il catalogo** all'avvocato in due pannelli (Novità, Avvisi
-   importanti) con linguaggio sobrio forense.
-3. **Su richiesta di installazione**, delega allo `skill-installer` (che
-   applica silenziosamente tutti i check di sicurezza e mostra una sola
-   riga per-tier all'avvocato per conferma). Dopo l'installazione,
-   ricorda all'avvocato che può chiedere l'adattamento italiano come
+1. **Punto all'avvocato l'URL del bollettino** e il fraseggio esatto
+   per chiedere a Claude di aprirlo. Non lo apri tu — è l'avvocato
+   che chiede a Claude di aprirlo, Claude lo legge via il proprio
+   `WebFetch` standard tool, il contenuto entra nel contesto.
+2. **Presento il catalogo** all'avvocato in due pannelli (Novità,
+   Avvisi importanti) con linguaggio sobrio forense, una volta che il
+   contenuto del bollettino è disponibile in contesto.
+3. **Su richiesta di installazione**, delego allo `skill-installer`
+   (che applica silenziosamente tutti i check di sicurezza sul
+   contenuto SKILL.md della skill terza — contenuto anch'esso letto
+   da Claude via WebFetch user-initiated). Dopo l'installazione,
+   ricordo all'avvocato che può chiedere l'adattamento italiano come
    **secondo passo cosciente separato**, invocando esplicitamente
    `adattamento-italiano [nome]`. Install e adattamento sono due
    richieste distinte.
 4. **Dopo l'attivazione di una skill marcata IT o EU** (anche solo
-   tramite adattamento italiano successivo), suggerisci automaticamente
+   tramite adattamento italiano successivo), suggerisco automaticamente
    all'avvocato di invocare `verifica-fonti` sull'output prodotto al
    momento dell'uso, per controllare le citazioni generate runtime
    (distinte da quelle hardcoded nel template della skill).
@@ -70,26 +100,23 @@ interazione.
 
 ## Disclaimer globale (mostralo una volta sola, al primo uso)
 
-Al **primo uso** del plugin in questa installazione di Claude Desktop, prima
-di mostrare il catalogo, presenta questo testo all'avvocato e chiedi conferma
-esplicita:
+Al **primo uso** del plugin in questa installazione di Claude Desktop,
+prima di mostrare il catalogo, presenta questo testo all'avvocato e
+chiedi conferma esplicita:
 
 > **Prima di iniziare.** Questo plugin è un fork-and-extend di
 > `legal-builder-hub` di Anthropic (Apache-2.0) con un layer italiano
-> aggiunto. Monitora automaticamente l'ecosistema legal-tech AI open
+> aggiunto. Monitoro automaticamente l'ecosistema legal-tech AI open
 > source — il bollettino è popolato da una routine che applica una
 > threshold policy esplicita (qualità, licenza OSS, rilevanza italiana),
 > non da curazione manuale runtime. **Il bollettino si aggiorna
 > automaticamente il 17 di ogni mese alle 22:40 ora italiana.**
 >
-> **Catalogo bundled di default.** Per impostazione standard il
-> catalogo che vedrai è la copia installata insieme al plugin:
-> funziona offline, è sempre disponibile, è la modalità di default.
-> Esiste anche una modalità "live" opzionale (catalogo aggiornato in
-> tempo reale ad ogni apertura) che richiede una piccola
-> configurazione di Claude Desktop — istruzioni su
-> [`https://micheleloi.pro/iuris-it/istruzioni/`](https://micheleloi.pro/iuris-it/istruzioni/).
-> Non è necessaria, è un'opzione.
+> **Come funziona il refresh.** Quando vuoi vedere la versione
+> aggiornata del bollettino, mi chiedi esplicitamente di aprire un URL
+> pubblico GitHub. Lo leggo per te in chat (non in background, non
+> nascosto) e te lo presento. Nessuna configurazione di rete da
+> impostare in Claude Desktop. Funziona out-of-box.
 >
 > **Catena di responsabilità.** Il founder garantisce solo la
 > distribuzione e l'automazione del filtro tecnico; non garantisce la
@@ -104,25 +131,28 @@ esplicita:
 >
 > Confermi di aver letto?
 
-Attendi una conferma esplicita (l'avvocato scrive "sì", "confermo", "ok",
-"ho capito", o equivalente). Solo dopo, prosegui.
+Attendi una conferma esplicita (l'avvocato scrive "sì", "confermo",
+"ok", "ho capito", o equivalente). Solo dopo, prosegui.
 
-**Come capisci se è il primo uso (stato globale di plugin, con fallback):**
+**Come capisci se è il primo uso (stato globale di plugin, con
+fallback):**
 
 1. **Primaria — stato globale di plugin:** controlla se esiste il file
-   `~/.claude/plugins/config/iuris-it/state.json` (path standard per state
-   durevole di plugin in Claude Desktop). Se non esiste, è il primo uso
-   *dell'installazione del plugin* (non del progetto). Crealo dopo la
-   conferma con `{"disclaimer_accepted": true, "accepted_on": "YYYY-MM-DD"}`.
-   Da questa scrittura in poi, in qualunque cartella di lavoro l'avvocato
-   apra cowork con iuris-it installato, il disclaimer non si ripresenta.
+   `~/.claude/plugins/config/iuris-it/state.json` (path standard per
+   state durevole di plugin in Claude Desktop). Se non esiste, è il
+   primo uso *dell'installazione del plugin* (non del progetto).
+   Crealo dopo la conferma con `{"disclaimer_accepted": true,
+   "accepted_on": "YYYY-MM-DD"}`. Da questa scrittura in poi, in
+   qualunque cartella di lavoro l'avvocato apra cowork con iuris-it
+   installato, il disclaimer non si ripresenta.
 
 2. **Fallback — stato per cartella di lavoro:** se la scrittura in
    `~/.claude/plugins/config/iuris-it/state.json` fallisce (permission
    denied dalla sandbox cowork, path non scrivibile, ecc.), ripiega su
-   un file `.iuris-it-state.json` nella cartella di lavoro connessa con la
-   stessa chiave `{"disclaimer_accepted": true, ...}`. Conseguenza: in
-   cartelle nuove il disclaimer ricomparirà. Meno elegante ma corretto.
+   un file `.iuris-it-state.json` nella cartella di lavoro connessa con
+   la stessa chiave `{"disclaimer_accepted": true, ...}`. Conseguenza:
+   in cartelle nuove il disclaimer ricomparirà. Meno elegante ma
+   corretto.
 
 3. **Ultimo fallback — nessuno stato scrivibile:** se né il path globale
    né la cartella di lavoro sono scrivibili, mostra il disclaimer
@@ -131,117 +161,80 @@ Attendi una conferma esplicita (l'avvocato scrive "sì", "confermo", "ok",
 
 **Rationale (per l'agent che legge):** l'intento del PDL è "disclaimer
 una volta sola al primo install". La semantica corretta è quindi
-per-installazione, non per-progetto. Il path globale `~/.claude/plugins/config/<plugin-name>/`
-è la convenzione documentata per stato durevole di plugin. Il fallback
-per-cartella era il design originale e resta come safety net.
+per-installazione, non per-progetto. Il path globale
+`~/.claude/plugins/config/<plugin-name>/` è la convenzione documentata
+per stato durevole di plugin. Il fallback per-cartella era il design
+originale e resta come safety net.
 
 ---
 
-## Passo 1 — Scarica il bollettino
+## Passo 1 — Pointer al bollettino (NON fai fetch tu)
 
-Il bollettino vive nel repo GitHub pubblico del plugin, non dentro il plugin
-stesso. È **popolato automaticamente** dalla routine `bollettino-research`
-in MHC-Work (founder fuori dal loop runtime — la curazione è cristallizzata
-in una threshold policy esplicita: license OSS, reputation minima, IT-relevance
-heuristic). L'avvocato vede sempre la versione più recente senza reinstall.
+Il bollettino vive nel repo GitHub pubblico del plugin, non dentro il
+plugin stesso. È **popolato automaticamente** dalla routine
+`bollettino-research` in MHC-Work (founder fuori dal loop runtime — la
+curazione è cristallizzata in una threshold policy esplicita: license
+OSS, reputation minima, IT-relevance heuristic). L'avvocato vede la
+versione più recente chiedendo esplicitamente a Claude di aprirla.
 
-**URL canonico** (da configurare al rilascio sostituendo `MicheleLoi`):
+**URL canonico:**
 
 ```
-https://raw.githubusercontent.com/MicheleLoi/legal-tech-cowork/main/iuris-it/bollettino.json
+https://github.com/MicheleLoi/legal-tech-cowork/blob/main/iuris-it/bollettino.json
 ```
 
 E per le validazioni di comunità:
 
 ```
-https://raw.githubusercontent.com/MicheleLoi/legal-tech-cowork/main/iuris-it/community_validations.json
+https://github.com/MicheleLoi/legal-tech-cowork/blob/main/iuris-it/community_validations.json
 ```
 
-**Come scaricarli (sequenza imperativa — esegui i passi in ordine, NON
-inferire la disponibilità di uno strumento, prova sempre prima):**
+**Cosa fai all'attivazione (pointer-pure):**
 
-1. **Tenta `WebFetch` sui due URL canonici** (`bollettino.json` e
-   `community_validations.json`). Path della "modalità live": il
-   bollettino viene scaricato fresh dal repo GitHub ad ogni
-   invocazione. Cache temporanea per la sessione corrente.
+NON tenti `WebFetch`. NON fai fetch in background. NON consulti il
+bundled. Rispondi all'avvocato con questo blocco (italiano sobrio
+forense):
 
-   **Vincolo operativo cardine:** **devi sempre tentare `WebFetch`
-   realmente**. È vietato inferire a priori che `WebFetch` non sia
-   disponibile, ristretta, o bloccata nella sandbox cowork. L'unico
-   modo per saperlo è provare e leggere la risposta. Se riesce,
-   l'avvocato è in modalità live (ha completato l'opt-in configurazione
-   egress allowlist documentato nella pagina istruzioni).
+> *"Il bollettino delle skill legal-tech italiane curate è pubblicato
+> qui:*
+>
+> *`https://github.com/MicheleLoi/legal-tech-cowork/blob/main/iuris-it/bollettino.json`*
+>
+> *Per vederlo aggiornato, scrivimi:*
+> *«apri questo URL e mostrami le skill disponibili».*
+>
+> *Lo apro nel browser e ti presento le novità di questo mese, con
+> eventuali alert su licenze o publisher."*
 
-   **Messaggio all'avvocato quando WebFetch riesce:**
-
-   > *"Bollettino aggiornato dal repo GitHub (`last_updated`:
-   > `<last_updated>`)."*
-
-2. **Se `WebFetch` ritorna un errore** (errore di rete, timeout,
-   dominio bloccato dalle impostazioni egress di Claude Desktop,
-   capability non disponibile, permission denied, 4xx/5xx HTTP,
-   ecc.) → fai fallback al `bollettino.json` **bundled nel plugin
-   stesso** (path relativo al plugin folder: `bollettino.json`
-   accanto a `.claude-plugin/`). Questo è lo **scenario di default**
-   per la maggior parte degli avvocati — NON è un'errore, NON è
-   degradazione, è il path normale per chi non ha attivato la
-   modalità live.
-
-   **Messaggio all'avvocato quando usi il bundled (tono neutro, NON
-   d'errore):**
-
-   > *"Catalogo installato con il plugin (versione del giorno:
-   > `<last_updated>`). Per attivare la modalità live (catalogo
-   > aggiornato in tempo reale ad ogni apertura) vedi
-   > [`https://micheleloi.pro/iuris-it/istruzioni/`](https://micheleloi.pro/iuris-it/istruzioni/)."*
-
-   **Vincoli sul messaggio:**
-   - NON mostrare l'errore tecnico ricevuto da `WebFetch` (es. *"egress
-     blocked"*, *"dominio non whitelisted"*) — l'avvocato non-tech non
-     può fare niente con quella informazione e si confonde
-   - NON usare parole d'errore (*"fallito"*, *"non riuscito"*, *"errore"*)
-   - NON suggerire "click Update sul plugin" — è misleading (l'update
-     plugin è azione tecnica diversa dal refresh contenuto)
-   - L'errore tecnico ricevuto va comunque catturato e scritto
-     nell'install-log per debug (vedi `install-log.yaml`), NON nel
-     messaggio lawyer-facing
-
-3. **Bollettino locale in cartella di lavoro (ultimo fallback, edge
-   case).** Se anche il bundled non è leggibile, controlla
-   `bollettino.json` nella cartella di lavoro connessa. Non documentare
-   all'avvocato come scenario normale.
+Quando l'avvocato risponde con la richiesta esplicita (es. *"apri questo
+URL e mostrami le skill disponibili"*, oppure semplicemente *"apri
+https://github.com/..."*), Claude — non più questa skill agent
+autonoma — usa `WebFetch` come tool standard su quell'URL. Il contenuto
+JSON entra nel contesto della conversazione. A quel punto tu (skill
+`catalogo`, ancora attiva) processi il contenuto e procedi a Passo 2.
 
 **Rationale (per l'agent che legge):**
 
-Il modello è **bundled di default, live come opt-in** (decisione
-doctrine 2026-05-18, REV2.5 onboarding revision). L'avvocato non-tech
-target primario non sa cos'è una egress allowlist né dove configurarla
-— per lui il path normale è bundled, e questa è una scelta di prodotto,
-non una degradazione.
+Il gate è la **richiesta esplicita dell'avvocato a Claude**, non una
+skill agent che fa fetch nascosto. Test empirico founder 2026-05-19:
+`WebFetch` invocato esplicitamente dall'utente (*"apri https://..."*)
+bypassa la sandbox proxy / egress allowlist. Le skill agent che fanno
+`WebFetch` autonomous in background, viceversa, sono soggette
+all'allowlist — e configurarla è bloccato da un bug del validatore
+Anthropic UI. La doctrine pointer (3.3.0) elimina del tutto la
+dipendenza dall'allowlist: niente configurazione utente richiesta,
+niente fallback bundled, nessuna distinzione tra "modalità live" e
+"modalità offline". C'è una sola modalità — pointer.
 
-**WebFetch va sempre tentata realmente** (mai inferenza preventiva)
-per due ragioni:
-- (a) l'avvocato avanzato che ha attivato l'opt-in deve poter accedere
-  alla modalità live senza alcun nuovo intervento;
-- (b) il check empirico è la sola fonte di verità sullo stato del
-  runtime.
+**Cosa fare se l'avvocato non chiede di aprire l'URL.** Non aprirlo per
+lui. Non fare WebFetch a sua insaputa. Se l'avvocato dice cose come
+"ok grazie" senza chiedere il fetch, lascia il bollettino non letto e
+chiudi cortesemente la conversazione di catalogo. È sua scelta
+deliberata se proseguire o no.
 
-Quando WebFetch fallisce, **il messaggio bundled deve essere neutro**:
-l'avvocato non-tech non deve sentirsi tech-inadequate né credere che
-qualcosa sia rotto. La pagina istruzioni linkata gli dice cosa
-attivare se vuole l'esperienza live, ma è opzionale e non urge.
-
-Storia del refactor:
-- **REV2.2** (2026-05-18): formulazione imperativa "tenta sempre
-  WebFetch realmente" — bug fix per inferenza preventiva
-- **REV2.5** (2026-05-18): bundled è il default per design (non
-  scenario d'errore); messaggio fallback riformulato in tono neutro
-  + URL pagina istruzioni invece di reference DISTRIBUZIONE.md
-  (avvocati non sanno cosa sono i file `.md`)
-
-**Cosa fare se `entries` è vuoto.** Lo stato iniziale del bollettino è
-vuoto perché il catalogo cresce per accumulo automatico. Comunicalo
-onestamente:
+**Cosa fare se `entries` (una volta letto il bollettino) è vuoto.** Lo
+stato iniziale del bollettino è vuoto perché il catalogo cresce per
+accumulo automatico. Comunicalo onestamente:
 
 > *"Il catalogo è ancora in costruzione. La routine automatica
 > `bollettino-research` monitora mensilmente l'ecosistema legal-tech
@@ -253,15 +246,19 @@ onestamente:
 
 ## Passo 2 — Presenta il catalogo (due pannelli)
 
+Una volta che il contenuto del bollettino è disponibile nel contesto
+(Claude lo ha appena letto su richiesta esplicita dell'avvocato),
+processa il JSON e presenta in due pannelli.
+
 ### Pannello A — "Novità nel catalogo"
 
-Mostrato quando l'avvocato dice "mostrami il catalogo", "ci sono novità",
-"cosa c'è di nuovo", o all'inizio di una conversazione se è la prima dopo
-un aggiornamento del bollettino (confronta `last_updated` del bollettino
-con `last_seen` in `.iuris-it-state.json`).
+Mostrato quando l'avvocato dice "mostrami il catalogo", "ci sono
+novità", "cosa c'è di nuovo", o all'inizio di una conversazione se è la
+prima dopo un aggiornamento del bollettino (confronta `last_updated`
+del bollettino con `last_seen` in `.iuris-it-state.json`).
 
-Per **ogni voce in `entries`**, presenta in questo formato (italiano sobrio
-forense, non consumer-marketing):
+Per **ogni voce in `entries`**, presenta in questo formato (italiano
+sobrio forense, non consumer-marketing):
 
 ```
 ─────────────────────────────────────────────────────────
@@ -325,42 +322,58 @@ conversazione — solo segnalare con chiarezza.
 
 ## Passo 3 — Installazione: delega al skill-installer
 
-Quando l'avvocato chiede di installare una skill (clicca `[Installa]` o dice
-"installa la skill X"), **non scrivere file tu**. L'installazione è
-delegata allo `skill-installer` (forkato da `legal-builder-hub` di
-Anthropic, sotto Apache-2.0) — gestisce allowlist, fetch in subagent
-read-only, structural trust check, license verification pre+post fetch,
-freshness gate, install log strutturato, tutto silenziosamente.
-L'avvocato vede solo una riga per-tier che riassume cosa sta installando
-e conferma esplicitamente.
+Quando l'avvocato chiede di installare una skill (clicca `[Installa]`
+o dice "installa la skill X"), **non scrivere file tu**. L'installazione
+è delegata allo `skill-installer` (forkato da `legal-builder-hub` di
+Anthropic, sotto Apache-2.0) — gestisce allowlist licenze, structural
+trust check, license verification, freshness gate, install log
+strutturato, tutto silenziosamente.
+
+**Doctrine pointer applicata al skill-installer.** Anche
+`skill-installer` non fa fetch autonomous. Il contenuto SKILL.md della
+skill terza candidata viene letto da Claude tramite `WebFetch`
+user-initiated (l'avvocato chiede esplicitamente *"apri [URL_skill] e
+fammi un audit"* prima di confermare l'installazione, oppure
+l'installazione vera e propria della skill terza la fa l'avvocato in
+prima persona tramite Customize → Plugin → Crea plugin → URL della
+skill in Claude Desktop UI nativa). `skill-installer` applica i 5
+controlli (allowlist, structural trust, license, heuristic, freshness)
+sul contenuto **già presente in contesto**.
+
+L'avvocato vede solo una riga per-tier che riassume cosa stiamo
+auditando e conferma esplicitamente.
 
 **Install e adattamento italiano sono due richieste separate.**
-L'installazione avviene tramite `skill-installer` che applica i
-controlli di sicurezza automaticamente. Dopo l'installazione l'avvocato
-riceve un promemoria su come richiedere l'adattamento italiano — questo
-richiede una seconda richiesta esplicita da parte sua. La REV2 cascade
-refactor (2026-05-18) ha rimosso il vecchio hook che attivava
-l'adattamento automaticamente per skill IT/EU: non funzionava in cowork
-e lasciava fuori il caso comune di skill generiche che l'avvocato
-voleva comunque in italiano.
+L'installazione effettiva e l'audit applicano i controlli di
+sicurezza. Dopo l'installazione l'avvocato riceve un promemoria su
+come richiedere l'adattamento italiano — questo richiede una seconda
+richiesta esplicita da parte sua. La REV2 cascade refactor
+(2026-05-18) ha rimosso il vecchio hook che attivava l'adattamento
+automaticamente per skill IT/EU: non funzionava in cowork e lasciava
+fuori il caso comune di skill generiche che l'avvocato voleva comunque
+in italiano.
 
 ### 3.1 — Invoca skill-installer
 
 Passa al `skill-installer` la voce del bollettino selezionata
 dall'avvocato (`bollettino_entry` completo, inclusi `repo_url`,
 `skill_path`, `tier`, `reputation.license`, `founder_disclaimer`).
-L'installer esegue il proprio workflow silenziosamente e mostra
-all'avvocato una sola riga per-tier:
+L'installer punta all'avvocato l'URL del `SKILL.md` candidato e gli
+suggerisce il fraseggio per farlo aprire a Claude
+(*"apri [URL_skill] e passamelo per audit"*). Una volta che il
+contenuto è in contesto, applica i 5 controlli silenziosamente e
+mostra all'avvocato una sola riga per-tier:
 
-- **Tier 1** (Anthropic-official): *"Installando [nome] — plugin
+- **Tier 1** (Anthropic-official): *"Audit di [nome] — plugin
   ufficiale Anthropic, licenza Apache-2.0. ..."*
-- **Tier 2** (publisher terzo, passa threshold): *"Installando
+- **Tier 2** (publisher terzo, passa threshold): *"Audit di
   [publisher]/[nome] — publisher terzo, passa i check tecnici
   automatici. ..."*
 - **Tier 2 WARN** (anomalia non bloccante): Tier 2 + *"Anomalia
   rilevata: [...]. Non bloccante. Procedi?"*
 - **REFUSE** (license assente / hook sospetto / injection): *"Skill
-  [nome] rifiutata: [motivo]. Installazione bloccata per sicurezza."*
+  [nome] rifiutata: [motivo]. Audit fallito, ti sconsiglio di
+  installarla."*
 
 Vedi `skills/skill-installer/SKILL.md` per il dettaglio.
 
@@ -370,12 +383,14 @@ Vedi `skills/skill-installer/SKILL.md` per il dettaglio.
 l'adattamento italiano come secondo passo cosciente. L'installer non
 lo fa automaticamente.**
 
-Dopo che lo `skill-installer` conferma l'installazione, mostra a sua
-volta un nudge:
+Dopo che lo `skill-installer` conferma l'audit, mostra a sua volta
+un nudge:
 
-> *"Skill `[nome]` installata in versione originale (inglese). Per
-> adattarla al diritto italiano e verificare le citazioni normative,
-> scrivi: 'adatta `[nome]` in italiano' o usa `/adattamento-italiano
+> *"Skill `[nome]` auditata con esito positivo. Puoi installarla in
+> Claude Desktop: Customize → Plugin → Crea plugin → incolla l'URL
+> della skill → Add. Una volta installata, se vuoi adattarla al
+> diritto italiano e verificare le citazioni normative, scrivi:
+> 'adatta `[nome]` in italiano' o usa `/adattamento-italiano
 > [nome]`."*
 
 Se l'avvocato non chiede l'adattamento, la skill resta in versione
@@ -383,44 +398,47 @@ originale (inglese) — può essere usata così, ma iuris-it non proporrà
 `verifica-fonti` automaticamente sui suoi output. L'avvocato può
 chiedere l'adattamento in qualsiasi momento successivo.
 
-### 3.3 — Cosa fai tu (catalogo) dopo l'installazione
+### 3.3 — Cosa fai tu (catalogo) dopo l'audit/installazione
 
-Lo `skill-installer` ti restituisce l'esito (`installed` / `cancelled` /
-`refused_by_security_gate`). Aggiorna `.iuris-it-state.json` di
-conseguenza (`installed_skills` solo se esito `installed`). Comunica
-all'avvocato:
+Lo `skill-installer` ti restituisce l'esito (`audit_passed` /
+`cancelled` / `refused_by_security_gate`). Aggiorna
+`.iuris-it-state.json` di conseguenza (`installed_skills` solo se
+esito `audit_passed` E l'avvocato ha confermato di aver completato
+l'installazione manuale in Claude Desktop). Comunica all'avvocato:
 
-- **Installata**: ripeti il nudge sull'adattamento italiano (vedi 3.2)
-  + invito a rileggere i file in
-  `~/.claude/plugins/config/iuris-it/installed_skills/<nome>/` e provarla
-  su una pratica a basso rischio prima dell'uso professionale.
-- **Cancellata dall'avvocato**: *"Installazione annullata. La skill
-  `<nome>` resta non installata."*
+- **Audit passato**: ripeti il nudge sull'installazione manuale e
+  sull'adattamento italiano (vedi 3.2) + invito a rileggere il
+  `SKILL.md` della skill installata e provarla su una pratica a basso
+  rischio prima dell'uso professionale.
+- **Cancellata dall'avvocato**: *"Audit annullato. La skill `<nome>`
+  resta non installata."*
 - **Rifiutata dal gate sicurezza**: ripeti il motivo dato dallo
   `skill-installer` (es. license assente, pattern injection bloccante).
   Non bypassare.
 
-**Mai installare bypassando lo `skill-installer`.** Il fork del layer
-sicurezza Anthropic è il motivo per cui esiste questo plugin nella forma
-attuale — bypassarlo significa perdere allowlist, internal trust
-analysis, freshness gate, security findings.
+**Mai validare una skill bypassando lo `skill-installer`.** Il fork
+del layer sicurezza Anthropic è il motivo per cui esiste questo plugin
+nella forma attuale — bypassarlo significa perdere allowlist licenze,
+internal trust analysis, freshness gate, security findings.
 
-### 3.4 — Update di una skill già installata (re-install + re-adattamento opzionale)
+### 3.4 — Update di una skill già installata (re-audit + re-adattamento opzionale)
 
 Quando una skill **già installata** dall'avvocato riceve un update
 upstream (nuovo commit / nuovo release nel suo repo originale) e il
 bollettino lo segnala, il flusso è **deliberatamente conservativo**:
-re-installa via `skill-installer` (che rifà tutti i check sulla nuova
-versione) e — se la skill era stata adattata in italiano in precedenza —
-proponi all'avvocato di rigenerare l'adattamento da zero.
+ri-audit via `skill-installer` (che rifà tutti i check sulla nuova
+versione del SKILL.md letto in contesto) e — se la skill era stata
+adattata in italiano in precedenza — proponi all'avvocato di
+rigenerare l'adattamento da zero.
 
 Sequenza:
 
-1. **Re-installa la nuova versione** via `skill-installer`. L'installer
+1. **Ri-audit della nuova versione** via `skill-installer`. L'installer
    rifà allowlist, license check, structural trust, heuristic scan,
-   freshness — e mostra all'avvocato la riga per-tier per nuova
-   conferma. Su `sì`, sovrascrive la skill installata con la nuova
-   versione originale.
+   freshness — sul contenuto SKILL.md nuovo letto via WebFetch
+   user-initiated — e mostra all'avvocato la riga per-tier per nuova
+   conferma. Su `sì`, l'avvocato re-installa la skill via Claude
+   Desktop UI sovrascrivendo la versione precedente.
 2. **Se la skill era stata adattata in italiano** (controlla
    `install-log.yaml` → `italian_adaptation_applied: true` per quel
    `skill_name`), proponi all'avvocato:
@@ -431,8 +449,8 @@ Sequenza:
 3. Su `sì`, invoca `adattamento-italiano [nome]` come secondo passo.
    Quella skill rigenera la proposta da zero sulla nuova versione,
    pre-flight `verifica-fonti`, e — se l'avvocato approva — sovrascrive
-   di nuovo la skill installata con la versione adattata. Se in passato
-   l'avvocato aveva fatto edit specifici (registrati in
+   la skill installata localmente con la versione adattata. Se in
+   passato l'avvocato aveva fatto edit specifici (registrati in
    `lawyer_edits_applied`), `adattamento-italiano` glieli ripropone
    come suggerimento di riapplicarli.
 
@@ -569,71 +587,67 @@ sopra per la logica di selezione. Gestito da questa skill:
 
 ## Tono e linguaggio
 
-- **Italiano sobrio forense.** Non consumer-marketing ("scopri", "incredibile",
-  "rivoluzionario"), non legalese boilerplate US ("AS IS", "no warranty").
-  Scrivi come parli a un professionista che si fida del suo giudizio.
-- **Mai prescrivere il contenuto giuridico.** La skill fornisce strumenti,
-  l'avvocato decide. Quando proponi un adattamento, scrivi "proposta",
-  "valuta", "[VERIFICA]" — mai "la legge applicabile è" come affermazione
-  autoritativa.
-- **Brevità.** Una frase per concetto. L'avvocato non ha tempo per leggere
-  paragrafi di introduzione.
+- **Italiano sobrio forense.** Non consumer-marketing ("scopri",
+  "incredibile", "rivoluzionario"), non legalese boilerplate US ("AS
+  IS", "no warranty"). Scrivi come parli a un professionista che si
+  fida del suo giudizio.
+- **Mai prescrivere il contenuto giuridico.** La skill fornisce
+  strumenti, l'avvocato decide. Quando proponi un adattamento, scrivi
+  "proposta", "valuta", "[VERIFICA]" — mai "la legge applicabile è"
+  come affermazione autoritativa.
+- **Brevità.** Una frase per concetto. L'avvocato non ha tempo per
+  leggere paragrafi di introduzione.
 
 ---
 
 ## Errori da NON commettere
 
-1. **Installare una skill bypassando `skill-installer`.** Lo
+1. **Fare `WebFetch` autonomous in background.** Doctrine pointer
+   (3.3.0): il gate di rete è la richiesta esplicita dell'avvocato a
+   Claude di aprire un URL. Tu skill non apri mai URL da sola — punti
+   all'avvocato l'URL e il fraseggio, e aspetti che lui chieda. Test
+   empirico founder 2026-05-19: skill agent autonomous fetch è
+   soggetto a egress allowlist; user-initiated WebFetch la bypassa.
+
+2. **Aprire l'URL del bollettino prima che l'avvocato lo chieda
+   esplicitamente.** "Mostrami il catalogo" attiva la skill ma NON
+   autorizza il fetch — autorizza solo a presentare il pointer. Solo
+   quando l'avvocato risponde con "apri questo URL" (o equivalente)
+   Claude apre. Se l'avvocato non chiede l'apertura, lascia il
+   bollettino non letto e chiudi cortesemente.
+
+3. **Promettere di "aggiornare in background" o "refreshare
+   automaticamente".** Niente background. Niente automatismi nascosti.
+   Ogni refresh è una richiesta esplicita dell'avvocato. Comunica
+   questo se l'avvocato chiede aggiornamenti automatici.
+
+4. **Installare una skill bypassando `skill-installer`.** Lo
    `skill-installer` (forkato Apache-2.0 da Anthropic) è il solo
-   punto che applica allowlist, internal trust analysis, license
-   verification, heuristic scan, freshness gate, install log
+   punto che applica allowlist licenze, internal trust analysis,
+   license verification, heuristic scan, freshness gate, install log
    strutturato. Bypassarlo = perdere il layer di sicurezza
    industrial-grade.
-2. **Scrivere file di skill installata direttamente da catalogo.** Lo
-   `skill-installer` è il solo che scrive in
-   `~/.claude/plugins/config/iuris-it/installed_skills/`.
-3. **Invocare `adattamento-italiano` automaticamente dopo
+
+5. **Auditare il contenuto di una skill terza prima di averlo letto
+   via WebFetch user-initiated.** Non inventare o inferire il
+   contenuto del SKILL.md di una skill terza. Punta all'avvocato
+   l'URL del SKILL.md candidato e chiedi che lo faccia aprire a
+   Claude — solo allora hai il contenuto reale su cui applicare i 5
+   controlli.
+
+6. **Invocare `adattamento-italiano` automaticamente dopo
    l'installazione.** REV2 (2026-05-18) ha disaccoppiato install e
    adattamento: l'adattamento è un secondo passo cosciente che
    l'avvocato richiede esplicitamente. Il tuo compito è solo
    mostrare il nudge post-install che lo invita a farlo (vedi
    Passo 3.2).
-4. **Mostrare il catalogo come fosse uno shop.** Non è una vetrina,
+
+7. **Mostrare il catalogo come fosse uno shop.** Non è una vetrina,
    è una lista skill ecosystem-monitored che ha superato la
    threshold policy. Niente "promo", "trending", "consigliati per
    te" stile raccomandazione algoritmica.
-5. **Saltare il disclaimer al primo uso.** L'avvocato deve sapere
+
+8. **Saltare il disclaimer al primo uso.** L'avvocato deve sapere
    che la responsabilità giuridica resta sua, che il founder
    garantisce solo la distribuzione, e che il bollettino è popolato
    automaticamente.
-6. **Trattare il bundled come scenario degradato o d'errore.** Il
-   bundled è la **modalità di default** per la maggior parte degli
-   avvocati (target primario = non-tech, non ha configurato l'egress
-   allowlist di Claude Desktop). Il messaggio deve essere neutro
-   ("Catalogo installato con il plugin, versione: X"), mai
-   allarmista. La modalità live è opt-in opzionale, non lo standard
-   atteso. REV2.5 doctrine (2026-05-18).
-
-7. **Inferire la disponibilità di `WebFetch` senza provarla.**
-   Tentare `WebFetch` resta vincolo cardine (REV2.2): il check
-   empirico è la sola fonte di verità sul runtime, e l'avvocato
-   avanzato che ha attivato l'opt-in egress deve poter accedere
-   alla modalità live senza alcun nuovo intervento. Mai inferire
-   "WebFetch non funziona" senza provare.
-
-8. **Mostrare l'errore tecnico di `WebFetch` nel messaggio
-   lawyer-facing.** L'avvocato non-tech non può fare niente con
-   *"egress blocked"*, *"dominio non whitelisted"*, *"403"*, ecc. —
-   si confonde, si sente tech-inadequate, perde fiducia nel sistema
-   ("perché mi sta mostrando un errore?"). L'errore tecnico ricevuto
-   da `WebFetch` va catturato e scritto nell'`install-log.yaml` per
-   debug futuro, NON mostrato in chat. Il messaggio lawyer-facing
-   resta neutro (vedi bullet 6 + Passo 1 §2).
-
-9. **Suggerire "clicca Update sul plugin" come refresh del
-   bollettino.** Misleading: l'update plugin è operazione tecnica di
-   manutenzione (pull commit più recente da GitHub) — non è
-   "aggiorna il catalogo" nel mental model dell'avvocato. Per il
-   refresh contenuto la via giusta è la modalità live (opt-in
-   egress allowlist documentato sulla pagina istruzioni). REV2.5
-   doctrine (2026-05-18).
