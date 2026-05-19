@@ -124,14 +124,16 @@ usa solo il primo:
   - `catalogo` punta all'avvocato l'URL del bollettino curato e gli
     suggerisce il fraseggio per chiedere a Claude di aprirlo
     (l'apertura avviene via `WebFetch` standard di Claude su
-    richiesta esplicita dell'avvocato, non in background dalla skill),
-  - lo `skill-installer` auditeggia la skill scelta applicando
+    richiesta esplicita dell'avvocato, non in background dalla skill);
+  - quando l'avvocato sceglie una skill ("installa skill X"), lo
+    `skill-installer` fa autonomous `WebFetch` del `SKILL.md`
+    candidato (autorizzato dal trigger esplicito), applica
     silenziosamente i 5 controlli di sicurezza (allowlist licenze,
-    tier, heuristic, license, freshness) sul `SKILL.md` letto in
-    contesto via la stessa richiesta esplicita;
-  - l'installazione effettiva la fa l'avvocato manualmente tramite
-    Claude Desktop → Customize → Plugin → Crea plugin → URL della
-    skill → Add;
+    tier, heuristic, license, freshness) e mostra all'avvocato una
+    riga per-tier con conferma `sì/no`;
+  - su `sì`, l'installer scrive i file in
+    `~/.claude/plugins/config/iuris-it/installed_skills/<nome>/` —
+    nessun passo UI manuale richiesto;
   - l'`adattamento-italiano` — su richiesta esplicita successiva —
     adatta al volo il prompt della skill terza al linguaggio
     giuridico italiano se necessario.
@@ -148,43 +150,54 @@ power-user che accettano questo costo in cambio di curation
 italiana. Per chi vuole solo verificare le citazioni di un atto, il
 default basta e avanza.
 
-## Doctrine pointer (3.3.0)
+## Doctrine pointer (3.3.0+) — distinzione fetch autonomous vs pointer
 
-A partire dalla versione 3.3.0 il plugin adotta la **doctrine
-pointer**: le skill avanzate (`catalogo`, `skill-installer`) **non
-fanno `WebFetch` autonomous in background**. Quando serve leggere il
-bollettino o il `SKILL.md` di una skill terza candidata, la skill
-suggerisce all'avvocato il fraseggio per chiedere a Claude di aprire
-l'URL pubblico — Claude usa il proprio `WebFetch` tool standard
-(user-initiated, non skill-mediated) e il contenuto entra nel
-contesto della conversazione. A quel punto le skill processano il
-contenuto già letto.
+A partire dalla versione 3.3.0 il plugin distingue **due regimi di
+fetch** nelle skill avanzate, in funzione del problema empirico che
+ciascun tipo di fetch ha mostrato in produzione:
 
-In pratica:
+- **Pointer (solo `catalogo`).** La skill **non** fa `WebFetch`
+  autonomous del bollettino. Suggerisce all'avvocato l'URL del
+  bollettino + il fraseggio esatto per chiedere a Claude di aprirlo
+  via `WebFetch` user-initiated. Il contenuto JSON entra in contesto
+  e la skill lo processa. *Motivo:* il polling ricorrente del
+  bollettino in background veniva bloccato dall'egress allowlist di
+  Claude Desktop (problema osservato 2026-05-18) — e configurare
+  l'allowlist è ulteriormente bloccato da un bug del validatore UI.
+  La pointer doctrine elimina del tutto la dipendenza dall'allowlist
+  per il caso "fetch ricorrente".
+
+- **Autonomous post-trigger esplicito (`skill-installer`).** Quando
+  l'avvocato dice esplicitamente *"installa skill X"* (oppure
+  conferma la scelta dal catalogo), `skill-installer` fa
+  `WebFetch` autonomous puntuale del `SKILL.md` di X per applicare
+  i 5 controlli di sicurezza, e — su `sì` esplicito — scrive i file
+  in `~/.claude/plugins/config/iuris-it/installed_skills/<nome>/`.
+  *Motivo:* il trigger esplicito dell'avvocato è user-initiated
+  implicito sufficiente; il fetch puntuale post-scelta non è
+  bloccato dall'allowlist (test empirico founder 2026-05-19);
+  costringere l'avvocato a due step UI manuali (apertura URL via
+  Claude + Customize → Crea plugin → URL) è un costo UX non
+  giustificato. Il refactor 3.3.0 aveva esteso erroneamente la
+  pointer doctrine anche allo `skill-installer`; la 3.3.1 ripristina
+  il regime autonomous puntuale.
+
+In pratica, per entrambi i regimi:
 
 - **Niente configurazione di rete in Claude Desktop.** Funziona
-  out-of-box: l'avvocato non deve configurare nessuna egress allowlist.
-- **Il gate è la richiesta esplicita dell'avvocato.** Nessuna skill
-  apre URL nascostamente. L'avvocato vede sempre cosa sta per essere
-  letto e decide se chiedere l'apertura.
-- **L'installazione di skill terze passa dall'UI nativa di Claude
-  Desktop** (Customize → Plugin → Crea plugin → URL → Add). Lo
-  `skill-installer` audita il `SKILL.md` letto in contesto prima
-  dell'installazione; non scrive file direttamente.
-
-Razionale completo: test empirico founder 2026-05-19 ha mostrato che
-`WebFetch` invocato esplicitamente dall'utente (*"apri https://..."*)
-bypassa la sandbox proxy, mentre skill agent autonomous fetch è
-soggetto a restrizioni di rete. La doctrine pointer elimina la
-dipendenza da configurazione utente — non c'è più una "modalità
-live" da attivare né un "fallback bundled". C'è una sola modalità.
+  out-of-box.
+- **Il gate è sempre una richiesta esplicita dell'avvocato.** Nessuna
+  skill apre URL senza un'azione cosciente dell'avvocato — per il
+  bollettino è la richiesta diretta a Claude di aprire l'URL; per
+  una skill terza è la scelta esplicita di installarla.
 
 Riferimento decisione: MHC-Work `_org/decision_log.md` voce
 "Plugin Cowork mhc-l: ratifica strategica riduzione a verifica-fonti
 only" (2026-05-18, plugin allora denominato `mhc-l`, rinominato
 `iuris-it` 2026-05-19) + raffinamento founder in-session post UX test
 ("default invariato + bollettino come gateway opt-in") + doctrine
-pointer 2026-05-19 (refactor 3.3.0).
+pointer 2026-05-19 (refactor 3.3.0 per `catalogo`) + 3.3.1 revert
+puntuale dello `skill-installer` ad autonomous post-trigger esplicito.
 
 ## Installazione
 
@@ -224,14 +237,18 @@ network. Power-users who want a curated Italian legal-tech skills
 ecosystem can invoke the bollettino explicitly to open the extended
 pipeline (catalogo + skill-installer + adattamento-italiano).
 
-Pointer doctrine (3.3.0, 2026-05-19): advanced-mode skills never
-perform autonomous `WebFetch` in the background. When a public URL
-(the bollettino, a third-party `SKILL.md`) needs to be read, the skill
-points the lawyer to the URL and the exact phrasing to ask Claude to
-open it — Claude reads it via its standard user-initiated `WebFetch`
-tool, the content enters context, and the skill processes it. No
-network configuration required on the lawyer's side. Actual install
-of third-party skills happens through Claude Desktop's native plugin
-UI; the skill-installer only audits the SKILL.md and logs the result.
+Pointer doctrine (3.3.0+, 2026-05-19) with 3.3.1 refinement:
+`catalogo` never performs autonomous `WebFetch` of the bollettino —
+it points the lawyer to the URL and the exact phrasing to ask Claude
+to open it, the content enters context via user-initiated WebFetch
+(motivation: recurring background polling was blocked by Claude
+Desktop's egress allowlist). `skill-installer` instead performs a
+*one-shot* autonomous `WebFetch` of the candidate third-party
+`SKILL.md` after an explicit lawyer trigger (*"installa skill X"*) —
+that trigger is implicit user-initiated authorization, the targeted
+fetch is not blocked by the allowlist, and the lawyer is spared two
+manual UI steps. On `yes`, the installer writes the skill files into
+the iuris-it install dir; no Claude Desktop UI navigation required.
+No network configuration on the lawyer's side either way.
 
 License: MIT.

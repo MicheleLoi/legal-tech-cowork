@@ -36,30 +36,51 @@ una skill" / "skill legal-tech italiane" o equivalenti.
 
 Riferimento decisione: MHC-Work `_org/decision_log.md` 2026-05-18
 (strada B + raffinamento founder advanced-via-bollettino) + doctrine
-pointer 2026-05-19 (refactor 3.3.0 da fetcher-autonomous a
-pointer-pure).
+pointer 2026-05-19 (refactor 3.3.0: `catalogo` da fetcher a pointer
+per il bollettino) + revert puntuale 3.3.1 dello `skill-installer`
+ad autonomous post-trigger esplicito (catalogo resta pointer).
 
 ---
 
-## Doctrine pointer (3.3.0) — cosa è cambiato
+## Doctrine pointer (3.3.0+) — cosa è cambiato e cosa NON è cambiato
 
-Versione 3.2.0 e precedenti: la skill tentava `WebFetch` autonomous in
-background per scaricare il bollettino. Quel modello funzionava solo se
-l'avvocato configurava l'egress allowlist di Claude Desktop — passo
-tecnico che la maggior parte degli avvocati non-tech non sapeva fare,
-e che era ulteriormente bloccato da un bug del validatore Anthropic UI
-(dropdown "Solo gestori di pacchetti" rifiutava domini aggiuntivi).
+**Cambiato (3.3.0) — `catalogo` è pointer-pure per il bollettino.**
+Versione 3.2.0 e precedenti: questa skill tentava `WebFetch` autonomous
+in background per scaricare il bollettino al primo trigger. Quel
+modello funzionava solo se l'avvocato configurava l'egress allowlist di
+Claude Desktop — passo tecnico che la maggior parte degli avvocati
+non-tech non sapeva fare, e che era ulteriormente bloccato da un bug
+del validatore Anthropic UI (dropdown "Solo gestori di pacchetti"
+rifiutava domini aggiuntivi). Dalla 3.3.0 in poi `catalogo` **non fa
+più `WebFetch` autonomous** sul bollettino: punta all'avvocato l'URL e
+il fraseggio per chiedere a Claude di aprirlo via `WebFetch`
+user-initiated. Il contenuto JSON entra in contesto e la skill lo
+processa.
 
-Versione 3.3.0 (pointer doctrine): la skill **non fa più `WebFetch`
-autonomous**. Il gate di rete è la richiesta esplicita dell'avvocato a
-Claude di aprire un URL — Claude usa il proprio `WebFetch` tool
-standard (user-initiated, non skill-mediated) e il contenuto entra nel
-contesto. A quel punto questa skill processa il JSON già letto e
-presenta il bollettino.
+**NON cambiato (3.3.1 revert) — `skill-installer` resta autonomous,
+ma solo dopo trigger esplicito dell'avvocato.** Il refactor 3.3.0
+aveva esteso la pointer doctrine anche allo `skill-installer`,
+costringendo l'avvocato a (a) chiedere esplicitamente a Claude di
+aprire l'URL del `SKILL.md` candidato, (b) installare poi la skill
+manualmente via Claude Desktop UI in due passi. Test empirico founder
+2026-05-19 ha mostrato che: (i) il fetch puntuale del `SKILL.md`
+candidato post-trigger esplicito *non* è bloccato dall'egress
+allowlist (è il polling ricorrente del bollettino in background che
+lo era); (ii) due step UI manuali sono un costo UX non giustificato.
+Dalla 3.3.1, quando l'avvocato sceglie esplicitamente una skill
+("installa skill X"), `skill-installer` riprende a fare `WebFetch`
+autonomous del `SKILL.md` per i 5 controlli automatici di sicurezza
+**e** a scrivere i file in
+`~/.claude/plugins/config/iuris-it/installed_skills/<nome>/`. Quel
+trigger esplicito è l'autorizzazione user-initiated implicita
+sufficiente.
 
-In una frase: **la skill è un pointer che suggerisce all'avvocato il
-fraseggio per chiedere a Claude di aprire l'URL**. Niente fetch
-nascosto, niente configurazione di rete da parte dell'avvocato.
+In una frase: **`catalogo` è pointer (bollettino = polling ricorrente,
+bloccato dall'allowlist senza richiesta esplicita); `skill-installer`
+è autonomous post-trigger esplicito (fetch puntuale di un SKILL.md
+specifico autorizzato dall'avvocato che sceglie quella skill).**
+Niente configurazione di rete da parte dell'avvocato, in nessuno dei
+due casi.
 
 ---
 
@@ -78,13 +99,14 @@ nell'ordine corretto:
    Avvisi importanti) con linguaggio sobrio forense, una volta che il
    contenuto del bollettino è disponibile in contesto.
 3. **Su richiesta di installazione**, delego allo `skill-installer`
-   (che applica silenziosamente tutti i check di sicurezza sul
-   contenuto SKILL.md della skill terza — contenuto anch'esso letto
-   da Claude via WebFetch user-initiated). Dopo l'installazione,
-   ricordo all'avvocato che può chiedere l'adattamento italiano come
-   **secondo passo cosciente separato**, invocando esplicitamente
-   `adattamento-italiano [nome]`. Install e adattamento sono due
-   richieste distinte.
+   (che applica silenziosamente tutti i 5 check di sicurezza sul
+   `SKILL.md` della skill terza — fetched autonomous dall'installer
+   stesso post-trigger esplicito dell'avvocato — e poi scrive i file
+   in `~/.claude/plugins/config/iuris-it/installed_skills/<nome>/`).
+   Dopo l'installazione, ricordo all'avvocato che può chiedere
+   l'adattamento italiano come **secondo passo cosciente separato**,
+   invocando esplicitamente `adattamento-italiano [nome]`. Install
+   e adattamento sono due richieste distinte.
 4. **Dopo l'attivazione di una skill marcata IT o EU** (anche solo
    tramite adattamento italiano successivo), suggerisco automaticamente
    all'avvocato di invocare `verifica-fonti` sull'output prodotto al
@@ -329,19 +351,22 @@ Anthropic, sotto Apache-2.0) — gestisce allowlist licenze, structural
 trust check, license verification, freshness gate, install log
 strutturato, tutto silenziosamente.
 
-**Doctrine pointer applicata al skill-installer.** Anche
-`skill-installer` non fa fetch autonomous. Il contenuto SKILL.md della
-skill terza candidata viene letto da Claude tramite `WebFetch`
-user-initiated (l'avvocato chiede esplicitamente *"apri [URL_skill] e
-fammi un audit"* prima di confermare l'installazione, oppure
-l'installazione vera e propria della skill terza la fa l'avvocato in
-prima persona tramite Customize → Plugin → Crea plugin → URL della
-skill in Claude Desktop UI nativa). `skill-installer` applica i 5
-controlli (allowlist, structural trust, license, heuristic, freshness)
-sul contenuto **già presente in contesto**.
+**Doctrine: skill-installer è autonomous post-trigger esplicito
+(3.3.1).** Quando l'avvocato sceglie esplicitamente una skill dal
+catalogo (clicca `[Installa]` o dice *"installa la skill X"*),
+quel trigger esplicito autorizza implicitamente `skill-installer` a
+fare `WebFetch` autonomous del `SKILL.md` candidato per applicare i
+5 controlli di sicurezza (allowlist, structural trust, license,
+heuristic, freshness). L'installer scrive poi i file in
+`~/.claude/plugins/config/iuris-it/installed_skills/<nome>/`
+dopo approvazione esplicita per-tier dell'avvocato — niente passi UI
+manuali. Distinguere dal `catalogo`, che resta pointer-pure per il
+bollettino: il bollettino è polling ricorrente bloccato dall'egress
+allowlist senza richiesta esplicita; il `SKILL.md` candidato è fetch
+puntuale post-scelta dell'avvocato, funziona out-of-box.
 
-L'avvocato vede solo una riga per-tier che riassume cosa stiamo
-auditando e conferma esplicitamente.
+L'avvocato vede solo una riga per-tier che riassume l'esito dei
+controlli e conferma con un singolo `sì`.
 
 **Install e adattamento italiano sono due richieste separate.**
 L'installazione effettiva e l'audit applicano i controlli di
@@ -358,24 +383,26 @@ in italiano.
 Passa al `skill-installer` la voce del bollettino selezionata
 dall'avvocato (`bollettino_entry` completo, inclusi `repo_url`,
 `skill_path`, `tier`, `reputation.license`, `founder_disclaimer`).
-L'installer punta all'avvocato l'URL del `SKILL.md` candidato e gli
-suggerisce il fraseggio per farlo aprire a Claude
-(*"apri [URL_skill] e passamelo per audit"*). Una volta che il
-contenuto è in contesto, applica i 5 controlli silenziosamente e
-mostra all'avvocato una sola riga per-tier:
+L'installer fa autonomous `WebFetch` del `SKILL.md` candidato (è
+autorizzato dal trigger esplicito dell'avvocato che ha scelto la
+skill), applica i 5 controlli silenziosamente e mostra all'avvocato
+una sola riga per-tier con prompt di conferma `sì/no`:
 
-- **Tier 1** (Anthropic-official): *"Audit di [nome] — plugin
-  ufficiale Anthropic, licenza Apache-2.0. ..."*
-- **Tier 2** (publisher terzo, passa threshold): *"Audit di
+- **Tier 1** (Anthropic-official): *"Installando [nome] — plugin
+  ufficiale Anthropic, licenza Apache-2.0. ... Procedo?"*
+- **Tier 2** (publisher terzo, passa threshold): *"Installando
   [publisher]/[nome] — publisher terzo, passa i check tecnici
-  automatici. ..."*
+  automatici. ... Procedo?"*
 - **Tier 2 WARN** (anomalia non bloccante): Tier 2 + *"Anomalia
-  rilevata: [...]. Non bloccante. Procedi?"*
+  rilevata: [...]. Non bloccante. Procedo?"*
 - **REFUSE** (license assente / hook sospetto / injection): *"Skill
-  [nome] rifiutata: [motivo]. Audit fallito, ti sconsiglio di
-  installarla."*
+  [nome] rifiutata: [motivo]. Installazione bloccata per
+  sicurezza."* — terminale, nessun override.
 
-Vedi `skills/skill-installer/SKILL.md` per il dettaglio.
+Su `sì` esplicito, l'installer scrive i file della skill in
+`~/.claude/plugins/config/iuris-it/installed_skills/<nome>/` e
+appende l'entry all'`install-log.yaml`. Vedi
+`skills/skill-installer/SKILL.md` per il dettaglio.
 
 ### 3.2 — Due richieste separate: install poi (eventualmente) adattamento
 
@@ -383,35 +410,32 @@ Vedi `skills/skill-installer/SKILL.md` per il dettaglio.
 l'adattamento italiano come secondo passo cosciente. L'installer non
 lo fa automaticamente.**
 
-Dopo che lo `skill-installer` conferma l'audit, mostra a sua volta
-un nudge:
+Dopo che lo `skill-installer` conferma l'installazione, mostra a sua
+volta un nudge (passive se `jurisdiction ∈ {IT, EU}`, active se
+`[?]` / `other` / `none`):
 
-> *"Skill `[nome]` auditata con esito positivo. Puoi installarla in
-> Claude Desktop: Customize → Plugin → Crea plugin → incolla l'URL
-> della skill → Add. Una volta installata, se vuoi adattarla al
-> diritto italiano e verificare le citazioni normative, scrivi:
-> 'adatta `[nome]` in italiano' o usa `/adattamento-italiano
-> [nome]`."*
+> *"Skill `[nome]` installata. Se vuoi adattarla al diritto italiano
+> e verificare le citazioni normative, scrivi: 'adatta `[nome]` in
+> italiano' o usa `/adattamento-italiano [nome]`."*
 
 Se l'avvocato non chiede l'adattamento, la skill resta in versione
 originale (inglese) — può essere usata così, ma iuris-it non proporrà
 `verifica-fonti` automaticamente sui suoi output. L'avvocato può
 chiedere l'adattamento in qualsiasi momento successivo.
 
-### 3.3 — Cosa fai tu (catalogo) dopo l'audit/installazione
+### 3.3 — Cosa fai tu (catalogo) dopo l'installazione
 
-Lo `skill-installer` ti restituisce l'esito (`audit_passed` /
+Lo `skill-installer` ti restituisce l'esito (`installed` /
 `cancelled` / `refused_by_security_gate`). Aggiorna
 `.iuris-it-state.json` di conseguenza (`installed_skills` solo se
-esito `audit_passed` E l'avvocato ha confermato di aver completato
-l'installazione manuale in Claude Desktop). Comunica all'avvocato:
+esito `installed`). Comunica all'avvocato:
 
-- **Audit passato**: ripeti il nudge sull'installazione manuale e
-  sull'adattamento italiano (vedi 3.2) + invito a rileggere il
-  `SKILL.md` della skill installata e provarla su una pratica a basso
-  rischio prima dell'uso professionale.
-- **Cancellata dall'avvocato**: *"Audit annullato. La skill `<nome>`
-  resta non installata."*
+- **Installata**: ripeti il nudge sull'adattamento italiano (vedi
+  3.2) + invito a rileggere il `SKILL.md` della skill installata e
+  provarla su una pratica a basso rischio prima dell'uso
+  professionale.
+- **Cancellata dall'avvocato**: *"Installazione annullata. La skill
+  `<nome>` resta non installata."*
 - **Rifiutata dal gate sicurezza**: ripeti il motivo dato dallo
   `skill-installer` (es. license assente, pattern injection bloccante).
   Non bypassare.
@@ -435,10 +459,11 @@ Sequenza:
 
 1. **Ri-audit della nuova versione** via `skill-installer`. L'installer
    rifà allowlist, license check, structural trust, heuristic scan,
-   freshness — sul contenuto SKILL.md nuovo letto via WebFetch
-   user-initiated — e mostra all'avvocato la riga per-tier per nuova
-   conferma. Su `sì`, l'avvocato re-installa la skill via Claude
-   Desktop UI sovrascrivendo la versione precedente.
+   freshness — sul SKILL.md nuovo, fetched autonomous dall'installer
+   stesso (post-trigger esplicito di update) — e mostra all'avvocato
+   la riga per-tier per nuova conferma. Su `sì`, l'installer
+   sovrascrive la skill in `installed_skills/<nome>/` con la nuova
+   versione.
 2. **Se la skill era stata adattata in italiano** (controlla
    `install-log.yaml` → `italian_adaptation_applied: true` per quel
    `skill_name`), proponi all'avvocato:
@@ -602,12 +627,19 @@ sopra per la logica di selezione. Gestito da questa skill:
 
 ## Errori da NON commettere
 
-1. **Fare `WebFetch` autonomous in background.** Doctrine pointer
-   (3.3.0): il gate di rete è la richiesta esplicita dell'avvocato a
-   Claude di aprire un URL. Tu skill non apri mai URL da sola — punti
+1. **Fare `WebFetch` autonomous del bollettino in background.**
+   Doctrine pointer (3.3.0): per il bollettino, il gate di rete è la
+   richiesta esplicita dell'avvocato a Claude di aprire l'URL. Tu
+   `catalogo` non apri mai l'URL del bollettino da sola — punti
    all'avvocato l'URL e il fraseggio, e aspetti che lui chieda. Test
-   empirico founder 2026-05-19: skill agent autonomous fetch è
-   soggetto a egress allowlist; user-initiated WebFetch la bypassa.
+   empirico founder 2026-05-19: skill agent autonomous fetch
+   ricorrente in background (polling del bollettino) è soggetto a
+   egress allowlist; user-initiated WebFetch la bypassa. Questa
+   regola **non** si estende allo `skill-installer` (3.3.1 revert):
+   l'installer fa autonomous fetch puntuale del `SKILL.md` candidato
+   *dopo* trigger esplicito dell'avvocato — quello è un caso
+   diverso (puntuale, user-initiated implicito sufficiente,
+   funziona out-of-box).
 
 2. **Aprire l'URL del bollettino prima che l'avvocato lo chieda
    esplicitamente.** "Mostrami il catalogo" attiva la skill ma NON
@@ -628,12 +660,15 @@ sopra per la logica di selezione. Gestito da questa skill:
    strutturato. Bypassarlo = perdere il layer di sicurezza
    industrial-grade.
 
-5. **Auditare il contenuto di una skill terza prima di averlo letto
-   via WebFetch user-initiated.** Non inventare o inferire il
-   contenuto del SKILL.md di una skill terza. Punta all'avvocato
-   l'URL del SKILL.md candidato e chiedi che lo faccia aprire a
-   Claude — solo allora hai il contenuto reale su cui applicare i 5
-   controlli.
+5. **Auditare/installare una skill terza senza trigger esplicito
+   dell'avvocato.** Lo `skill-installer` fa autonomous fetch del
+   `SKILL.md` candidato *solo* dopo che l'avvocato ha scelto
+   esplicitamente quella skill (clicca `[Installa]` o dice
+   *"installa la skill X"*). Senza trigger esplicito, non
+   instradare al `skill-installer` e non inventare il contenuto
+   della skill terza. Il trigger esplicito è l'autorizzazione
+   user-initiated implicita che legittima l'autonomous fetch
+   puntuale.
 
 6. **Invocare `adattamento-italiano` automaticamente dopo
    l'installazione.** REV2 (2026-05-18) ha disaccoppiato install e
