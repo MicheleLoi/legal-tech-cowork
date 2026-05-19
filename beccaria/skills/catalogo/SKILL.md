@@ -2,24 +2,23 @@
 name: catalogo
 description: >
   Catalogo curato delle skill legal-tech per l'avvocato italiano (componente
-  della modalità AVANZATA opt-in del plugin iuris-it, non default). Scarica
-  il bollettino mensile da GitHub presentando all'avvocato l'URL e il
-  fraseggio per chiedere a Claude di aprirlo; processa il contenuto JSON
-  una volta che Claude lo ha letto via WebFetch user-initiated; presenta
-  novità e avvisi importanti; orchestra installazione e adattamento di
-  skill terze sempre tramite richieste esplicite dell'avvocato. NON si
-  attiva automaticamente: si attiva SOLO su invocazione esplicita
-  dell'avvocato ("mostrami il catalogo", "apri il bollettino delle skill
-  italiane", "che skill posso installare?", "ci sono novità nel
-  bollettino?", "/catalogo", o equivalenti).
+  della modalità AVANZATA opt-in del plugin BeccarIA, non default). Fetcha
+  autonomous il bollettino mensile dal VPS RegIA (bulletins.micheleloi.pro/bulletin_skills.json)
+  appena l'avvocato attiva esplicitamente la skill; processa il contenuto JSON;
+  presenta novità e avvisi importanti; orchestra installazione e adattamento di
+  skill terze tramite richieste esplicite dell'avvocato. NON si attiva
+  automaticamente: si attiva SOLO su invocazione esplicita dell'avvocato
+  ("mostrami il catalogo", "apri il bollettino delle skill italiane",
+  "che skill posso installare?", "ci sono novità nel bollettino?",
+  "/catalogo", o equivalenti).
 ---
 
-# iuris-it — Catalogo skill legal-tech (meta-skill)
+# BeccarIA — Catalogo skill legal-tech (meta-skill)
 
 ## Posizionamento: gateway modalità avanzata opt-in
 
 Questa skill è il **punto d'ingresso del workflow avanzato opt-in** del
-plugin iuris-it. Il plugin opera a due livelli:
+plugin beccaria. Il plugin opera a due livelli:
 
 - **Default**: l'avvocato usa solo `verifica-fonti`. Niente catalogo,
   niente bollettino, niente installer, niente adattamento.
@@ -36,51 +35,60 @@ una skill" / "skill legal-tech italiane" o equivalenti.
 
 Riferimento decisione: MHC-Work `_org/decision_log.md` 2026-05-18
 (strada B + raffinamento founder advanced-via-bollettino) + doctrine
-pointer 2026-05-19 (refactor 3.3.0: `catalogo` da fetcher a pointer
-per il bollettino) + revert puntuale 3.3.1 dello `skill-installer`
-ad autonomous post-trigger esplicito (catalogo resta pointer).
+pointer 2026-05-19 (refactor 3.3.0: `catalogo` da fetcher a pointer)
++ revert 3.3.1 di `skill-installer` ad autonomous post-trigger +
+**doctrine 4.0.0 autonomous fetch (2026-05-19 PM very late)** —
+scoperta empirica: `bulletins.micheleloi.pro` è accettato dal
+validator UI Claude Desktop come custom domain via Impostazioni →
+allowlist egress. Il bollettino skill terze migra su VPS RegIA;
+`catalogo` upgrada da pointer-pure a autonomous fetch.
 
 ---
 
-## Doctrine pointer (3.3.0+) — cosa è cambiato e cosa NON è cambiato
+## Doctrine evolution 3.x → 4.0.0 — autonomous fetch su VPS RegIA
 
-**Cambiato (3.3.0) — `catalogo` è pointer-pure per il bollettino.**
-Versione 3.2.0 e precedenti: questa skill tentava `WebFetch` autonomous
-in background per scaricare il bollettino al primo trigger. Quel
-modello funzionava solo se l'avvocato configurava l'egress allowlist di
-Claude Desktop — passo tecnico che la maggior parte degli avvocati
-non-tech non sapeva fare, e che era ulteriormente bloccato da un bug
-del validatore Anthropic UI (dropdown "Solo gestori di pacchetti"
-rifiutava domini aggiuntivi). Dalla 3.3.0 in poi `catalogo` **non fa
-più `WebFetch` autonomous** sul bollettino: punta all'avvocato l'URL e
-il fraseggio per chiedere a Claude di aprirlo via `WebFetch`
-user-initiated. Il contenuto JSON entra in contesto e la skill lo
-processa.
+**3.3.0 → 4.0.0: `catalogo` upgrade da pointer-pure a autonomous fetch.**
+Versione 3.3.0/3.3.1 — questa skill non faceva `WebFetch` autonomous
+del bollettino: puntava all'avvocato l'URL su GitHub raw e il
+fraseggio per chiedere a Claude di aprirlo via `WebFetch`
+user-initiated. Motivo: il polling ricorrente di GitHub raw in
+background era bloccato dall'egress allowlist di Claude Desktop, e
+configurarla era ulteriormente bloccato da un bug del validatore UI
+("Solo gestori di pacchetti" rifiutava domini come `raw.githubusercontent.com`).
+**Scoperta empirica 2026-05-19 sera:** dominio founder pulito
+(`bulletins.micheleloi.pro`) è accettato dal validator UI Claude
+Desktop senza problemi. Il blocco era specifico per GitHub raw, non
+universale per domini custom.
 
-**NON cambiato (3.3.1 revert) — `skill-installer` resta autonomous,
-ma solo dopo trigger esplicito dell'avvocato.** Il refactor 3.3.0
-aveva esteso la pointer doctrine anche allo `skill-installer`,
-costringendo l'avvocato a (a) chiedere esplicitamente a Claude di
-aprire l'URL del `SKILL.md` candidato, (b) installare poi la skill
-manualmente via Claude Desktop UI in due passi. Test empirico founder
-2026-05-19 ha mostrato che: (i) il fetch puntuale del `SKILL.md`
-candidato post-trigger esplicito *non* è bloccato dall'egress
-allowlist (è il polling ricorrente del bollettino in background che
-lo era); (ii) due step UI manuali sono un costo UX non giustificato.
-Dalla 3.3.1, quando l'avvocato sceglie esplicitamente una skill
-("installa skill X"), `skill-installer` riprende a fare `WebFetch`
-autonomous del `SKILL.md` per i 5 controlli automatici di sicurezza
-**e** a scrivere i file in
-`~/.claude/plugins/config/iuris-it/installed_skills/<nome>/`. Quel
-trigger esplicito è l'autorizzazione user-initiated implicita
-sufficiente.
+**Conseguenze ratificate:**
 
-In una frase: **`catalogo` è pointer (bollettino = polling ricorrente,
-bloccato dall'allowlist senza richiesta esplicita); `skill-installer`
-è autonomous post-trigger esplicito (fetch puntuale di un SKILL.md
-specifico autorizzato dall'avvocato che sceglie quella skill).**
-Niente configurazione di rete da parte dell'avvocato, in nessuno dei
-due casi.
+1. Il bollettino skill terze è stato migrato da `legal-tech-cowork/beccaria/bollettino.json`
+   (GitHub raw) a `https://bulletins.micheleloi.pro/bulletin_skills.json`
+   (VPS RegIA, HTTPS Let's Encrypt, headers Content-Type + Cache-Control
+   + CORS + X-Source-Code per AGPL §13).
+2. `catalogo` ora fa `WebFetch` autonomous sul VPS al primo trigger
+   esplicito dell'avvocato.
+3. Onboarding requirement: l'avvocato aggiunge `bulletins.micheleloi.pro`
+   alla allowlist egress di Claude Desktop **una volta** (single step),
+   poi tutte le skill BeccarIA che usano il VPS funzionano autonomous
+   (catalogo + ecosystem-scout + pattern-extractor).
+4. Pointer-pure resta documentato come **fallback** per casi enterprise
+   lockdown / allowlist non modificabile dall'utente.
+
+**Skill-installer resta autonomous post-trigger esplicito (invariato).**
+Quando l'avvocato sceglie esplicitamente una skill dal catalogo
+("installa skill X"), `skill-installer` fa `WebFetch` autonomous del
+`SKILL.md` candidato dal repo originale terzo (non dal VPS RegIA,
+perché ogni skill terza vive nel proprio repo GitHub) e applica i 5
+controlli automatici di sicurezza. Quel trigger esplicito è
+l'autorizzazione user-initiated implicita sufficiente. La doctrine
+3.3.1 di skill-installer regge senza modifiche.
+
+In una frase: **`catalogo` ora autonomous fetch dal VPS RegIA al primo
+trigger esplicito (con fallback pointer-pure se allowlist non
+modificabile); `skill-installer` autonomous post-trigger esplicito su
+SKILL.md di repo terzo (invariato).** Single onboarding step
+(allowlist `bulletins.micheleloi.pro`) copre tutte le skill VPS-based.
 
 ---
 
@@ -102,7 +110,7 @@ nell'ordine corretto:
    (che applica silenziosamente tutti i 5 check di sicurezza sul
    `SKILL.md` della skill terza — fetched autonomous dall'installer
    stesso post-trigger esplicito dell'avvocato — e poi scrive i file
-   in `~/.claude/plugins/config/iuris-it/installed_skills/<nome>/`).
+   in `~/.claude/plugins/config/beccaria/installed_skills/<nome>/`).
    Dopo l'installazione, ricordo all'avvocato che può chiedere
    l'adattamento italiano come **secondo passo cosciente separato**,
    invocando esplicitamente `adattamento-italiano [nome]`. Install
@@ -135,10 +143,14 @@ chiedi conferma esplicita:
 > automaticamente il 17 di ogni mese alle 22:40 ora italiana.**
 >
 > **Come funziona il refresh.** Quando vuoi vedere la versione
-> aggiornata del bollettino, mi chiedi esplicitamente di aprire un URL
-> pubblico GitHub. Lo leggo per te in chat (non in background, non
-> nascosto) e te lo presento. Nessuna configurazione di rete da
-> impostare in Claude Desktop. Funziona out-of-box.
+> aggiornata del bollettino, lo fetcho per te in chat dal VPS RegIA
+> (`bulletins.micheleloi.pro`). Lo leggo non in background nascosto:
+> il fetch avviene come azione esplicita di questa skill su tua
+> richiesta esplicita (es. "mostrami il catalogo"). La prima volta che
+> attivi la skill ti chiedo di aggiungere `bulletins.micheleloi.pro`
+> alla allowlist di Claude Desktop (Impostazioni → Network egress) —
+> single step, una volta sola, vale per tutte le skill BeccarIA che
+> usano lo stesso VPS.
 >
 > **Catena di responsabilità.** Il founder garantisce solo la
 > distribuzione e l'automazione del filtro tecnico; non garantisce la
@@ -160,18 +172,18 @@ Attendi una conferma esplicita (l'avvocato scrive "sì", "confermo",
 fallback):**
 
 1. **Primaria — stato globale di plugin:** controlla se esiste il file
-   `~/.claude/plugins/config/iuris-it/state.json` (path standard per
+   `~/.claude/plugins/config/beccaria/state.json` (path standard per
    state durevole di plugin in Claude Desktop). Se non esiste, è il
    primo uso *dell'installazione del plugin* (non del progetto).
    Crealo dopo la conferma con `{"disclaimer_accepted": true,
    "accepted_on": "YYYY-MM-DD"}`. Da questa scrittura in poi, in
-   qualunque cartella di lavoro l'avvocato apra cowork con iuris-it
+   qualunque cartella di lavoro l'avvocato apra cowork con beccaria
    installato, il disclaimer non si ripresenta.
 
 2. **Fallback — stato per cartella di lavoro:** se la scrittura in
-   `~/.claude/plugins/config/iuris-it/state.json` fallisce (permission
+   `~/.claude/plugins/config/beccaria/state.json` fallisce (permission
    denied dalla sandbox cowork, path non scrivibile, ecc.), ripiega su
-   un file `.iuris-it-state.json` nella cartella di lavoro connessa con
+   un file `.beccaria-state.json` nella cartella di lavoro connessa con
    la stessa chiave `{"disclaimer_accepted": true, ...}`. Conseguenza:
    in cartelle nuove il disclaimer ricomparirà. Meno elegante ma
    corretto.
@@ -190,79 +202,103 @@ originale e resta come safety net.
 
 ---
 
-## Passo 1 — Pointer al bollettino (NON fai fetch tu)
+## Passo 1 — Fetch autonomous del bollettino
 
-Il bollettino vive nel repo GitHub pubblico del plugin, non dentro il
-plugin stesso. È **popolato automaticamente** dalla routine
-`bollettino-research` in MHC-Work (founder fuori dal loop runtime — la
-curazione è cristallizzata in una threshold policy esplicita: license
-OSS, reputation minima, IT-relevance heuristic). L'avvocato vede la
-versione più recente chiedendo esplicitamente a Claude di aprirla.
+Il bollettino vive sul VPS RegIA, servito via HTTPS:
 
-**URL canonico:**
+**URL canonico produzione:**
 
 ```
-https://github.com/MicheleLoi/legal-tech-cowork/blob/main/iuris-it/bollettino.json
+https://bulletins.micheleloi.pro/bulletin_skills.json
 ```
 
-E per le validazioni di comunità:
+Il bollettino è **popolato automaticamente** dalla routine
+`bollettino-research` (founder fuori dal loop runtime — curazione
+cristallizzata in una threshold policy esplicita: license OSS,
+reputation minima, IT-relevance heuristic). L'updater pubblica i
+JSON sul VPS via SSH/rsync.
 
+**Cosa fai all'attivazione esplicita:**
+
+Esegui `WebFetch` autonomous su `https://bulletins.micheleloi.pro/bulletin_skills.json`.
+Parsa il JSON, processa il contenuto, procedi a Passo 2.
+
+Schema atteso (documentato in `regia-bollettino-updater` repo, source
+of truth):
+
+```json
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-05-19T22:53:00Z",
+  "source_count": 0,
+  "skills": [
+    {
+      "name": "...",
+      "source_repo": "owner/name",
+      "source_url": "https://github.com/...",
+      "tier": 1,
+      "license": "Apache-2.0",
+      "jurisdiction": "IT",
+      "italian_adaptation_status": "ready",
+      "description": "...",
+      "last_seen": "2026-05-19T...",
+      "notes": null
+    }
+  ]
+}
 ```
-https://github.com/MicheleLoi/legal-tech-cowork/blob/main/iuris-it/community_validations.json
-```
 
-**Cosa fai all'attivazione (pointer-pure):**
+(Schema definitivo coordinato con il repo updater; campi e valori esatti
+dal file pydantic `src/schema/skills.py` di `regia-bollettino-updater`.)
 
-NON tenti `WebFetch`. NON fai fetch in background. NON consulti il
-bundled. Rispondi all'avvocato con questo blocco (italiano sobrio
-forense):
+### Fallback onboarding allowlist (prima attivazione, validator block)
 
-> *"Il bollettino delle skill legal-tech italiane curate è pubblicato
-> qui:*
+Se `WebFetch` fallisce con errore di rete / validator block (succede la
+prima volta che l'avvocato attiva la skill se `bulletins.micheleloi.pro`
+non è ancora in allowlist Claude Desktop), il messaggio default di
+Claude Desktop è "L'accesso a questo sito web è bloccato... Puoi
+modificarle in Impostazioni" — **non dice cosa scrivere**. Colma il
+gap con istruzioni precise:
+
+> Non riesco a contattare il bollettino delle skill (`bulletins.micheleloi.pro`).
 >
-> *`https://github.com/MicheleLoi/legal-tech-cowork/blob/main/iuris-it/bollettino.json`*
+> **Per autorizzarmi (una volta sola, vale per sempre):**
+> 1. Clicca su "Impostazioni" nel messaggio sopra (oppure menu → Settings → Network egress).
+> 2. Aggiungi alla allowlist esattamente: **`bulletins.micheleloi.pro`** (solo hostname, senza protocollo).
+> 3. Conferma.
+> 4. Rifammi la richiesta — funzionerò autonomamente d'ora in avanti.
 >
-> *Per vederlo aggiornato, scrivimi:*
-> *«apri questo URL e mostrami le skill disponibili».*
+> Una volta che il dominio è in allowlist, anche le altre skill di
+> BeccarIA che usano lo stesso VPS (`ecosystem-scout`, `pattern-extractor`)
+> funzionano autonomously — single onboarding step copre tutto.
 >
-> *Lo apro nel browser e ti presento le novità di questo mese, con
-> eventuali alert su licenze o publisher."*
+> **Alternativa senza modificare allowlist:** posso punterti l'URL e
+> chiedimi esplicitamente *"apri https://bulletins.micheleloi.pro/bulletin_skills.json"*
+> — questo bypassa il validator via user-initiated WebFetch (pattern
+> pointer-pure, fallback documentato dalla doctrine 3.3.0). A quel punto
+> il contenuto entra in contesto e posso processarlo come al Passo 2.
 
-Quando l'avvocato risponde con la richiesta esplicita (es. *"apri questo
-URL e mostrami le skill disponibili"*, oppure semplicemente *"apri
-https://github.com/..."*), Claude — non più questa skill agent
-autonoma — usa `WebFetch` come tool standard su quell'URL. Il contenuto
-JSON entra nel contesto della conversazione. A quel punto tu (skill
-`catalogo`, ancora attiva) processi il contenuto e procedi a Passo 2.
+**Empirical note (2026-05-19):** `bulletins.micheleloi.pro` è
+accettato dal validator UI Claude Desktop come custom domain. La
+doctrine pointer-pure 3.3.0 (che assumeva blocco universale) era
+basata su osservazione vera solo per GitHub raw, falsa per dominio
+founder pulito.
 
-**Rationale (per l'agent che legge):**
+### Cosa fare se l'avvocato rifiuta di modificare la allowlist
 
-Il gate è la **richiesta esplicita dell'avvocato a Claude**, non una
-skill agent che fa fetch nascosto. Test empirico founder 2026-05-19:
-`WebFetch` invocato esplicitamente dall'utente (*"apri https://..."*)
-bypassa la sandbox proxy / egress allowlist. Le skill agent che fanno
-`WebFetch` autonomous in background, viceversa, sono soggette
-all'allowlist — e configurarla è bloccato da un bug del validatore
-Anthropic UI. La doctrine pointer (3.3.0) elimina del tutto la
-dipendenza dall'allowlist: niente configurazione utente richiesta,
-niente fallback bundled, nessuna distinzione tra "modalità live" e
-"modalità offline". C'è una sola modalità — pointer.
+Rispetta la scelta. Procedi col fallback pointer-pure (punta URL,
+attendi user-initiated open). Non insistere.
 
-**Cosa fare se l'avvocato non chiede di aprire l'URL.** Non aprirlo per
-lui. Non fare WebFetch a sua insaputa. Se l'avvocato dice cose come
-"ok grazie" senza chiedere il fetch, lascia il bollettino non letto e
-chiudi cortesemente la conversazione di catalogo. È sua scelta
-deliberata se proseguire o no.
+### Cosa fare se `skills` (una volta letto il bollettino) è vuoto
 
-**Cosa fare se `entries` (una volta letto il bollettino) è vuoto.** Lo
-stato iniziale del bollettino è vuoto perché il catalogo cresce per
-accumulo automatico. Comunicalo onestamente:
+Lo stato iniziale del bollettino è vuoto perché il catalogo cresce
+per accumulo automatico. Comunicalo onestamente:
 
 > *"Il catalogo è ancora in costruzione. La routine automatica
 > `bollettino-research` monitora mensilmente l'ecosistema legal-tech
-> open source e pubblica le skill che superano la threshold policy.
-> Quando saranno disponibili, le vedrai qui. Nel frattempo, posso
-> aiutarti su lavori legali generali — chiedimi pure."*
+> open source e pubblica sul VPS le skill che superano la threshold
+> policy. Quando saranno disponibili, le vedrai qui. Nel frattempo,
+> posso aiutarti su lavori legali generali — chiedimi pure."*
 
 ---
 
@@ -277,7 +313,7 @@ processa il JSON e presenta in due pannelli.
 Mostrato quando l'avvocato dice "mostrami il catalogo", "ci sono
 novità", "cosa c'è di nuovo", o all'inizio di una conversazione se è la
 prima dopo un aggiornamento del bollettino (confronta `last_updated`
-del bollettino con `last_seen` in `.iuris-it-state.json`).
+del bollettino con `last_seen` in `.beccaria-state.json`).
 
 Per **ogni voce in `entries`**, presenta in questo formato (italiano
 sobrio forense, non consumer-marketing):
@@ -321,7 +357,7 @@ Avviso del curatore: [founder_disclaimer in 1 riga]
 
 Mostrato **sempre per primo** se ci sono voci in `entries` marcate
 `critical_alert: true` E **già installate** dall'avvocato (controlla
-`.iuris-it-state.json` → `installed_skills`).
+`.beccaria-state.json` → `installed_skills`).
 
 Formato:
 
@@ -352,18 +388,19 @@ trust check, license verification, freshness gate, install log
 strutturato, tutto silenziosamente.
 
 **Doctrine: skill-installer è autonomous post-trigger esplicito
-(3.3.1).** Quando l'avvocato sceglie esplicitamente una skill dal
-catalogo (clicca `[Installa]` o dice *"installa la skill X"*),
+(3.3.1, invariato in 4.0.0).** Quando l'avvocato sceglie esplicitamente
+una skill dal catalogo (clicca `[Installa]` o dice *"installa la skill X"*),
 quel trigger esplicito autorizza implicitamente `skill-installer` a
-fare `WebFetch` autonomous del `SKILL.md` candidato per applicare i
-5 controlli di sicurezza (allowlist, structural trust, license,
-heuristic, freshness). L'installer scrive poi i file in
-`~/.claude/plugins/config/iuris-it/installed_skills/<nome>/`
-dopo approvazione esplicita per-tier dell'avvocato — niente passi UI
-manuali. Distinguere dal `catalogo`, che resta pointer-pure per il
-bollettino: il bollettino è polling ricorrente bloccato dall'egress
-allowlist senza richiesta esplicita; il `SKILL.md` candidato è fetch
-puntuale post-scelta dell'avvocato, funziona out-of-box.
+fare `WebFetch` autonomous del `SKILL.md` candidato dal repo originale
+terzo (NON dal VPS RegIA — ogni skill terza vive nel proprio repo
+GitHub) per applicare i 5 controlli di sicurezza (allowlist, structural
+trust, license, heuristic, freshness). L'installer scrive poi i file in
+`~/.claude/plugins/config/beccaria/installed_skills/<nome>/` dopo
+approvazione esplicita per-tier dell'avvocato — niente passi UI manuali.
+
+In 4.0.0 anche `catalogo` upgrada a autonomous fetch (dal VPS RegIA
+sul dominio whitelistato `bulletins.micheleloi.pro`); single onboarding
+step (allowlist add) abilita tutto il workflow VPS-based.
 
 L'avvocato vede solo una riga per-tier che riassume l'esito dei
 controlli e conferma con un singolo `sì`.
@@ -400,7 +437,7 @@ una sola riga per-tier con prompt di conferma `sì/no`:
   sicurezza."* — terminale, nessun override.
 
 Su `sì` esplicito, l'installer scrive i file della skill in
-`~/.claude/plugins/config/iuris-it/installed_skills/<nome>/` e
+`~/.claude/plugins/config/beccaria/installed_skills/<nome>/` e
 appende l'entry all'`install-log.yaml`. Vedi
 `skills/skill-installer/SKILL.md` per il dettaglio.
 
@@ -419,7 +456,7 @@ volta un nudge (passive se `jurisdiction ∈ {IT, EU}`, active se
 > italiano' o usa `/adattamento-italiano [nome]`."*
 
 Se l'avvocato non chiede l'adattamento, la skill resta in versione
-originale (inglese) — può essere usata così, ma iuris-it non proporrà
+originale (inglese) — può essere usata così, ma beccaria non proporrà
 `verifica-fonti` automaticamente sui suoi output. L'avvocato può
 chiedere l'adattamento in qualsiasi momento successivo.
 
@@ -427,7 +464,7 @@ chiedere l'adattamento in qualsiasi momento successivo.
 
 Lo `skill-installer` ti restituisce l'esito (`installed` /
 `cancelled` / `refused_by_security_gate`). Aggiorna
-`.iuris-it-state.json` di conseguenza (`installed_skills` solo se
+`.beccaria-state.json` di conseguenza (`installed_skills` solo se
 esito `installed`). Comunica all'avvocato:
 
 - **Installata**: ripeti il nudge sull'adattamento italiano (vedi
@@ -502,7 +539,7 @@ all'avvocato di passare l'output a `verifica-fonti`:
 > coerenza? (sì / no / mostra prima cosa controlla)"*
 
 Se l'avvocato dice sì, invoca `verifica-fonti` passando l'intero output
-come input. Se dice no, registra il "no" in `.iuris-it-state.json` →
+come input. Se dice no, registra il "no" in `.beccaria-state.json` →
 `last_verifica_skipped: true` per non riproporlo subito alla prossima
 risposta della stessa skill (rispetta il "no" per 3 turni).
 
@@ -583,9 +620,9 @@ Per skill con `jurisdiction: none` o `other`, il campo è sempre `pending`
 
 Due possibili sedi, in ordine di preferenza:
 
-1. **Primaria (globale al plugin):** `~/.claude/plugins/config/iuris-it/state.json`.
+1. **Primaria (globale al plugin):** `~/.claude/plugins/config/beccaria/state.json`.
    Una sola volta per installazione; si applica a tutti i progetti.
-2. **Fallback (per cartella di lavoro):** `.iuris-it-state.json` nella
+2. **Fallback (per cartella di lavoro):** `.beccaria-state.json` nella
    cartella connessa. Si applica solo a quel progetto.
 
 Schema identico in entrambi i casi. Vedi sezione "Disclaimer globale"

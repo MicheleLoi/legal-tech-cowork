@@ -1,5 +1,6 @@
 {
   "_schema": "https://github.com/MicheleLoi/legal-tech-cowork/blob/main/BOLLETTINO_FORMAT.md",
+  "_deprecation_note_v4": "SUPERSEDED IN BECCARIA v4.0.0 (2026-05-19) — questo file resta come backward-compat per utenti su iuris-it 3.3.1. In BeccarIA v4.0.0+ il bollettino skill terze è servito dal VPS RegIA all'URL https://bulletins.micheleloi.pro/bulletin_skills.json, con doctrine `catalogo` autonomous fetch (era pointer-pure in 3.3.0/3.3.1). Vedi _org/decision_log.md di MHC-Work 2026-05-19 PM very late §'Phase II: unificazione bollettini su VPS'.",
   "_note_it": "Stato iniziale: vuoto. Il bollettino cresce automaticamente tramite la routine 'bollettino-research' eseguita in MHC-Work che applica una threshold policy esplicita (license OSS, reputation minima, IT-relevance heuristic) e auto-committa + auto-pusha. Founder fuori dal runtime loop. Non aggiungere voci a mano qui salvo eccezioni documentate.",
   "_note_en": "Initial state: empty. The bollettino grows automatically via the 'bollettino-research' routine running in MHC-Work which applies an explicit threshold policy (OSS license, minimum reputation, IT-relevance heuristic) and auto-commits + auto-pushes. Founder out of runtime loop. Do not add entries manually here unless documented exception.",
   "_field_notes": {
