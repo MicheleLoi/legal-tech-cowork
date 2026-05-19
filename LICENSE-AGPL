@@ -1,0 +1,39 @@
+GNU Affero General Public License v3.0 only — for original BeccarIA parts of this repository
+
+Copyright (C) 2026 Michele Loi
+
+This program is free software: you can redistribute it and/or modify it
+under the terms of the GNU Affero General Public License version 3.0 as
+published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License
+for more details.
+
+The full text of the GNU Affero General Public License version 3.0 is
+available at:
+
+    https://www.gnu.org/licenses/agpl-3.0.txt
+
+This file is a pointer to the canonical license text. The full text MUST be
+substituted here (or distributed alongside) before any public release of the
+plugin or its derivatives, per AGPL-3.0 §5 (Conveying Modified Source
+Versions) and the standard requirement to ship the license text with the
+licensed work.
+
+Files covered by AGPL-3.0 in this repository (BeccarIA original code):
+
+- beccaria/skills/ecosystem-scout/
+- beccaria/skills/pattern-extractor/
+
+Files covered by other licenses:
+
+- beccaria/skills/verifica-fonti/, beccaria/skills/adattamento-italiano/,
+  beccaria/skills/catalogo/adaptation_prompt.md, bollettino.json,
+  BOLLETTINO_FORMAT.md, README.md, DISTRIBUZIONE.md → MIT (see LICENSE)
+- beccaria/skills/catalogo/SKILL.md, beccaria/skills/skill-installer/ and
+  any other file inherited from anthropics/claude-for-legal → Apache-2.0
+  (see LICENSE-ANTHROPIC + NOTICE)
+
+SPDX-License-Identifier: AGPL-3.0-only
