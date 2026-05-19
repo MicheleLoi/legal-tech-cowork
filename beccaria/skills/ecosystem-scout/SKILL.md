@@ -84,11 +84,15 @@ Esegui `WebFetch` su:
 ${ECOSYSTEM_BULLETIN_URL}
 ```
 
-Default placeholder: `https://api.regia.it/bulletins/bulletin_ecosystem.json`
+Default produzione: `https://bulletins.micheleloi.pro/bulletin_ecosystem.json`
 
-L'URL definitivo va sostituito quando il VPS è live. Se Michele ha
-cambiato il sottodominio, sostituisci qui o leggi dall'env var
-`ECOSYSTEM_BULLETIN_URL` quando disponibile.
+Endpoint LIVE su VPS RegIA (configurato 2026-05-19): HTTPS via Let's Encrypt
+auto-renewal, headers `Content-Type: application/json`, `Cache-Control:
+max-age=3600, public`, `Access-Control-Allow-Origin: *`, `X-Source-Code:
+https://github.com/MicheleLoi/regia-bollettino-updater` (AGPL §13).
+
+Se Michele cambia sottodominio in futuro, leggi dall'env var
+`ECOSYSTEM_BULLETIN_URL` quando disponibile, altrimenti sostituisci qui.
 
 ### 2. Parsing del JSON
 
@@ -148,13 +152,15 @@ strumento.** Se AGPL, aggiungi nota inline:
 Comportamento:
 
 > Non riesco a contattare il servizio di monitoring dell'ecosistema
-> (`${ECOSYSTEM_BULLETIN_URL}`). Posso comunque rispondere sulla base della
-> mia conoscenza generale dell'ecosistema legal-AI open source, ma i dati
-> potrebbero non essere aggiornati.
+> (`https://bulletins.micheleloi.pro/bulletin_ecosystem.json`). Posso
+> comunque rispondere sulla base della mia conoscenza generale
+> dell'ecosistema legal-AI open source, ma i dati potrebbero non essere
+> aggiornati.
 >
 > Se vuoi i dati aggiornati ora, puoi chiedermi esplicitamente di aprire
-> il bollettino: *"apri ${ECOSYSTEM_BULLETIN_URL}"* — questo bypassa il
-> blocco del validator e mi permette di fetcharlo come azione utente.
+> il bollettino: *"apri https://bulletins.micheleloi.pro/bulletin_ecosystem.json"*
+> — questo bypassa il blocco del validator e mi permette di fetcharlo
+> come azione utente (user-initiated WebFetch, pattern pointer-pure).
 
 Pattern di fallback documentato: pointer-pure (lo stesso pattern di
 `catalogo` doctrine 3.3.0).

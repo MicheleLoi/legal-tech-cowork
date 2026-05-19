@@ -104,9 +104,16 @@ Esegui `WebFetch` su:
 ${PATTERNS_BULLETIN_URL}
 ```
 
-Default placeholder: `https://api.regia.it/bulletins/bulletin_patterns.json`
+Default produzione: `https://bulletins.micheleloi.pro/bulletin_patterns.json`
 
-L'URL è coordinato con `ecosystem-scout` ma riferisce un endpoint distinto.
+Endpoint LIVE su VPS RegIA (configurato 2026-05-19): HTTPS via Let's
+Encrypt, headers `Content-Type: application/json`, `Cache-Control:
+max-age=3600, public`, `Access-Control-Allow-Origin: *`, `X-Source-Code:
+https://github.com/MicheleLoi/regia-bollettino-updater` (AGPL §13).
+
+L'URL è coordinato con `ecosystem-scout` (stesso sottodominio, endpoint
+distinto). Se Michele cambia sottodominio in futuro, leggi dall'env
+var `PATTERNS_BULLETIN_URL` quando disponibile.
 
 ### 2. Parsing del JSON
 
@@ -220,13 +227,14 @@ Poi applica un approccio basato sulla conoscenza generale di Claude.
 
 ### Opzione 3 — Backend irraggiungibile
 
-Se `WebFetch` su `${PATTERNS_BULLETIN_URL}` fallisce (validator block,
-network, JSON corrotto):
+Se `WebFetch` su `https://bulletins.micheleloi.pro/bulletin_patterns.json`
+fallisce (validator block, network, JSON corrotto):
 
-> Non riesco a contattare il bollettino pattern (`${PATTERNS_BULLETIN_URL}`).
-> Posso procedere con un approccio generale o, se vuoi i dati live, puoi
+> Non riesco a contattare il bollettino pattern
+> (`https://bulletins.micheleloi.pro/bulletin_patterns.json`). Posso
+> procedere con un approccio generale o, se vuoi i dati live, puoi
 > chiedermi esplicitamente di aprire il bollettino con *"apri
-> ${PATTERNS_BULLETIN_URL}"*.
+> https://bulletins.micheleloi.pro/bulletin_patterns.json"*.
 
 Pattern di fallback: pointer-pure (lo stesso di `catalogo` doctrine 3.3.0).
 
