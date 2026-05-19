@@ -1,4 +1,3 @@
-# SPDX-License-Identifier: AGPL-3.0-only
 ---
 name: pattern-extractor
 description: >
@@ -8,6 +7,8 @@ description: >
   bollettino curato dal VPS di BeccarIA. Mai attribuire pattern non
   effettivamente recuperati dal backend.
 ---
+
+<!-- SPDX-License-Identifier: AGPL-3.0-only -->
 
 # pattern-extractor — applicazione di pattern dall'ecosistema con attribution AGPL
 

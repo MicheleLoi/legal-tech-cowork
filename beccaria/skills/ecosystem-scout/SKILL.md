@@ -1,4 +1,3 @@
-# SPDX-License-Identifier: AGPL-3.0-only
 ---
 name: ecosystem-scout
 description: >
@@ -8,6 +7,8 @@ description: >
   Consulta un bollettino aggiornato dal VPS di BeccarIA e segnala
   implicazioni AGPL per studio legale.
 ---
+
+<!-- SPDX-License-Identifier: AGPL-3.0-only -->
 
 # ecosystem-scout — panoramica intelligente dell'ecosistema legal-AI open source
 
