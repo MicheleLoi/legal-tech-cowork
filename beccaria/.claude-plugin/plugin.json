@@ -1,12 +1,12 @@
 {
-  "name": "iuris-it",
-  "version": "3.3.1",
-  "description": "Skill italiana di verifica fonti normative e giurisprudenziali (Cassazione, Corte Cost., Consiglio di Stato, TAR, EUR-Lex, Agenzia Entrate, CNF, Garante, AGCM, ANAC, Banca d'Italia). Plus modalità avanzata opzionale: il bollettino curato di skill legal-tech italiane si attiva su invocazione esplicita. Catalogo è pointer (l'avvocato chiede a Claude di aprire l'URL del bollettino, niente fetch ricorrente in background); skill-installer è autonomous post-trigger esplicito dell'avvocato (autorizzazione user-initiated implicita per fetch puntuale del SKILL.md candidato e install dei file). Niente configurazione di rete richiesta. Default: usi solo verifica-fonti. Avanzato: chiami il bollettino e accedi all'ecosistema esteso.",
-  "keywords": ["legal", "italian-law", "source-verification", "italy", "verifica-fonti", "advanced-mode", "italian-skills-ecosystem"],
+  "name": "beccaria",
+  "version": "4.0.0",
+  "description": "BeccarIA — Skill Claude per l'avvocato italiano nell'ecosistema legal-AI open source. AGPL-3.0. Verifica fonti normative e giurisprudenziali italiane ed europee (default); modalità avanzata opzionale: catalogo skill legal-tech (pointer-pure), installer autonomous post-trigger, adattamento italiano, ecosystem-scout (panoramica MikeOSS + fork), pattern-extractor (pattern AGPL con attribution obbligatoria). Prodotto autonomo sotto RegIA. Niente configurazione di rete richiesta.",
+  "keywords": ["legal", "italian-law", "source-verification", "italy", "beccaria", "regia", "legal-ai-ecosystem", "agpl", "verifica-fonti", "ecosystem-scout", "pattern-extractor"],
   "author": {
     "name": "Michele Loi"
   },
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "homepage": "https://github.com/MicheleLoi/legal-tech-cowork",
   "repository": "https://github.com/MicheleLoi/legal-tech-cowork"
 }
