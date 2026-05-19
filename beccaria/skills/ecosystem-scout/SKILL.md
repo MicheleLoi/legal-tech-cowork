@@ -148,23 +148,40 @@ strumento.** Se AGPL, aggiungi nota inline:
 
 ## Gestione errori
 
-### WebFetch fallisce o validator blocca
+### WebFetch fallisce o validator blocca — guida onboarding allowlist
 
-Comportamento:
+Quando l'utente attiva la skill la prima volta e il dominio
+`bulletins.micheleloi.pro` non è ancora in allowlist Claude Desktop,
+Claude Desktop blocca il `WebFetch` skill-mediated. Il messaggio default
+("L'accesso a questo sito web è bloccato dalle impostazioni di uscita
+della rete. Puoi modificarle in Impostazioni") **non dice all'utente cosa
+scrivere**. La skill colma il gap con istruzioni precise.
 
-> Non riesco a contattare il servizio di monitoring dell'ecosistema
-> (`https://bulletins.micheleloi.pro/bulletin_ecosystem.json`). Posso
-> comunque rispondere sulla base della mia conoscenza generale
-> dell'ecosistema legal-AI open source, ma i dati potrebbero non essere
-> aggiornati.
+Comportamento atteso dalla skill in questo caso:
+
+> Non riesco a contattare il servizio (`bulletins.micheleloi.pro`).
 >
-> Se vuoi i dati aggiornati ora, puoi chiedermi esplicitamente di aprire
-> il bollettino: *"apri https://bulletins.micheleloi.pro/bulletin_ecosystem.json"*
-> — questo bypassa il blocco del validator e mi permette di fetcharlo
-> come azione utente (user-initiated WebFetch, pattern pointer-pure).
+> **Per autorizzarmi (una volta sola, vale per sempre):**
+> 1. Clicca su "Impostazioni" nel messaggio sopra (oppure menu → Settings → Network egress).
+> 2. Aggiungi alla allowlist esattamente: **`bulletins.micheleloi.pro`** (solo hostname, senza protocollo).
+> 3. Conferma.
+> 4. Rifammi la domanda — funzionerò autonomamente d'ora in avanti.
+>
+> Una volta che il dominio è in allowlist, anche le altre skill di
+> BeccarIA che usano lo stesso VPS (`catalogo`, `pattern-extractor`)
+> funzionano autonomamente — single onboarding step copre tutto.
+>
+> **Alternativa senza modificare allowlist:** posso procedere su
+> conoscenza generale (dati non aggiornati al bollettino real-time),
+> oppure chiedimi esplicitamente: *"apri https://bulletins.micheleloi.pro/bulletin_ecosystem.json"*
+> — questo bypassa il validator via user-initiated WebFetch (pattern
+> pointer-pure, fallback documentato).
 
-Pattern di fallback documentato: pointer-pure (lo stesso pattern di
-`catalogo` doctrine 3.3.0).
+**Empirical note (2026-05-19):** `bulletins.micheleloi.pro` è
+accettato dal validator UI Claude Desktop come custom domain. La
+doctrine pointer-pure di precedenti versioni assumeva blocco
+universale per domini custom — quella osservazione era vera per
+GitHub raw, falsa per dominio founder pulito.
 
 ### JSON malformato o schema_version inatteso
 

@@ -229,15 +229,34 @@ Poi applica un approccio basato sulla conoscenza generale di Claude.
 ### Opzione 3 — Backend irraggiungibile
 
 Se `WebFetch` su `https://bulletins.micheleloi.pro/bulletin_patterns.json`
-fallisce (validator block, network, JSON corrotto):
+fallisce (validator block, network, JSON corrotto), guida onboarding
+allowlist precisa (il messaggio default di Claude Desktop dice solo
+"modifica in Impostazioni" senza spiegare cosa scrivere):
 
-> Non riesco a contattare il bollettino pattern
-> (`https://bulletins.micheleloi.pro/bulletin_patterns.json`). Posso
-> procedere con un approccio generale o, se vuoi i dati live, puoi
-> chiedermi esplicitamente di aprire il bollettino con *"apri
-> https://bulletins.micheleloi.pro/bulletin_patterns.json"*.
+> Non riesco a contattare il bollettino pattern (`bulletins.micheleloi.pro`).
+>
+> **Per autorizzarmi (una volta sola, vale per sempre):**
+> 1. Clicca su "Impostazioni" nel messaggio sopra (oppure menu → Settings → Network egress).
+> 2. Aggiungi alla allowlist esattamente: **`bulletins.micheleloi.pro`** (solo hostname, senza protocollo).
+> 3. Conferma.
+> 4. Rifammi la richiesta — funzionerò autonomamente d'ora in avanti.
+>
+> Una volta che il dominio è in allowlist, anche le altre skill di
+> BeccarIA che usano lo stesso VPS (`catalogo`, `ecosystem-scout`)
+> funzionano autonomamente — single onboarding step copre tutto.
+>
+> **Alternativa senza modificare allowlist:** posso procedere con un
+> approccio generale di Claude (segnalandolo esplicitamente, mai con
+> attribution AGPL fasulla), oppure chiedimi esplicitamente: *"apri
+> https://bulletins.micheleloi.pro/bulletin_patterns.json"* — questo
+> bypassa il validator via user-initiated WebFetch (pattern pointer-pure,
+> fallback documentato).
 
-Pattern di fallback: pointer-pure (lo stesso di `catalogo` doctrine 3.3.0).
+**Empirical note (2026-05-19):** `bulletins.micheleloi.pro` è
+accettato dal validator UI Claude Desktop come custom domain. La
+doctrine pointer-pure di precedenti versioni assumeva blocco
+universale per domini custom — quella osservazione era vera per
+GitHub raw, falsa per dominio founder pulito.
 
 ## MAI inventare attribuzioni
 
