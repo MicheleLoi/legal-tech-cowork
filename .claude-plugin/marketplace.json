@@ -5,9 +5,9 @@
   },
   "plugins": [
     {
-      "name": "iuris-it",
-      "source": "./iuris-it",
-      "description": "Skill italiana di verifica delle fonti normative e giurisprudenziali (Cassazione, Corte Costituzionale, Consiglio di Stato, TAR, EUR-Lex, Garante Privacy, AGCM, ANAC, Banca d'Italia). Per skill legali generali usa il marketplace Anthropic — Claude parla italiano nativo.",
+      "name": "beccaria",
+      "source": "./beccaria",
+      "description": "BeccarIA — Skill Claude per l'avvocato italiano nell'ecosistema legal-AI open source. Sei skill: verifica-fonti (default, citazioni normative IT/EU), catalogo (pointer bollettino skill terze), skill-installer (autonomous post-trigger), adattamento-italiano (US→IT mapping), ecosystem-scout (panoramica MikeOSS + fork), pattern-extractor (pattern AGPL con attribution obbligatoria). Plugin sotto RegIA umbrella. Multi-license (AGPL-3.0 / MIT / Apache-2.0).",
       "author": {
         "name": "Michele Loi"
       }

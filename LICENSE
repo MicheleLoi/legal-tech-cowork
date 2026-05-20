@@ -1,22 +1,46 @@
-MIT License — for original parts of this repository
+Multi-license repository — BeccarIA plugin distribution
 
 Copyright (c) 2026 Michele Loi
 
-The following files (and any other file authored originally for this
-project — recognizable by the absence of an Anthropic copyright header
-at the top) are released under the MIT terms below:
+This repository (`legal-tech-cowork`) hosts the BeccarIA plugin under a
+mixed-license model:
 
-- skills/adattamento-italiano/
-- skills/verifica-fonti/
-- skills/catalogo/adaptation_prompt.md
+1. **MIT** — original BeccarIA parts authored for this project (recognizable
+   by the absence of any other license header).
+2. **GNU AGPL-3.0-only** — BeccarIA original code that participates in the
+   AGPL legal-AI open-source ecosystem (currently:
+   `beccaria/skills/ecosystem-scout/` and `beccaria/skills/pattern-extractor/`).
+   See `LICENSE-AGPL` for terms.
+3. **Apache-2.0** — files inherited from `anthropics/claude-for-legal`
+   (the upstream legal-builder-hub plugin), which carry Anthropic's original
+   copyright header. See `LICENSE-ANTHROPIC` for the full Apache 2.0 text and
+   `NOTICE` for attribution.
+
+Each source file is the authoritative source of its own license: look at the
+SPDX-License-Identifier header (when present) or refer to the per-folder
+mapping in `LICENSE-AGPL` and to the absence/presence of an Anthropic header.
+
+---
+
+MIT License — for original parts of this repository (the section below
+applies to files NOT covered by AGPL-3.0 or Apache-2.0 above):
+
+The following files (and any other file authored originally for this project
+— recognizable by the absence of an Anthropic copyright header at the top
+AND not listed under AGPL-3.0 in `LICENSE-AGPL`) are released under the MIT
+terms below:
+
+- beccaria/skills/adattamento-italiano/
+- beccaria/skills/verifica-fonti/
+- beccaria/skills/catalogo/adaptation_prompt.md
 - bollettino.json (the schema design and the threshold policy)
 - BOLLETTINO_FORMAT.md (the threshold policy section in particular)
 - README.md, DISTRIBUZIONE.md, BUILD_NOTES.md (project documentation)
 
-Files inherited from anthropics/claude-for-legal (the upstream
-legal-builder-hub plugin) carry Anthropic's original copyright header
-and remain under the Apache License 2.0. See LICENSE-ANTHROPIC for
-the full Apache 2.0 text, and NOTICE for attribution.
+Files inherited from `anthropics/claude-for-legal` (the upstream
+legal-builder-hub plugin) carry Anthropic's original copyright header and
+remain under the Apache License 2.0. See `LICENSE-ANTHROPIC` for the full
+Apache 2.0 text, and `NOTICE` for attribution.
 
 ---
 
