@@ -196,8 +196,17 @@ In pratica, per tutti i regimi:
 
 ## Installazione
 
-Vedi **[DISTRIBUZIONE.md](./DISTRIBUZIONE.md)** per il flusso passo-passo
-(5 click in Claude Desktop, no terminale, no account GitHub).
+Due click guidati dentro Claude Code Desktop:
+
+```text
+/plugin marketplace add MicheleLoi/legal-tech-cowork
+/plugin install beccaria@legal-tech-cowork
+```
+
+- **Documentazione canonica Anthropic in italiano:** [Trova e installa plugin](https://code.claude.com/docs/it/discover-plugins).
+- **Guida step-by-step pensata per l'avvocato non-tecnico** (5 click, screenshot, troubleshooting, percorso alternativo zip locale): **[DISTRIBUZIONE.md](./DISTRIBUZIONE.md)**.
+
+Prima volta con Claude Code Desktop? Vedi [code.claude.com/docs/it/desktop](https://code.claude.com/docs/it/desktop).
 
 ## Licenza
 

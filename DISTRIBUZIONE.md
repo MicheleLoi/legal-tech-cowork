@@ -59,14 +59,22 @@ Out-of-box in entrambi i casi.
 
 ## Prerequisiti
 
-- Claude Desktop installato (scaricabile da
-  [claude.ai/download](https://claude.ai/download))
-- Piano Claude Pro o superiore (il piano gratuito non include plugin
-  di terze parti su cowork)
+- **Claude Code Desktop installato.** Scarica da [claude.com/download](https://claude.com/download)
+  oppure consulta la [guida ufficiale Anthropic in italiano](https://code.claude.com/docs/it/desktop)
+  con installer Windows/macOS e nota su Git for Windows.
+- **Piano Claude Pro o superiore** (il piano gratuito non include plugin
+  di terze parti su cowork).
+- **Se non hai mai usato Claude Code**, può aiutarti vedere prima un tutorial introduttivo —
+  ne segnalo alcuni in fondo (sezione "Tutorial guidato di terze parti").
 
 ---
 
 ## Installazione — percorso standard (GitHub marketplace)
+
+> **Documentazione canonica del comando.** Il comando `/plugin marketplace add` è documentato
+> ufficialmente da Anthropic in italiano qui: [Trova e installa plugin](https://code.claude.com/docs/it/discover-plugins).
+> I cinque click descritti sotto sono la versione step-by-step pensata per chi non legge documentazione
+> di software.
 
 Questo è il percorso che useranno tutti gli avvocati. Cinque click in
 Claude Desktop.
@@ -332,6 +340,29 @@ Le due skill includono un **fallback pointer-pure** documentato: ti
 suggeriscono il fraseggio per chiedere a Claude di aprire l'URL come
 azione utente. Segui quel fraseggio e il bollettino entra in contesto
 come fetch user-initiated.
+
+---
+
+## Tutorial guidato di terze parti
+
+Se preferisci vedere Claude Code in azione prima di installarlo, ci sono alcuni
+video YouTube in italiano che mostrano l'installazione e l'uso base. **Nessuno
+copre specificamente il comando `/plugin marketplace add`** — per quello segui
+le istruzioni in questo documento.
+
+- [Installazione Claude Code e primo utilizzo — tutorial semplice](https://www.youtube.com/watch?v=_mU3oQkkBQk)
+- [Claude Code: La Guida COMPLETA per Iniziare nel 2026](https://www.youtube.com/watch?v=U57E3Ci94-A)
+- [Installa CLAUDE CODE GRATIS sul tuo COMPUTER](https://www.youtube.com/watch?v=xfNDqZAG5N8)
+
+Video di autori indipendenti — qualità dichiarata dai loro stessi titoli, non
+da noi garantita. La documentazione canonica resta sempre
+[code.claude.com/docs/it](https://code.claude.com/docs/it).
+
+### Riferimenti ufficiali Anthropic in italiano
+
+- [Applicazione desktop](https://code.claude.com/docs/it/desktop) — installer Windows/macOS
+- [Guida rapida](https://code.claude.com/docs/it/quickstart) — primi passi CLI
+- [Trova e installa plugin](https://code.claude.com/docs/it/discover-plugins) — pagina canonical su `/plugin marketplace add` e `/plugin install`
 
 ---
 
