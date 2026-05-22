@@ -61,7 +61,7 @@ italiane ed europee che l'ecosistema non copre nativamente.*
 
 ---
 
-## Cosa cambia in v4.0.0 (oltre il rename)
+## Cosa cambia in v4.0.0
 
 - Identità autonoma sotto **RegIA** (non più sotto-componente MHC-L).
 - Due skill nuove (`ecosystem-scout`, `pattern-extractor`) che integrano
@@ -158,39 +158,22 @@ per power-user che accettano questo costo in cambio di curation italiana
 + accesso strutturato all'ecosistema globale. Per chi vuole solo
 verificare le citazioni di un atto, il default basta e avanza.
 
-## Doctrine duale fetch — pointer + autonomous post-trigger esplicito
+## Sicurezza + privacy fetch
 
-A partire dalla 3.3.x il plugin distingue **due regimi di fetch**, in
-funzione del problema empirico osservato in produzione:
+Il plugin opera senza configurazione di rete preventiva in Claude Desktop:
 
-- **Pointer (`catalogo`).** La skill **non** fa `WebFetch` autonomous del
-  bollettino skill. Suggerisce all'avvocato l'URL + il fraseggio esatto
-  per chiedere a Claude di aprirlo via `WebFetch` user-initiated. Il
-  contenuto JSON entra in contesto e la skill lo processa. *Motivo:* il
-  polling ricorrente del bollettino in background veniva bloccato
-  dall'egress allowlist di Claude Desktop, e configurare l'allowlist è
-  ulteriormente bloccato da un bug del validatore UI.
+- **`catalogo` (skill terze) — pointer.** Il plugin suggerisce l'URL del
+  bollettino e il fraseggio per chiederne l'apertura a Claude.
+  Tu controlli quando e cosa.
+- **`ecosystem-scout`, `pattern-extractor`, `skill-installer` —
+  fetch puntuale solo dopo un tuo trigger esplicito** (richiesta di
+  installazione, domanda sull'ecosistema, richiesta di applicare un
+  pattern). Niente polling background. Niente fetch senza una tua azione
+  cosciente.
 
-- **Autonomous post-trigger esplicito (`skill-installer`,
-  `ecosystem-scout`, `pattern-extractor`).** Dopo un trigger esplicito
-  dell'avvocato (richiesta di installazione, domanda sull'ecosistema,
-  richiesta di applicare un pattern), la skill fa `WebFetch` autonomous
-  puntuale del payload necessario. *Motivo:* il trigger esplicito
-  costituisce autorizzazione user-initiated implicita; il fetch puntuale
-  non è bloccato dall'allowlist (test empirico founder 2026-05-19).
-
-Per `ecosystem-scout` e `pattern-extractor` esiste un **fallback
-pointer-pure** documentato nelle rispettive SKILL.md: se il validator
-blocca il `WebFetch` autonomous, la skill ricalibra a suggerire l'URL al
-lawyer per fetch user-initiated. Lo stesso pattern di `catalogo`.
-
-In pratica, per tutti i regimi:
-
-- **Niente configurazione di rete in Claude Desktop.** Funziona
-  out-of-box.
-- **Il gate è sempre una richiesta esplicita dell'avvocato.** Nessuna
-  skill apre URL o applica pattern senza un'azione cosciente
-  dell'avvocato.
+Fallback pointer-pure documentato in ogni SKILL.md per casi di policy
+di rete restrittiva: la skill ricalibra a suggerire l'URL per
+fetch user-initiated, identico al pattern di `catalogo`.
 
 ## Installazione
 
@@ -284,12 +267,13 @@ applies patterns from the ecosystem to the current conversation, with
 response. Never invents attributions: if the bulletin has no matching
 pattern, declares it openly.
 
-**Fetch doctrine (3.3.0+ / 4.0.0):** `catalogo` is pointer-only (it
-suggests the URL and the phrasing for the lawyer to ask Claude to open
-it). `skill-installer`, `ecosystem-scout`, `pattern-extractor` use
-autonomous post-trigger fetch, with a documented pointer-pure fallback
-if the validator blocks. No network configuration required on the
-lawyer's side either way.
+**Fetch posture:** `catalogo` is pointer-only (it suggests the URL and
+the phrasing for the lawyer to ask Claude to open it). `skill-installer`,
+`ecosystem-scout`, `pattern-extractor` fetch only after an explicit
+lawyer trigger (install request, ecosystem question, pattern application
+request). Documented pointer-pure fallback for restrictive network
+policies. No network configuration required on the lawyer's side either
+way.
 
 **Licensing:** multi-license repository — AGPL-3.0 for new ecosystem
 skills, MIT for other BeccarIA original parts, Apache-2.0 for components
