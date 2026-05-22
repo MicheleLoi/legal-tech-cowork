@@ -17,9 +17,7 @@ italiane ed europee che l'ecosistema non copre nativamente.*
 > all'avvocato italiano che vuole usare seriamente l'ecosistema legal-AI
 > open source da Claude.
 
-> **Identità.** BeccarIA succede a `iuris-it` come nome del plugin (terza
-> denominazione in cinque giorni: `mhc-l` → `iuris-it` → `BeccarIA`). Il
-> nome onora **Cesare Beccaria**, il padre del diritto penale moderno
+> **Identità.**  Il nome onora **Cesare Beccaria**, il padre del diritto penale moderno
 > italiano, e segna la promozione del plugin a prodotto autonomo (non più
 > sotto-componente di MHC-L). Il rename arriva con il bump major a
 > v4.0.0.
