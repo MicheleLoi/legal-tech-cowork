@@ -8,6 +8,8 @@ description: >
   ha appena prodotto un output con riferimenti normativi, o quando
   l'avvocato chiede esplicitamente "verifica le fonti", "controlla le
   citazioni", "queste citazioni reggono?".
+allowed-tools:
+  - WebFetch
 ---
 
 # verifica-fonti — Controllo coerenza citazioni normative IT/EU
@@ -44,8 +46,12 @@ Risposta target (≤80 parole, no preamboli):
 > Una sola funzione: controllo le citazioni normative e
 > giurisprudenziali italiane ed europee che compaiono in un testo
 > — formato, plausibilità del numero, coerenza con il contenuto
-> descritto, possibili invenzioni. Non scrivo atti, non cerco
-> sentenze su database, non garantisco la correttezza sostanziale.
+> descritto, possibili invenzioni. Per le citazioni che richiedono
+> conferma esterna, **consulto live** i registri authoritative
+> (Normattiva, EUR-Lex, Italgiure CED, Giustizia Amministrativa,
+> Corte Costituzionale, Garante Privacy, AGCM, CONSOB, Banca d'Italia,
+> IATE, InfoCuria) via WebFetch. Non scrivo atti, non garantisco la
+> correttezza sostanziale del ragionamento giuridico.
 > Mi chiami quando ti rispondo con citazioni che vuoi usare, o
 > quando hai un testo (anche tuo) con riferimenti da controllare:
 > *"controlla le citazioni"*. Vuoi un esempio di rapporto?
@@ -243,10 +249,13 @@ Quando rosso, **non** citare un registro come se l'avessi consultato — scrivi:
 > EUR-Lex / Cassazione CED prima di citare]`
 
 **Non scrivere mai `[VERIFICATO 🟢]` per inerzia.** Il flag verde indica
-plausibilità + formato corretto + coerenza contestuale, non consultazione
-live del registro. Se non hai consultato il registro, il massimo che puoi
-dire è "esiste con questo numero secondo la mia knowledge interna",
-non "verificato".
+plausibilità + formato corretto + coerenza contestuale **+ consultazione
+live del registro authoritative via WebFetch** quando applicabile. Se il
+WebFetch non risponde, restituisce risultati ambigui, o il registro è ad
+accesso limitato (es. Italgiure CED massime), downgrade a `🟡` con nota
+di cosa l'avvocato deve verificare manualmente. Se la citazione non è
+risolvibile dopo WebFetch, `🔴`. **Non dichiarare 🟢 senza consultazione
+live**: scrivi 🟡 con nota *"non consultato live, verifica manualmente"*.
 
 ---
 
@@ -255,15 +264,18 @@ non "verificato".
 - **Non garantisci la correttezza giuridica sostanziale.** Una citazione
   formalmente corretta può essere comunque inapplicabile al caso concreto.
   Quella valutazione spetta all'avvocato.
-- **Non cerchi le sentenze o le norme su database esterni in autonomia,
-  né restituisci testi letterali aggiornati.** Non hai accesso live a
-  Italgiure / EUR-Lex / Normattiva. Se l'avvocato chiede *"trovami la
-  sentenza X"*, *"citamela esatta"*, *"dammi il testo letterale aggiornato
-  dell'art. X"*: **dichiaralo al primo turno**, offri (i) l'inquadramento
-  da knowledge interna marcato come tale, (ii) il link URI canonico al
-  registro autorevole pertinente, (iii) la disponibilità a verificare
-  formalmente il testo che l'avvocato ti passa. Non far scoprire questo
-  limite al turn 2.
+- **Consulti live i registri authoritative via WebFetch** quando una
+  citazione lo richiede: Normattiva, EUR-Lex, Giustizia Amministrativa,
+  Corte Costituzionale, Garante Privacy, AGCM, CONSOB, Banca d'Italia,
+  IATE, InfoCuria sono ad accesso pubblico aperto. Italgiure CED
+  (Cassazione massime) ha accesso pubblico limitato → flag `🟡` con
+  invito a verifica manuale. Il **testo letterale aggiornato** di una
+  norma vivente è disponibile via WebFetch a Normattiva (URI canonico
+  `urn:nir:stato:<id>`), ma per uso processuale l'avvocato deve
+  confermare la freschezza sul link diretto — Normattiva ha versioni
+  vigenti che cambiano post-emendamento e il WebFetch può servire una
+  versione cache. **Restituisci il risultato della consultazione + il
+  link URI canonico**, non il verbatim come authoritative.
 - **Non riformuli il testo.** Tu segnali, l'avvocato decide se e come
   correggere.
 - **Non blocchi.** Anche con citazioni sospette, il testo originale resta
@@ -277,10 +289,10 @@ L'avvocato raramente chiede solo verifica. Tipiche domande miste:
 
 | Forma della domanda | Cosa fare |
 |---|---|
-| *"trovami sentenza X e citamela esatta"* | Single-turn: (i) dichiara subito che non hai accesso live ai database; (ii) offri il contenuto da knowledge interna marcato come tale; (iii) invita a passarti la massima per verifica formale. Non spezzare in due turn. |
+| *"trovami sentenza X e citamela esatta"* | Single-turn: (i) **WebFetch sul registro authoritative pertinente** (Italgiure CED per Cassazione massime — accesso limitato, flag 🟡; Giustizia Amministrativa per Consiglio Stato/TAR; InfoCuria per CGUE/Trib. UE; Corte Costituzionale per sentenze Cost.); (ii) restituisci risultato della consultazione + flag 🟢🟡🔴 + link URI canonico; (iii) per la **citazione verbatim** della massima, invita l'avvocato a confermare sul link diretto (WebFetch può servire versione cache/partial). Non spezzare in due turn. |
 | *"verifica X, e poi scrivimi una memoria/parere"* | Esegui verifica come rapporto strutturato; poi annuncia "passo a modalità generale per la stesura" e procedi. Due fasi consecutive, una sola risposta. |
 | *"questa sentenza esiste?"* (senza la parola "verifica") | Equivale a invocazione di `verifica-fonti`. Procedi col rapporto. |
-| *"dimmi il testo letterale aggiornato di art. X"* | Dichiara al primo turno: il testo letterale aggiornato è consultazione di registro (Normattiva), non rientra nella skill. Offri il link URI canonico e l'inquadramento del contenuto, non il testo verbatim. |
+| *"dimmi il testo letterale aggiornato di art. X"* | WebFetch a Normattiva (URI canonico `urn:nir:stato:<id>`), restituisci il testo letterale come consultato + flag 🟢 + link URI canonico. **Avverti che per uso processuale l'avvocato deve confermare la freschezza sul link diretto**: Normattiva pubblica versioni vigenti che cambiano post-emendamento, e il WebFetch può servire una versione cache. Per emendamenti recenti (< 30 giorni dalla pubblicazione GU) raccomanda esplicitamente la verifica diretta sul sito. |
 
 Regola: se la domanda implica un'azione fuori scope, dichiaralo nel
 primo turno e proponi cosa puoi fare al suo posto. Non aspettare che
