@@ -167,11 +167,6 @@ plugin"** (non "Aggiungi marketplace").
 4. Claude Desktop estrae e installa il plugin. Comparirà nella lista
    plugin con tag "Active".
 
-In alternativa allo zip, al passo 4 della procedura standard puoi
-incollare il **percorso assoluto della cartella locale** del repo
-(es. `C:\Users\<nome>\legal-tech-cowork`) al posto dell'URL GitHub: il
-resto del flusso è identico.
-
 ---
 
 ## Come testare il plugin
