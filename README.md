@@ -69,11 +69,13 @@ italiane ed europee che l'ecosistema non copre nativamente.*
   JSON curati pubblicati dal VPS RegIA.
 - Licenza per i nuovi componenti BeccarIA: **GNU AGPL-3.0**, per coerenza
   con l'ecosistema (Mike e fork sono AGPL). Vedi sezione "Licenza" sotto.
-- Doctrine duale **pointer + autonomous post-trigger esplicito**
-  preservata e ora estesa: il `catalogo` (skill terze) resta pointer; le
-  due skill nuove (`ecosystem-scout`, `pattern-extractor`) usano
-  autonomous fetch con fallback pointer-pure documentato se il validator
-  di Claude Desktop blocca.
+- Doctrine **fetch autonomous post-trigger esplicito su VPS BeccarIA**
+  (`bulletins.micheleloi.pro`) per tutte le skill modalità avanzata
+  (`catalogo`, `skill-installer`, `ecosystem-scout`, `pattern-extractor`).
+  Single onboarding step: aggiungere `bulletins.micheleloi.pro`
+  all'allowlist egress di Claude Desktop. Fallback pointer-pure
+  documentato in ogni `SKILL.md` per casi di policy di rete restrittiva
+  (allowlist non modificabile, enterprise lockdown).
 
 ## Come si usa in pratica
 
@@ -171,9 +173,11 @@ Il plugin opera senza configurazione di rete preventiva in Claude Desktop:
   pattern). Niente polling background. Niente fetch senza una tua azione
   cosciente.
 
-Fallback pointer-pure documentato in ogni SKILL.md per casi di policy
-di rete restrittiva: la skill ricalibra a suggerire l'URL per
-fetch user-initiated, identico al pattern di `catalogo`.
+Fallback pointer-pure documentato in ogni `SKILL.md` per casi di policy
+di rete restrittiva (allowlist non modificabile, enterprise lockdown):
+la skill ricalibra a suggerire il fraseggio per chiedere a Claude di
+aprire l'URL come azione utente (`WebFetch` user-initiated, bypassa il
+validator skill-mediated).
 
 ## Installazione
 
@@ -267,13 +271,18 @@ applies patterns from the ecosystem to the current conversation, with
 response. Never invents attributions: if the bulletin has no matching
 pattern, declares it openly.
 
-**Fetch posture:** `catalogo` is pointer-only (it suggests the URL and
-the phrasing for the lawyer to ask Claude to open it). `skill-installer`,
-`ecosystem-scout`, `pattern-extractor` fetch only after an explicit
-lawyer trigger (install request, ecosystem question, pattern application
-request). Documented pointer-pure fallback for restrictive network
-policies. No network configuration required on the lawyer's side either
-way.
+**Fetch posture:** all advanced-mode skills (`catalogo`,
+`skill-installer`, `ecosystem-scout`, `pattern-extractor`) perform
+autonomous `WebFetch` on the BeccarIA VPS (`bulletins.micheleloi.pro`)
+**only after an explicit lawyer trigger** (open catalog, install
+request, ecosystem question, pattern application). No background
+polling, no network call without a conscious lawyer action. Single
+onboarding step: the lawyer adds `bulletins.micheleloi.pro` to Claude
+Desktop's egress allowlist (Settings → Network egress) — covers all
+VPS-based skills simultaneously. Documented pointer-pure fallback in
+every `SKILL.md` for restrictive network policies (non-configurable
+allowlist, enterprise lockdown): the skill recalibrates to suggest the
+user-initiated `WebFetch` phrasing instead.
 
 **Licensing:** multi-license repository — AGPL-3.0 for new ecosystem
 skills, MIT for other BeccarIA original parts, Apache-2.0 for components

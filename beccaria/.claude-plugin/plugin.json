@@ -1,7 +1,7 @@
 {
   "name": "beccaria",
   "version": "4.0.0",
-  "description": "BeccarIA — Skill Claude per l'avvocato italiano nell'ecosistema legal-AI open source. AGPL-3.0. Verifica fonti normative e giurisprudenziali italiane ed europee (default); modalità avanzata opzionale: catalogo skill legal-tech (pointer-pure), installer autonomous post-trigger, adattamento italiano, ecosystem-scout (panoramica MikeOSS + fork), pattern-extractor (pattern AGPL con attribution obbligatoria). Prodotto autonomo sotto RegIA. Niente configurazione di rete richiesta.",
+  "description": "BeccarIA — Skill Claude per l'avvocato italiano nell'ecosistema legal-AI open source. AGPL-3.0. Verifica fonti normative e giurisprudenziali italiane ed europee (default); modalità avanzata opzionale: catalogo skill legal-tech, installer, adattamento italiano, ecosystem-scout (panoramica MikeOSS + fork), pattern-extractor (pattern AGPL con attribution obbligatoria). Tutte le skill avanzate fanno WebFetch autonomous post-trigger esplicito sul VPS BeccarIA (bulletins.micheleloi.pro). Prodotto autonomo sotto RegIA. Single onboarding step: aggiungere bulletins.micheleloi.pro all'allowlist egress di Claude Desktop.",
   "keywords": ["legal", "italian-law", "source-verification", "italy", "beccaria", "regia", "legal-ai-ecosystem", "agpl", "verifica-fonti", "ecosystem-scout", "pattern-extractor"],
   "author": {
     "name": "Michele Loi"

@@ -25,25 +25,30 @@ bollettino) o non chieda direttamente di installare una skill.
 Riferimento decisione: MHC-Work _org/decision_log.md 2026-05-18
 (strada B + raffinamento founder advanced-via-bollettino) +
 2026-05-19 (revert over-refactor 3.3.0: skill-installer torna
-autonomous post-trigger esplicito; catalogo resta pointer).
+autonomous post-trigger esplicito; catalogo inizialmente conservato
+pointer) + 2026-05-19 PM very late (Phase II: unificazione bollettini
+su VPS, catalogo upgrade a autonomous fetch dopo verifica empirica che
+`bulletins.micheleloi.pro` è accettato dal validator UI Claude Desktop).
 -->
 
 
 # skill-installer (forked from legal-builder-hub, adattato per iuris-it)
 
-> **Nota operativa (3.3.1).** Skill-installer si attiva solo dopo
+> **Nota operativa (4.0.0+).** Skill-installer si attiva solo dopo
 > trigger esplicito dell'avvocato (*«installa la skill X»*, oppure
 > instradamento dal `catalogo` su scelta esplicita) — quel trigger
-> autorizza implicitamente il `WebFetch` autonomous del `SKILL.md`
-> della skill terza necessario per i 5 controlli automatici di
-> sicurezza. Distinguere dal `catalogo`, che resta pointer-pure
-> (suggerisce all'avvocato l'URL del bollettino + fraseggio per
-> chiedere a Claude di aprirlo, niente fetch in background): il
-> bollettino è un polling ricorrente bloccato dall'egress allowlist,
-> mentre il fetch del `SKILL.md` candidato è puntuale, post-trigger
-> esplicito utente, e funziona out-of-box (test empirico founder
-> 2026-05-19). L'avvocato non deve fare due passi UI manuali per
-> installare una skill scelta.
+> autorizza implicitamente il `WebFetch` puntuale del `SKILL.md` della
+> skill terza necessario per i 5 controlli automatici di sicurezza.
+> Anche `catalogo` esegue un `WebFetch` autonomous sul proprio
+> bollettino skill terze (`bulletins.micheleloi.pro/bulletin_skills.json`)
+> post-trigger esplicito dell'avvocato — vedi `catalogo/SKILL.md` doctrine
+> 4.0.0 (era pointer-pure in 3.3.0/3.3.1, upgrade ratificato il
+> 2026-05-19 dopo verifica empirica che il dominio
+> `bulletins.micheleloi.pro` è accettato dal validator UI Claude
+> Desktop). Entrambe le skill si appoggiano allo stesso single allowlist
+> step (`bulletins.micheleloi.pro` aggiunto una volta all'egress
+> allowlist via Impostazioni Claude Desktop). L'avvocato non deve fare
+> due passi UI manuali per installare una skill scelta.
 
 
 The lawyer is a non-technical audience. Industrial-grade security checks

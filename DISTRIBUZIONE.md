@@ -36,22 +36,35 @@ che restano inerti finché non le attivi esplicitamente:
 Vedi la sezione **Come testare la modalità avanzata** più sotto. Se non
 ti servono, ignorale: il default copre l'80% dei casi.
 
-**Doctrine duale fetch.** La modalità avanzata funziona via trigger
-semantici, **niente configurazione di rete da impostare in Claude
-Desktop**. Le skill si dividono in due regimi:
+**Doctrine fetch autonomous su VPS, single allowlist step.** Tutte le
+skill della modalità avanzata (`catalogo`, `skill-installer`,
+`ecosystem-scout`, `pattern-extractor`) fanno `WebFetch` puntuale sul
+**VPS BeccarIA** (`bulletins.micheleloi.pro`) **dopo un tuo trigger
+esplicito**:
 
-- **Pointer** (`catalogo`): non fa fetch in background. Ti indica l'URL
-  del bollettino skill e il fraseggio per chiedermi di aprirlo io, e il
-  contenuto entra in chat.
-- **Autonomous post-trigger esplicito** (`skill-installer`,
-  `ecosystem-scout`, `pattern-extractor`): dopo che tu hai scelto
-  esplicitamente di installare una skill / chiedere informazioni
-  sull'ecosistema / applicare un pattern, la skill fa fetch puntuale del
-  payload necessario. Il tuo trigger esplicito è l'autorizzazione. Per
-  `ecosystem-scout` e `pattern-extractor` c'è anche un **fallback
-  pointer-pure** documentato: se il validator di Claude Desktop blocca
-  il fetch autonomous, la skill ricalibra a suggerirti l'URL come fa
-  `catalogo`.
+- `catalogo` apre il bollettino delle skill terze italiane.
+- `skill-installer` recupera il `SKILL.md` della skill candidata + 5
+  controlli automatici di sicurezza.
+- `ecosystem-scout` legge il bollettino dell'ecosistema legal-AI open
+  source (921 repos al 2026-05-19).
+- `pattern-extractor` legge il bollettino dei pattern attribuiti AGPL
+  (167 pattern al 2026-05-19).
+
+Il tuo trigger esplicito è l'autorizzazione — nessun polling in
+background, nessuna chiamata senza una tua azione cosciente.
+
+**Onboarding single step.** Aggiungi una volta `bulletins.micheleloi.pro`
+all'allowlist egress di Claude Desktop (Impostazioni → Network egress,
+solo hostname senza protocollo). Copre tutte le skill VPS-based
+simultaneamente. Verificato empiricamente il 2026-05-19: il validator UI
+di Claude Desktop accetta il dominio.
+
+**Fallback pointer-pure documentato (escape hatch).** Se il tuo piano
+Claude Desktop ha l'allowlist non modificabile (es. enterprise lockdown,
+o policy di rete restrittiva), ogni skill ricalibra automaticamente: ti
+suggerisce il fraseggio per chiedere a Claude di aprire l'URL come
+azione utente (`WebFetch` user-initiated, che bypassa il validator
+skill-mediated). Pattern documentato in ogni `SKILL.md`.
 
 Out-of-box in entrambi i casi.
 
@@ -67,6 +80,13 @@ Out-of-box in entrambi i casi.
   dove i plugin si installano in cinque click. È il percorso descritto sotto.
 - **Anche supportato: Claude Code Desktop.** Stessa app, modalità alternativa di interazione.
   Il plugin BeccarIA funziona anche lì.
+- **Per la modalità avanzata (5 skill opt-in): single allowlist step.** Apri Impostazioni →
+  Network egress di Claude Desktop e aggiungi **`bulletins.micheleloi.pro`** (solo hostname,
+  senza protocollo). Una volta, copre tutte le skill VPS-based simultaneamente. Il default è
+  consentire solo gestori di pacchetti — il dominio personalizzato va aggiunto esplicitamente.
+  Verificato accettato dal validator UI Claude Desktop il 2026-05-19. Se il tuo piano ha
+  l'allowlist non modificabile (enterprise lockdown), le skill ricalibrano automaticamente a
+  fallback pointer-pure documentato (vedi sezione "Doctrine" sotto).
 - **Se non hai mai usato Claude**, può aiutarti vedere prima un tutorial introduttivo —
   ne segnalo alcuni in fondo (sezione "Tutorial guidato di terze parti").
 
@@ -245,10 +265,12 @@ e i suoi fork nazionali).
    giurisdizione inferita, capabilities, stato (attivo/dormiente). Se
    uno strumento è AGPL, aggiunge nota sulle implicazioni per studio
    legale.
-3. Se il fetch fallisce (validator block o network), la skill ricalibra
-   automaticamente a pattern pointer-pure: ti dice apertamente di non
-   essere riuscita a contattare il bollettino, e ti suggerisce il
-   fraseggio per chiederle di aprire l'URL come azione utente.
+3. Se il fetch fallisce (allowlist non configurata o policy di rete
+   restrittiva), la skill ricalibra automaticamente a fallback
+   pointer-pure: ti dice apertamente di non essere riuscita a contattare
+   il bollettino, e ti suggerisce il fraseggio per chiederle di aprire
+   l'URL come azione utente. Vedi §Prerequisiti per il single allowlist
+   step che evita questo caso.
 
 ### 5) Test modalità avanzata — `pattern-extractor` (nuova in 4.0.0)
 
@@ -337,12 +359,18 @@ gate di smoke test del founder.
 
 ### `ecosystem-scout` o `pattern-extractor` falliscono il fetch
 
-Il validator di Claude Desktop ha bloccato il fetch autonomous su
-dominio custom (problema noto della UI di configurazione allowlist).
-Le due skill includono un **fallback pointer-pure** documentato: ti
-suggeriscono il fraseggio per chiedere a Claude di aprire l'URL come
-azione utente. Segui quel fraseggio e il bollettino entra in contesto
-come fetch user-initiated.
+Causa più frequente: `bulletins.micheleloi.pro` non è nell'allowlist
+egress di Claude Desktop. Apri Impostazioni → Network egress e verifica
+che il dominio sia presente; se manca, aggiungilo (solo hostname, senza
+protocollo) — è single step, copre tutte le skill VPS-based
+simultaneamente. Ri-prova il trigger della skill: il fetch passa.
+
+Se invece il tuo piano ha l'allowlist non modificabile (es. enterprise
+lockdown), le skill ricalibrano automaticamente a **fallback
+pointer-pure** documentato: ti suggeriscono il fraseggio per chiedere a
+Claude di aprire l'URL come azione utente. Segui quel fraseggio e il
+bollettino entra in contesto come fetch user-initiated (bypassa il
+validator skill-mediated).
 
 ---
 
@@ -380,11 +408,13 @@ parti oltre al normale traffico con Anthropic. Nessuna telemetria,
 nessun tracking, nessun analytics.
 
 In modalità avanzata, le uniche chiamate di rete esterne sono letture
-di bollettini JSON pubblici dal VPS BeccarIA (o GitHub pubblico per
-fallback pointer-pure): il bollettino skill lo apri tu chiedendolo
-esplicitamente a Claude; il bollettino ecosystem / patterns lo recupera
-la skill autonomous post-tuo-trigger. In tutti i casi è una tua azione
-esplicita ad autorizzare la chiamata di rete, mai un polling nascosto
+di bollettini JSON pubblici dal **VPS BeccarIA**
+(`bulletins.micheleloi.pro`): bollettino skill terze, bollettino
+ecosistema, bollettino pattern. Tutte le skill della modalità avanzata
+fanno fetch puntuale dopo un tuo trigger esplicito (apri catalogo,
+domanda sull'ecosistema, richiesta di applicare un pattern, scelta di
+installare una skill terza). In tutti i casi è una tua azione esplicita
+ad autorizzare la chiamata di rete, mai un polling nascosto
 in background.
 
 I bollettini servono solo metadati pubblici (GitHub API + descrizioni
@@ -445,11 +475,14 @@ strategico.
 
 ---
 
-*DISTRIBUZIONE.md — BeccarIA v4.0.0 — 2026-05-19. Sei skill totali
-(`verifica-fonti` default; `catalogo`, `skill-installer`,
-`adattamento-italiano`, `ecosystem-scout`, `pattern-extractor` modalità
-avanzata opt-in). Doctrine duale fetch (pointer per `catalogo`,
-autonomous post-trigger esplicito per gli altri) con fallback pointer
-documentato per le skill ecosystem. Multi-license (AGPL-3.0 per nuove
-skill ecosystem + MIT per BeccarIA originale + Apache-2.0 per parti
-Anthropic forkate). Posizionamento: modulo plug-and-play sotto RegIA.*
+*DISTRIBUZIONE.md — BeccarIA v4.0.0 — 2026-05-19, prereq + fetch
+doctrine aggiornati 2026-05-23. Sei skill totali (`verifica-fonti`
+default; `catalogo`, `skill-installer`, `adattamento-italiano`,
+`ecosystem-scout`, `pattern-extractor` modalità avanzata opt-in).
+Doctrine fetch autonomous post-trigger esplicito su VPS BeccarIA
+(`bulletins.micheleloi.pro`) per tutte le skill modalità avanzata,
+single allowlist onboarding step. Fallback pointer-pure documentato in
+ogni `SKILL.md` per casi di policy di rete restrittiva. Multi-license
+(AGPL-3.0 per nuove skill ecosystem + MIT per BeccarIA originale +
+Apache-2.0 per parti Anthropic forkate). Posizionamento: modulo
+plug-and-play sotto RegIA.*
