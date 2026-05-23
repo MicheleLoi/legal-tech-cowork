@@ -102,7 +102,7 @@ of truth):
 
 ```json
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "generated_at": "2026-05-19T18:00:00Z",
   "source_count": 12,
   "repos": [
@@ -118,11 +118,23 @@ of truth):
       "stars": 123,
       "fork_count": 5,
       "is_active": true,
-      "notes": "annotazione manuale del founder (opzionale)"
+      "notes": "annotazione manuale del founder (opzionale)",
+      "source_type": "github_scanned"
     }
   ]
 }
 ```
+
+**Campo `source_type`** (schema 1.1.0+): distingue origine editoriale della
+voce. Due valori possibili:
+
+- `github_scanned` — voce derivata da scan GitHub API dell'ecosistema MikeOSS
+  e fork (default automatico, behavior pre-feature)
+- `human_picked` — voce curata manualmente dal founder, aggiunta da
+  `config.yaml human_picks:` con rationale + tags + jurisdiction override
+
+**Backward compat 1.0.0:** se il campo è assente, trattare come
+`github_scanned` (comportamento default).
 
 ### 3. Filtra/ordina per rilevanza
 
@@ -145,6 +157,24 @@ strumento.** Se AGPL, aggiungi nota inline:
 > servizi network richiedono pubblicazione del source. Consulta il DPO o
 > il responsabile legale prima di integrare in workflow di studio
 > proprietario.
+
+**Distinzione `source_type` (schema 1.1.0+):** raggruppa o etichetta le voci
+per origine, così l'avvocato distingue cosa è scan automatico GitHub vs
+cosa è curation editoriale del founder.
+
+- Voci con `source_type: human_picked`: prefisso o sezione **"Dalla
+  curation del fornitore..."** (es. "Risorse selezionate manualmente dal
+  founder RegIA, con rationale di curation").
+- Voci con `source_type: github_scanned` (o campo assente, schema 1.0.0):
+  prefisso o sezione **"Dall'ecosistema GitHub MikeOSS..."** (es. "Strumenti
+  derivati dallo scan automatico dell'ecosistema open source").
+
+Se ci sono entrambe le categorie nella risposta, presentale come due
+sezioni separate (o due tabelle), in modo che l'avvocato sappia in chiaro
+quale voce è curation editoriale (più alto signal-to-noise, validata dal
+founder) e quale è scan automatico (più ampia copertura, meno editorial
+filter). Per `human_picked`, mostra anche il campo `notes` se presente —
+è il rationale di curation del founder.
 
 ## Gestione errori
 
@@ -189,6 +219,10 @@ GitHub raw, falsa per dominio founder pulito.
 > incompatibile (atteso schema_version >= 1.0.0, ricevuto <X>).
 > Avvisa Michele e nel frattempo posso rispondere sulla base della mia
 > conoscenza generale.
+
+Nota: schema 1.0.0 e 1.1.0 sono entrambi supportati (1.1.0 aggiunge
+campo `source_type` opzionale per distinzione github_scanned vs
+human_picked — backward-compat additive).
 
 ### Strumento non trovato nel bollettino
 
