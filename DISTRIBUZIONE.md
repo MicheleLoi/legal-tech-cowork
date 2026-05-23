@@ -1,21 +1,14 @@
 # Come installare e testare BeccarIA
 
-*Per l'avvocato. Nessun comando terminale, nessun account GitHub, nessuna
-conoscenza tecnica richiesta.*
-
-> **Versione friendly online.** La guida con video dimostrativo
-> dell'installazione e formattazione pensata per la lettura su web vive
-> a [micheleloi.pro/beccaria](https://micheleloi.pro/beccaria/).
-> Questo `DISTRIBUZIONE.md` resta il riferimento canonico tecnico
-> (troubleshooting, FAQ, percorso zip locale, dettagli licenza).
+*Per l'avvocato italiano. Due percorsi di installazione: cinque click
+nell'interfaccia grafica, oppure due comandi da terminale (Claude Code).
+Scegli quello che ti è più comodo.*
 
 > **BeccarIA** è uno dei tre prodotti del brand ombrello **RegIA**,
 > insieme a **MHC** (governance framework) e **Recode IT**
 > (pseudonimizzazione web). I tre sono moduli plug-and-play: ciascuno
 > standalone, oppure combinabili a stack. Questo documento descrive
-> l'installazione di BeccarIA. Per gli altri due moduli vedi
-> [micheleloi.pro/regia](https://micheleloi.pro/regia/) (quando la
-> guida modulare sarà pubblicata).
+> l'installazione di BeccarIA.
 
 ---
 
@@ -42,74 +35,47 @@ che restano inerti finché non le attivi esplicitamente:
 Vedi la sezione **Come testare la modalità avanzata** più sotto. Se non
 ti servono, ignorale: il default copre l'80% dei casi.
 
-**Doctrine fetch autonomous su VPS, single allowlist step.** Tutte le
-skill della modalità avanzata (`catalogo`, `skill-installer`,
-`ecosystem-scout`, `pattern-extractor`) fanno `WebFetch` puntuale sul
-**VPS BeccarIA** (`bulletins.micheleloi.pro`) **dopo un tuo trigger
-esplicito**:
+**Come funziona la modalità avanzata.** Le cinque skill avanzate
+consultano bollettini pubblici di curatela ospitati sul VPS BeccarIA
+(`bulletins.micheleloi.pro`) **solo dopo un tuo trigger esplicito**
+(apri il catalogo, chiedi info sull'ecosistema, applica un pattern,
+installa una skill). Nessun polling in background, nessuna chiamata
+senza una tua azione cosciente.
 
-- `catalogo` apre il bollettino delle skill terze italiane.
-- `skill-installer` recupera il `SKILL.md` della skill candidata + 5
-  controlli automatici di sicurezza.
-- `ecosystem-scout` legge il bollettino dell'ecosistema legal-AI open
-  source (921 repos al 2026-05-19).
-- `pattern-extractor` legge il bollettino dei pattern attribuiti AGPL
-  (167 pattern al 2026-05-19).
-
-Il tuo trigger esplicito è l'autorizzazione — nessun polling in
-background, nessuna chiamata senza una tua azione cosciente.
-
-**Onboarding single step.** Aggiungi una volta `bulletins.micheleloi.pro`
-all'allowlist egress di Claude Desktop (Impostazioni → Network egress,
-solo hostname senza protocollo). Copre tutte le skill VPS-based
-simultaneamente. Verificato empiricamente il 2026-05-19: il validator UI
-di Claude Desktop accetta il dominio.
-
-**Fallback pointer-pure documentato (escape hatch).** Se il tuo piano
-Claude Desktop ha l'allowlist non modificabile (es. enterprise lockdown,
-o policy di rete restrittiva), ogni skill ricalibra automaticamente: ti
-suggerisce il fraseggio per chiedere a Claude di aprire l'URL come
-azione utente (`WebFetch` user-initiated, che bypassa il validator
-skill-mediated). Pattern documentato in ogni `SKILL.md`.
-
-Out-of-box in entrambi i casi.
+Per usarle, **una volta sola** aggiungi `bulletins.micheleloi.pro`
+all'allowlist egress di Claude (Impostazioni → Network egress, solo
+hostname senza protocollo). Se il tuo piano ha l'allowlist non
+modificabile (es. enterprise lockdown), le skill ricalibrano da sole:
+ti suggeriscono il fraseggio per chiedere a Claude di aprire l'URL
+come tua azione utente.
 
 ---
 
 ## Prerequisiti
 
-- **App Claude installata sul tuo computer.** Scarica da [claude.com/download](https://claude.com/download)
-  (installer Windows/macOS; vedi anche la [guida ufficiale Anthropic in italiano](https://code.claude.com/docs/it/desktop)).
-  BeccarIA si installa via interfaccia grafica — **nessun comando terminale richiesto**.
-- **Piano Claude Pro o superiore.** Il piano gratuito non include plugin di terze parti.
-- **Modalità consigliata: Cowork.** È la tab Cowork nella sidebar sinistra dell'app Claude,
-  dove i plugin si installano in cinque click. È il percorso descritto sotto.
-- **Anche supportato: Claude Code Desktop.** Stessa app, modalità alternativa di interazione.
-  Il plugin BeccarIA funziona anche lì.
-- **Per la modalità avanzata (5 skill opt-in): single allowlist step.** Apri Impostazioni →
-  Network egress di Claude Desktop e aggiungi **`bulletins.micheleloi.pro`** (solo hostname,
-  senza protocollo). Una volta, copre tutte le skill VPS-based simultaneamente. Il default è
-  consentire solo gestori di pacchetti — il dominio personalizzato va aggiunto esplicitamente.
-  Verificato accettato dal validator UI Claude Desktop il 2026-05-19. Se il tuo piano ha
-  l'allowlist non modificabile (enterprise lockdown), le skill ricalibrano automaticamente a
-  fallback pointer-pure documentato (vedi sezione "Doctrine" sotto).
-- **Se non hai mai usato Claude**, può aiutarti vedere prima un tutorial introduttivo —
-  ne segnalo alcuni in fondo (sezione "Tutorial guidato di terze parti").
+- **App Claude installata sul tuo computer.** Scarica da
+  [claude.com/download](https://claude.com/download) (installer Windows/macOS;
+  guida ufficiale Anthropic in italiano:
+  [code.claude.com/docs/it/desktop](https://code.claude.com/docs/it/desktop)).
+- **Piano Claude Pro o superiore.** Il piano gratuito non include plugin
+  di terze parti.
+- **Una delle due modalità Claude.** **Cowork** (tab Cowork nella sidebar
+  sinistra, percorso UI a cinque click) **oppure Claude Code** (modalità
+  terminale, due comandi). Il plugin funziona in entrambe — scegli quella
+  che ti è più comoda.
+- **Per la modalità avanzata (5 skill opt-in):** una volta sola, aggiungi
+  `bulletins.micheleloi.pro` all'allowlist egress di Claude (vedi sopra).
+- **Se non hai mai usato Claude**, può aiutarti vedere prima un tutorial
+  introduttivo — ne segnalo alcuni in fondo.
 
 ---
 
-## Installazione — percorso standard (GitHub marketplace)
+## Installazione — percorso UI (Cowork, cinque click)
 
-> **Documentazione canonica del comando.** Il comando `/plugin marketplace add` è documentato
-> ufficialmente da Anthropic in italiano qui: [Trova e installa plugin](https://code.claude.com/docs/it/discover-plugins).
-> I cinque click descritti sotto sono la versione step-by-step pensata per chi non legge documentazione
-> di software.
+Il percorso più semplice per chi non è abituato al terminale. Cinque
+click nell'app Claude (modalità Cowork).
 
-Questo è il percorso che useranno tutti gli avvocati. Cinque click in
-Claude Desktop.
-
-1. **Apri Claude Desktop**, vai sulla tab **Cowork** nella sidebar
-   sinistra.
+1. **Apri Claude**, vai sulla tab **Cowork** nella sidebar sinistra.
 2. Sempre nella sidebar di Cowork, clicca **Customize → Plugin → "+"**
    in alto a destra.
 3. Nel menu che si apre clicca **"Crea plugin"** — sì, "Crea plugin",
@@ -132,18 +98,25 @@ installate: `verifica-fonti`, `catalogo`, `skill-installer`,
 prima è attiva di default; le altre cinque restano inerti finché non le
 invochi esplicitamente (vedi sotto).
 
-> **Nota durante lo sviluppo pre-1.0.** Il push delle nuove versioni su
-> GitHub avviene solo dopo verifica del fondatore. Finché nella UI di
-> Claude Desktop non vedi `beccaria` versione **4.0.0**, il marketplace
-> remoto potrebbe puntare a una release precedente (es. `iuris-it`
-> 3.3.1): in quel caso usa il percorso "zip locale" qui sotto, oppure
-> attendi il push del founder.
+---
 
-> **Se vedi `iuris-it` invece di `beccaria`.** Il rename è arrivato con
-> v4.0.0 (2026-05-19). Le versioni precedenti del plugin si chiamavano
-> `iuris-it` (3.x) e prima ancora `mhc-l` (≤2.x). Sono lo stesso
-> plugin nella sua evoluzione storica; aggiorna alla 4.0.0 per ottenere
-> identità + due skill nuove + supporto AGPL ecosystem.
+## Installazione — percorso CLI (Claude Code, due comandi)
+
+Per chi usa Claude Code (modalità terminale). Due comandi, copia e
+incolla nella sessione Claude Code:
+
+```text
+/plugin marketplace add MicheleLoi/legal-tech-cowork
+/plugin install beccaria@legal-tech-cowork
+```
+
+Il primo registra questo repository come marketplace di plugin; il
+secondo installa il plugin `beccaria` da quel marketplace. Documentazione
+canonica Anthropic in italiano del comando:
+[Trova e installa plugin](https://code.claude.com/docs/it/discover-plugins).
+
+Risultato identico al percorso UI: stesse 6 skill, stessa modalità
+default + 5 skill avanzate opt-in.
 
 ---
 
@@ -345,56 +318,31 @@ nella richiesta: *"usa la skill verifica-fonti su questo testo"*. Se
 persiste, apri una issue su
 `https://github.com/MicheleLoi/legal-tech-cowork/issues`.
 
-### Vedo `beccaria` ma le skill non sono 6
-
-Probabile che il marketplace remoto sia su una versione precedente
-(`iuris-it` 3.3.1 con 4 skill, o 2.x con la sola `verifica-fonti`).
-In attesa che la 4.0.0 sia pushata, installa via zip locale come
-descritto sopra, oppure attendi il push del founder.
-
-### Vedo ancora `iuris-it` invece di `beccaria`
-
-Cache stale di Claude Desktop. Prova a fare logout + login, oppure
-ri-aggiungere il marketplace. Il push origin/main della 4.0.0 segue il
-gate di smoke test del founder.
-
 ### `ecosystem-scout` o `pattern-extractor` falliscono il fetch
 
 Causa più frequente: `bulletins.micheleloi.pro` non è nell'allowlist
-egress di Claude Desktop. Apri Impostazioni → Network egress e verifica
-che il dominio sia presente; se manca, aggiungilo (solo hostname, senza
-protocollo) — è single step, copre tutte le skill VPS-based
-simultaneamente. Ri-prova il trigger della skill: il fetch passa.
+egress di Claude. Apri Impostazioni → Network egress, aggiungi il
+dominio (solo hostname, senza protocollo) e ri-prova: il fetch passa.
 
-Se invece il tuo piano ha l'allowlist non modificabile (es. enterprise
-lockdown), le skill ricalibrano automaticamente a **fallback
-pointer-pure** documentato: ti suggeriscono il fraseggio per chiedere a
-Claude di aprire l'URL come azione utente. Segui quel fraseggio e il
-bollettino entra in contesto come fetch user-initiated (bypassa il
-validator skill-mediated).
+Se il tuo piano ha l'allowlist non modificabile (es. enterprise
+lockdown), le skill ricalibrano automaticamente: ti suggeriscono il
+fraseggio per chiedere a Claude di aprire l'URL come tua azione utente.
+Segui quel fraseggio e il bollettino entra in contesto.
 
 ---
 
-## Tutorial guidato di terze parti
+## Tutorial guidato e riferimenti ufficiali
 
-Se preferisci vedere Claude Code in azione prima di installarlo, ci sono alcuni
-video YouTube in italiano che mostrano l'installazione e l'uso base. **Nessuno
-copre specificamente il comando `/plugin marketplace add`** — per quello segui
-le istruzioni in questo documento.
-
-- [Installazione Claude Code e primo utilizzo — tutorial semplice](https://www.youtube.com/watch?v=_mU3oQkkBQk)
-- [Claude Code: La Guida COMPLETA per Iniziare nel 2026](https://www.youtube.com/watch?v=U57E3Ci94-A)
-- [Installa CLAUDE CODE GRATIS sul tuo COMPUTER](https://www.youtube.com/watch?v=xfNDqZAG5N8)
-
-Video di autori indipendenti — qualità dichiarata dai loro stessi titoli, non
-da noi garantita. La documentazione canonica resta sempre
-[code.claude.com/docs/it](https://code.claude.com/docs/it).
-
-### Riferimenti ufficiali Anthropic in italiano
+Documentazione canonica Anthropic in italiano:
 
 - [Applicazione desktop](https://code.claude.com/docs/it/desktop) — installer Windows/macOS
-- [Guida rapida](https://code.claude.com/docs/it/quickstart) — primi passi CLI
-- [Trova e installa plugin](https://code.claude.com/docs/it/discover-plugins) — pagina canonical su `/plugin marketplace add` e `/plugin install`
+- [Guida rapida](https://code.claude.com/docs/it/quickstart) — primi passi
+- [Trova e installa plugin](https://code.claude.com/docs/it/discover-plugins) — comandi `/plugin marketplace add` e `/plugin install`
+
+Se non hai mai usato Claude, esistono anche alcuni video YouTube in
+italiano di autori indipendenti (cerca "Claude Code tutorial italiano"
+o equivalenti). Nessuno copre BeccarIA in modo specifico — per quello
+segui queste istruzioni.
 
 ---
 
@@ -454,36 +402,15 @@ No. Controlla formato, plausibilità numerica, coerenza contestuale e
 indirizza ai registri authoritative per la verifica sostanziale. La
 responsabilità professionale finale resta dell'avvocato.
 
-**Perché ora è AGPL e prima era MIT?**
-Solo le **due skill nuove** di v4.0.0 (`ecosystem-scout`,
-`pattern-extractor`) sono sotto AGPL-3.0, per coerenza con l'ecosistema
-legal-AI open source AGPL che consumano (Mike e fork). Tutti gli altri
-componenti BeccarIA originali restano MIT (`verifica-fonti`,
-`adattamento-italiano`, documentazione, bollettino schema). I file
-forkati da `anthropics/claude-for-legal` restano Apache-2.0. Vedi
-`LICENSE`, `LICENSE-AGPL`, `LICENSE-ANTHROPIC` per i dettagli.
-
-**Cosa è RegIA?**
-RegIA è il brand ombrello / azienda che produce BeccarIA + due altri
-moduli: **MHC** (governance framework per AI-assisted knowledge work,
-audience cross-domain) e **Recode IT** (pseudonimizzazione web,
-audience consumer/prosumer). I tre moduli sono plug-and-play. La
-combinazione completa MHC + BeccarIA + Recode IT è la "versione
-modulare" di quello che storicamente è stato chiamato MHC-L (ora
-disaggregato in moduli separati). Vedi
-[micheleloi.pro/regia](https://micheleloi.pro/regia/) per il quadro
-strategico.
+**Con che licenza è distribuito BeccarIA?**
+Modello multi-licenza open source: AGPL-3.0 per le skill che
+interagiscono con l'ecosistema legal-AI AGPL (`ecosystem-scout`,
+`pattern-extractor`); MIT per il resto del plugin; Apache-2.0 per i
+file forkati da `anthropics/claude-for-legal`. Per i dettagli vedi
+`LICENSE`, `LICENSE-AGPL` e `LICENSE-ANTHROPIC` nel repository.
 
 ---
 
-*DISTRIBUZIONE.md — BeccarIA v4.0.0 — 2026-05-19, prereq + fetch
-doctrine aggiornati 2026-05-23. Sei skill totali (`verifica-fonti`
+*DISTRIBUZIONE.md — BeccarIA v4.0.0. Sei skill totali (`verifica-fonti`
 default; `catalogo`, `skill-installer`, `adattamento-italiano`,
-`ecosystem-scout`, `pattern-extractor` modalità avanzata opt-in).
-Doctrine fetch autonomous post-trigger esplicito su VPS BeccarIA
-(`bulletins.micheleloi.pro`) per tutte le skill modalità avanzata,
-single allowlist onboarding step. Fallback pointer-pure documentato in
-ogni `SKILL.md` per casi di policy di rete restrittiva. Multi-license
-(AGPL-3.0 per nuove skill ecosystem + MIT per BeccarIA originale +
-Apache-2.0 per parti Anthropic forkate). Posizionamento: modulo
-plug-and-play sotto RegIA.*
+`ecosystem-scout`, `pattern-extractor` modalità avanzata opt-in).*
