@@ -3,6 +3,12 @@
 *Per l'avvocato. Nessun comando terminale, nessun account GitHub, nessuna
 conoscenza tecnica richiesta.*
 
+> **Versione friendly online.** La guida con video dimostrativo
+> dell'installazione e formattazione pensata per la lettura su web vive
+> a [micheleloi.pro/beccaria](https://micheleloi.pro/beccaria/).
+> Questo `DISTRIBUZIONE.md` resta il riferimento canonico tecnico
+> (troubleshooting, FAQ, percorso zip locale, dettagli licenza).
+
 > **BeccarIA** è uno dei tre prodotti del brand ombrello **RegIA**,
 > insieme a **MHC** (governance framework) e **Recode IT**
 > (pseudonimizzazione web). I tre sono moduli plug-and-play: ciascuno
