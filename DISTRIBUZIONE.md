@@ -59,12 +59,15 @@ Out-of-box in entrambi i casi.
 
 ## Prerequisiti
 
-- **Claude Code Desktop installato.** Scarica da [claude.com/download](https://claude.com/download)
-  oppure consulta la [guida ufficiale Anthropic in italiano](https://code.claude.com/docs/it/desktop)
-  con installer Windows/macOS e nota su Git for Windows.
-- **Piano Claude Pro o superiore** (il piano gratuito non include plugin
-  di terze parti su cowork).
-- **Se non hai mai usato Claude Code**, può aiutarti vedere prima un tutorial introduttivo —
+- **App Claude installata sul tuo computer.** Scarica da [claude.com/download](https://claude.com/download)
+  (installer Windows/macOS; vedi anche la [guida ufficiale Anthropic in italiano](https://code.claude.com/docs/it/desktop)).
+  BeccarIA si installa via interfaccia grafica — **nessun comando terminale richiesto**.
+- **Piano Claude Pro o superiore.** Il piano gratuito non include plugin di terze parti.
+- **Modalità consigliata: Cowork.** È la tab Cowork nella sidebar sinistra dell'app Claude,
+  dove i plugin si installano in cinque click. È il percorso descritto sotto.
+- **Anche supportato: Claude Code Desktop.** Stessa app, modalità alternativa di interazione.
+  Il plugin BeccarIA funziona anche lì.
+- **Se non hai mai usato Claude**, può aiutarti vedere prima un tutorial introduttivo —
   ne segnalo alcuni in fondo (sezione "Tutorial guidato di terze parti").
 
 ---
