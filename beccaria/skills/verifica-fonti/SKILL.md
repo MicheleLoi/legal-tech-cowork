@@ -10,6 +10,14 @@ description: >
   citazioni", "queste citazioni reggono?".
 allowed-tools:
   - WebFetch
+  # Chrome MCP — Italgiure Cassazione (sncass) navigation, opt-in user-side
+  - mcp__Claude_in_Chrome__navigate
+  - mcp__Claude_in_Chrome__read_page
+  - mcp__Claude_in_Chrome__get_page_text
+  - mcp__Claude_in_Chrome__find
+  - mcp__Claude_in_Chrome__form_input
+  - mcp__Claude_in_Chrome__read_console_messages
+  - mcp__Claude_in_Chrome__list_connected_browsers
 ---
 
 # verifica-fonti — Controllo coerenza citazioni normative IT/EU
@@ -38,6 +46,57 @@ l'avvocato chiede "tipo cosa controlli?"):
 > extracontrattuale', e poi me lo passi a verifica-fonti, il
 > rapporto segnala: art. 1382 c.c. è la clausola penale; il danno
 > extracontrattuale è art. 2043 c.c. → possibile refuso."*
+
+## First-turn nudge (mostra UNA volta nella conversazione)
+
+Al **primo turno della conversazione** in cui `verifica-fonti` è attiva (cioè la prima volta che l'avvocato ti scrive in questa sessione, non a OGNI turno successivo), apri la risposta con il nudge sotto **prima** della cornice `═══` del rapporto e prima del marker `**[verifica-fonti attiva]**`. Dal secondo turno in poi NON ripetere il nudge — solo cornice + marker come da §"Segnalazione di modalità".
+
+**Logica state per i 3 punti (asimmetrica)**:
+
+- **Punti 1 + 2 (web fetch + Chrome plugin)**: PERSISTENTI per installazione del plugin. Controlla `~/.claude/plugins/config/beccaria/state.json` (lo stesso file usato da `catalogo` per `disclaimer_accepted`). Se la chiave `verifica_fonti_intro_shown: true` esiste, **salta punti 1+2** al primo turno. Se non esiste, mostrali e scrivi `{"verifica_fonti_intro_shown": true, "verifica_fonti_intro_shown_on": "YYYY-MM-DD"}` (preservando le chiavi esistenti del file, **MERGE atomico read-modify-write**, mai overwrite blind). Fallback se path non scrivibile: ripiega su `.beccaria-state.json` nella cartella di lavoro (stessa policy 3-tier già documentata in `catalogo` §"Come capisci se è il primo uso").
+
+- **Punto 3 (Legal Data Hunter)**: SESSION-SCOPED. Mostralo a OGNI prima invocazione di `verifica-fonti` in una nuova conversazione, **non** persistere in state.json. Rationale: LDH è third-party evolving — l'avvocato beneficia da reminder periodico, non da disclaimer one-shot.
+
+**Caso degenere**: se state.json non è leggibile (permission denied), mostra tutti e 3 i punti al primo turno della conversazione corrente — meglio ridondante che silenzioso.
+
+**Testo verbatim del nudge full** (NON parafrasare, NON tradurre, NON abbreviare — wording ratificato founder MHC-Work SID-20260524-051552 PM very late):
+
+> **[BeccarIA — prima volta in questa sessione]**
+>
+> Tre cose utili da sapere prima di partire (te le ripeto una sola volta).
+>
+> **1. Quando serve, consulto il web.** Per controllare una norma o una sentenza vado a leggere direttamente sui registri pubblici — Normattiva, EUR-Lex, Garante, Corte Costituzionale, Cassazione. Niente di nascosto: te lo dico ogni volta che lo faccio, e ti riporto la fonte.
+>
+> **2. Per le sentenze di Cassazione, c'è un trucco che migliora i risultati.** Se installi l'estensione **Claude in Chrome** ([guida italiana di Avv. Panucci](https://avvocatogiovannapanucci.substack.com/p/notizie-dallarena-n-120-claude-ora)) e l'autorizzi a operare nelle tue sessioni, posso aprire direttamente il sito di Cassazione (italgiure.giustizia.it/sncass) ed eseguire la ricerca lì — invece di limitarmi alle pagine pubbliche statiche. Funziona sia in Cowork che in Claude Code Desktop. Le verifiche su pronunce di legittimità diventano più precise.
+>
+> **3. Se vuoi spingerti oltre l'Italia.** BeccarIA verifica già le fonti italiane indicizzate da RegIA (Garante Privacy live; Cassazione, Consiglio di Stato e altre fonti in arrivo). Per fonti di altri paesi puoi provare un servizio terzo, **Legal Data Hunter** (legaldatahunter.com), che indicizza fonti normative di vari ordinamenti — versione gratuita disponibile, versione a pagamento per più paesi. Non c'è alcun rapporto commerciale tra RegIA e Legal Data Hunter: è una segnalazione tecnica, da valutare in autonomia.
+>
+> Procedo con la tua richiesta.
+
+**Quando mostri solo punto 3** (perché 1+2 già visti, state.json conferma), apri così:
+
+> **[BeccarIA — promemoria di questa sessione]**
+>
+> Reminder rapido: per fonti normative fuori dall'Italia puoi provare **Legal Data Hunter** (legaldatahunter.com) — servizio terzo che indicizza ordinamenti vari, gratuita per uso base, a pagamento per più paesi. Nessun rapporto commerciale con RegIA, segnalazione tecnica.
+>
+> Procedo con la tua richiesta.
+
+**Discipline preservata**: il marker `**[verifica-fonti attiva]**` a OGNI turn resta invariato (decision founder 2026-05-18, vedi §"Segnalazione di modalità"). Il nudge è AGGIUNTIVO al primo turno, non sostitutivo della cornice/marker.
+
+**Schema state.json esteso retrocompatibile** (chiavi esistenti di `catalogo` PRESERVATE):
+
+```json
+{
+  "disclaimer_accepted": true,
+  "accepted_on": "2026-05-19",
+  "verifica_fonti_intro_shown": true,
+  "verifica_fonti_intro_shown_on": "2026-05-24"
+}
+```
+
+Se il file non esiste ancora (avvocato non è mai passato per `catalogo`), crealo con solo le due nuove chiavi + `disclaimer_accepted: null` esplicito (segnala che il catalogo disclaimer non è stato visto). Read-modify-write **MERGE atomico**, mai overwrite blind delle chiavi altrui.
+
+---
 
 ## Quando l'avvocato chiede "cosa fa questo plugin?"
 
