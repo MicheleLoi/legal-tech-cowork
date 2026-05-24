@@ -190,6 +190,7 @@ Due click guidati dentro Claude Code Desktop:
 
 - **Documentazione canonica Anthropic in italiano:** [Trova e installa plugin](https://code.claude.com/docs/it/discover-plugins).
 - **Guida step-by-step pensata per l'avvocato non-tecnico** (5 click, screenshot, troubleshooting, percorso alternativo zip locale): **[DISTRIBUZIONE.md](./DISTRIBUZIONE.md)**.
+- **Vuoi provare `verifica-fonti` con OpenAI Codex invece che con Claude?** Percorso sperimentale per avvocati: **[CODEX_INSTALL.md](./CODEX_INSTALL.md)**.
 
 Prima volta con Claude Code Desktop? Vedi [code.claude.com/docs/it/desktop](https://code.claude.com/docs/it/desktop).
 
