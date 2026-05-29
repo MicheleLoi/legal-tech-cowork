@@ -1,16 +1,19 @@
 ---
 name: pattern-extractor
 description: >
-  Applica nella conversazione corrente pattern di prompt/approccio derivati
-  dall'ecosistema legal-AI open source (Mike e fork), con attribution AGPL
-  obbligatoria visibile all'avvocato all'inizio della risposta. Consulta un
-  bollettino curato dal VPS di BeccarIA. Mai attribuire pattern non
-  effettivamente recuperati dal backend.
+  Applica nella conversazione corrente pattern di approccio al diritto
+  italiano — impalcature di lavoro "scaffold-not-answer" curate
+  editorialmente da MicheleLoi e pubblicate sul bollettino di BeccarIA
+  (bulletins.micheleloi.pro). Mostra l'attribuzione editoriale all'inizio
+  della risposta. Mai attribuire pattern non effettivamente recuperati
+  dal backend.
 ---
 
-<!-- SPDX-License-Identifier: AGPL-3.0-only -->
+<!-- SPDX-License-Identifier: AGPL-3.0-only (skill code) -->
+<!-- Bulletin content licensed proprietary © MicheleLoi 2026; see
+     https://github.com/MicheleLoi/regia-bollettino-updater/blob/main/NOTICE.md -->
 
-# pattern-extractor — applicazione di pattern dall'ecosistema con attribution AGPL
+# pattern-extractor — applicazione di pattern di approccio al diritto italiano
 
 ## Quick start
 
@@ -27,13 +30,14 @@ con avviso esplicito).
 ## Cosa l'avvocato vede
 
 All'inizio della risposta che applica il pattern, **prefisso di
-attribution obbligatorio**:
+attribuzione editoriale obbligatorio**:
 
-> Sto applicando un approccio derivato da **[source_repo]** ([source_owner],
-> **[source_license]**). [Eventuale nota sul perché questo pattern è
-> appropriato per il task].
+> Sto applicando un'impalcatura di lavoro tratta dal bollettino
+> editoriale di **MicheleLoi** ([source_repo] · contenuto proprietario,
+> codice della skill AGPL-3.0). [Eventuale nota sul perché questo
+> pattern è appropriato per il task].
 
-Subito dopo l'attribution, marker modalità:
+Subito dopo l'attribuzione, marker modalità:
 
 > **[pattern-extractor attiva]**
 
@@ -45,19 +49,22 @@ Marker exit quando l'avvocato cambia topic:
 
 ### Esempio concreto
 
-**Avvocato:** *"Applica l'approccio di Mike all'estrazione clausole di
-questo NDA."*
+**Avvocato:** *"Voglio redigere il nucleo di un contratto di trasporto
+di cose per via terra."*
 
 **pattern-extractor:**
 
-> Sto applicando un approccio derivato da **willchen96/mike**
-> (willchen96, **AGPL-3.0**). Questo pattern estrae clausole per
-> tipologia (riservatezza, durata, foro, penali) ed evidenzia le
-> divergenze rispetto a un template di riferimento.
+> Sto applicando un'impalcatura di lavoro tratta dal bollettino editoriale
+> di **MicheleLoi** (MicheleLoi/legal-tech-cowork · contenuto proprietario,
+> codice della skill AGPL-3.0). Il pattern `legal_civile_contratti_trasporto`
+> è nato per analisi ex-post di responsabilità e danni: lo inverto qui come
+> scaffolding ex-ante — costruisco il nucleo contrattuale presidiando le
+> stesse aree (obblighi del vettore, clausole di limitazione, documentazione
+> del danno, termini di reclamo).
 >
 > **[pattern-extractor attiva]**
 >
-> *[applicazione del pattern al NDA caricato — estrazione strutturata]*
+> *[applicazione del pattern al task — redazione strutturata]*
 
 ## Quando attivarsi
 
@@ -142,6 +149,28 @@ Schema atteso (documentato in `regia-bollettino-updater` repo):
   ]
 }
 ```
+
+### 2-bis. Avviso del curatore (`lawyer_notice`), una volta per sessione
+
+Quando fetchi il bollettino, **se è presente un blocco top-level
+`lawyer_notice`** (accanto a `patterns`, non dentro l'array), mostra
+all'avvocato i suoi campi `author` + `disclosure` + `perk` **una sola
+volta all'inizio della sessione** — non a ogni schema applicato. Formato
+sobrio, prima di procedere con il primo schema:
+
+> **Dal curatore del bollettino.** [valore di `author`] · [valore di
+> `disclosure`] · [valore di `perk`].
+
+Regole:
+
+- Mostralo **una volta sola** per sessione (al primo fetch del bollettino),
+  non a ripetizione a ogni schema.
+- Se il blocco `lawyer_notice` è **assente** dal bollettino, non mostrare
+  nulla e procedi normalmente (backward-compat con bollettini che non
+  hanno il campo — nessun errore, nessun avviso).
+- È un avviso informativo del curatore: non sostituisce e non duplica
+  l'attribution prefix dello Step 4 (che resta obbligatoria per ogni
+  schema applicato).
 
 ### 3. Match del pattern
 
