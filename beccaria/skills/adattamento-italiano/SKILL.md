@@ -2,7 +2,7 @@
 name: adattamento-italiano
 description: >
   Adatta una skill legal-tech già installata al diritto italiano
-  (componente della modalità AVANZATA opt-in del plugin iuris-it, non
+  (componente della modalità AVANZATA opt-in del plugin beccaria, non
   default): traduce il prompt, mappa i riferimenti normativi originali
   agli equivalenti italiani/europei dove plausibile, marca con
   [VERIFICA] ogni riferimento da controllare, esegue pre-flight
@@ -20,7 +20,7 @@ argument-hint: "[nome skill già installata, oppure niente per selezione interat
 ## Posizionamento: componente modalità avanzata opt-in
 
 Questa skill fa parte del workflow **avanzato opt-in** del plugin
-iuris-it (gateway: la skill `catalogo` / il bollettino). Non si attiva
+beccaria (gateway: la skill `catalogo` / il bollettino). Non si attiva
 automaticamente in nessun caso: né all'apertura del plugin, né
 all'installazione di una skill terza, né su menzione generica di
 "diritto italiano". Si attiva **solo** se l'avvocato la invoca
@@ -97,7 +97,7 @@ distinte, due momenti distinti, entrambi deliberati.
 
 L'avvocato ha scritto `adatta [nome] in italiano` o
 `/adattamento-italiano [nome]`. Cerca la skill in
-`~/.claude/plugins/config/iuris-it/installed_skills/[nome]/`.
+`~/.claude/plugins/config/beccaria/installed_skills/[nome]/`.
 
 - Trovata → carica `SKILL.md` da lì come `original_skill_md` e
   procedi a Step 2.
@@ -110,7 +110,7 @@ L'avvocato ha scritto `adatta [nome] in italiano` o
 
 L'avvocato ha scritto solo `/adattamento-italiano` o "adatta una
 skill in italiano". Lista le skill in
-`~/.claude/plugins/config/iuris-it/installed_skills/`:
+`~/.claude/plugins/config/beccaria/installed_skills/`:
 
 > *"Quale skill installata vuoi adattare al diritto italiano?*
 >
@@ -223,7 +223,7 @@ Cosa vuoi fare?
 ## Step 6 — Gestisci la risposta dell'avvocato
 
 - **Approva e sovrascrivi installata** → sovrascrivi
-  `~/.claude/plugins/config/iuris-it/installed_skills/[nome]/SKILL.md`
+  `~/.claude/plugins/config/beccaria/installed_skills/[nome]/SKILL.md`
   con la versione adattata. Aggiorna il record nell'`install-log.yaml`:
   `italian_adaptation_applied: true`, `adaptation_hash:
   <sha256_dell_adattata>`, `adaptation_date: <YYYY-MM-DD>`,
@@ -269,7 +269,7 @@ importazione nel diritto italiano), produci un output che dice:
 
 > *"Questa skill non è adattabile al contesto italiano per le seguenti
 > ragioni: [elenco]. Resta installata in versione originale e puoi
-> comunque usarla, ma iuris-it non proporrà `verifica-fonti`
+> comunque usarla, ma beccaria non proporrà `verifica-fonti`
 > automaticamente sui suoi output (la skill non opera su diritto
 > italiano/europeo). Nessuna modifica fatta alla skill installata."*
 

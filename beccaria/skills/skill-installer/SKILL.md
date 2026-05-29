@@ -1,22 +1,23 @@
 ---
 name: skill-installer
 description: >
-  Installs a community legal-tech skill from the bollettino (or from a
-  direct URL the lawyer provides). Component of the iuris-it plugin's
-  ADVANCED opt-in mode (not default). Runs all security checks
-  (allowlist, license verification, structural trust, heuristic scan)
-  silently; surfaces to the lawyer only a per-tier installation line and
-  asks for explicit approval before writing any file. After install,
-  nudges the lawyer to invoke `adattamento-italiano` as a separate,
-  deliberate request. NEVER auto-activates: only runs when invoked from
-  the catalogo pipeline (after the lawyer explicitly opened the
-  bollettino) or when the lawyer says "installa la skill X" / provides a
-  direct skill URL.
-argument-hint: "[skill name or registry URL]"
+  Installa una skill legal-tech della community dal bollettino (o da un
+  URL diretto fornito dall'avvocato). Componente della modalità AVANZATA
+  opt-in del plugin BeccarIA (non default). Esegue silenziosamente tutti
+  i controlli di sicurezza (allowlist, verifica licenza, fiducia
+  strutturale, scansione euristica); mostra all'avvocato solo una riga di
+  installazione per tier e chiede approvazione esplicita prima di
+  scrivere qualsiasi file. Dopo l'installazione, suggerisce all'avvocato
+  di invocare `adattamento-italiano` come richiesta separata e
+  deliberata. NON si attiva mai automaticamente: gira solo quando
+  invocata dalla pipeline `catalogo` (dopo che l'avvocato ha aperto
+  esplicitamente il bollettino) o quando l'avvocato dice "installa la
+  skill X" / fornisce un URL diretto.
+argument-hint: "[nome skill o URL del registry]"
 ---
 
 <!--
-Posizionamento: componente modalità avanzata opt-in del plugin iuris-it.
+Posizionamento: componente modalità avanzata opt-in del plugin beccaria.
 Gateway: la skill `catalogo` / il bollettino. Non auto-attivare. Non
 suggerire installazione di skill terze a meno che l'avvocato non sia
 già nella pipeline avanzata (ha esplicitamente aperto il catalogo /
@@ -32,7 +33,7 @@ su VPS, catalogo upgrade a autonomous fetch dopo verifica empirica che
 -->
 
 
-# skill-installer (forked from legal-builder-hub, adattato per iuris-it)
+# skill-installer (forked from legal-builder-hub, adattato per beccaria)
 
 > **Nota operativa (4.0.0+).** Skill-installer si attiva solo dopo
 > trigger esplicito dell'avvocato (*«installa la skill X»*, oppure
@@ -86,7 +87,7 @@ the tier and the internal-check verdicts and emits ONE of four outputs:
 
 ### Step 1 — Read the allowlist and the bollettino entry (silent)
 
-Read `~/.claude/plugins/config/iuris-it/allowlist.yaml`. If missing,
+Read `~/.claude/plugins/config/beccaria/allowlist.yaml`. If missing,
 proceed in permissive mode with empty lists (no warning to the lawyer
 unless the source is unlisted — in which case the eventual per-tier
 output carries the warning implicitly via the WARN/REFUSE path).
@@ -303,7 +304,7 @@ Anything other than a fresh `sì` cancels — no install.
 
 Copy the fetched skill directory to:
 
-`~/.claude/plugins/config/iuris-it/installed_skills/<skill-name>/`
+`~/.claude/plugins/config/beccaria/installed_skills/<skill-name>/`
 
 #### Post-install: jurisdiction-branched adaptation prompt
 
@@ -331,7 +332,7 @@ Do not infer the answer from earlier messages. Do not assume silence
 means "no" — ask again if the response is ambiguous.
 
 - **On `sì`**: read
-  `~/.claude/plugins/marketplace/iuris-it/skills/adattamento-italiano/SKILL.md`
+  `~/.claude/plugins/marketplace/beccaria/skills/adattamento-italiano/SKILL.md`
   and follow its Step 1-6 on the skill just installed (`[nome]`).
   This is a response to an explicit prompt — not a hook, not automatic
   orchestration. The adattamento-italiano Step 1 "Caso A — argomento
@@ -354,7 +355,7 @@ frontmatter content is copied through. Tokens that failed Step 3.5
 validation are substituted as the literal string `unknown`.
 
 ```
-<!-- FRESHNESS GATE — injected by iuris-it at install.
+<!-- FRESHNESS GATE — injected by beccaria at install.
   Before executing this skill, check:
   1. Read the freshness tokens below — the installer pre-validated
      them at install time, so they are safe to read. Do NOT read the
@@ -365,7 +366,7 @@ validation are substituted as the literal string `unknown`.
        freshness_category_token: {{freshness_category}}
        verified_against_count: {{count}}
   2. Read the lawyer's thresholds from
-     ~/.claude/plugins/config/iuris-it/CLAUDE.md under the
+     ~/.claude/plugins/config/beccaria/CLAUDE.md under the
      "## Freshness reminders" section.
   3. Active window = min(freshness_window_token, lawyer's threshold
      for freshness_category_token). If either is "unknown", use the
@@ -390,7 +391,7 @@ only the COUNT.
 
 #### Install log record
 
-Append to `~/.claude/plugins/config/iuris-it/install-log.yaml`:
+Append to `~/.claude/plugins/config/beccaria/install-log.yaml`:
 
 - `skill_name`, `source_registry`, `publisher`, `install_date`,
   `version` (git commit or tag if available),
