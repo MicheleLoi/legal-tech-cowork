@@ -136,11 +136,16 @@ chiedi conferma esplicita:
 
 > **Prima di iniziare.** Questo plugin è un fork-and-extend di
 > `legal-builder-hub` di Anthropic (Apache-2.0) con un layer italiano
-> aggiunto. Monitoro automaticamente l'ecosistema legal-tech AI open
-> source — il bollettino è popolato da una routine che applica una
-> threshold policy esplicita (qualità, licenza OSS, rilevanza italiana),
-> non da curazione manuale runtime. **Il bollettino si aggiorna
-> automaticamente il 17 di ogni mese alle 22:40 ora italiana.**
+> aggiunto. Il bollettino RegIA combina due fonti editoriali: (1) uno
+> **scan automatico** dell'ecosistema legal-tech AI open source che
+> applica una threshold policy esplicita (qualità, licenza OSS,
+> rilevanza italiana), e (2) una **selezione curata manualmente** dal
+> curatore RegIA (`human_picks`) per coprire risorse rilevanti che lo
+> scan automatico non catturerebbe (es. servizi MCP italiani non su
+> GitHub, strumenti proprietari di rilievo per il diritto italiano).
+> Le due fonti sono distinte nel JSON dal campo `source_type` e
+> presentate come sezioni separate nelle risposte. **Il bollettino si
+> aggiorna automaticamente il 17 di ogni mese alle 22:40 ora italiana.**
 >
 > **Come funziona il refresh.** Quando vuoi vedere la versione
 > aggiornata del bollettino, lo fetcho per te in chat dal VPS RegIA
@@ -721,5 +726,19 @@ sopra per la logica di selezione. Gestito da questa skill:
 
 8. **Saltare il disclaimer al primo uso.** L'avvocato deve sapere
    che la responsabilità giuridica resta sua, che il founder
-   garantisce solo la distribuzione, e che il bollettino è popolato
-   automaticamente.
+   garantisce solo la distribuzione, e che il bollettino combina
+   scan automatico + selezione curata.
+
+9. **Confabulare assenza/gap su `bulletin_skills.json` ignorando
+   le human_picks.** Quando il schema di `bulletin_skills.json`
+   includerà voci `human_picks` (config schema già lo supporta nel
+   repo updater), valgono le stesse tre regole di anti-confabulazione
+   di `ecosystem-scout`: **read first** (leggere prima le human_picks
+   rilevanti), **never filter out** (mai applicare loro filtri per
+   capabilities/threshold che le scarterebbero — sono curate
+   apposta), **never confabulate absence** (mai dichiarare "non
+   esiste skill X per dominio Y" senza prima aver matchato la
+   domanda contro `topic`, `notes_curatorial`, `tags`,
+   `inferred_jurisdiction` delle human_picks). La discipline
+   canonica è quella documentata in `ecosystem-scout/SKILL.md` §3
+   e §"Errori da NON commettere".

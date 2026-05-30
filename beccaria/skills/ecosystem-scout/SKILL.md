@@ -107,23 +107,51 @@ of truth):
   "source_count": 12,
   "repos": [
     {
-      "name": "...",
-      "owner": "...",
-      "url": "...",
+      "name": "mike-oss",
+      "owner": "anthropics",
+      "url": "https://github.com/...",
       "description": "...",
       "license": "AGPL-3.0-only",
       "inferred_jurisdiction": "IT",
       "inferred_capabilities": ["contract_review", "..."],
+      "reputation_signals": {"stars": 123, "fork_count": 5},
       "last_activity": "2026-05-15T10:30:00Z",
-      "stars": 123,
-      "fork_count": 5,
       "is_active": true,
       "notes": "annotazione manuale del founder (opzionale)",
       "source_type": "github_scanned"
+    },
+    {
+      "name": "legaldatahunter-com",
+      "owner": "(curator-supplied)",
+      "url": "https://legaldatahunter.com",
+      "description": "...",
+      "license": "proprietary",
+      "inferred_jurisdiction": "IT",
+      "inferred_capabilities": [],
+      "reputation_signals": null,
+      "last_activity": null,
+      "is_active": true,
+      "notes": null,
+      "source_type": "human_picked",
+      "topic": "MCP italiano per ricerca giurisprudenza",
+      "notes_curatorial": "Servizio MCP italiano operativo, esempio rilevante di MCP italiano nel mercato — citarlo quando l'avvocato chiede se esistono MCP italiani.",
+      "added_date": "2026-05-22",
+      "tags": ["mcp", "italia", "giurisprudenza"],
+      "curator": "founder"
     }
   ]
 }
 ```
+
+**Campi extra `human_picked`** (5 field aggiuntivi, presenti solo se `source_type == "human_picked"`):
+
+- `topic` — titolo curatoriale breve (1 frase) del perché la voce è stata aggiunta
+- `notes_curatorial` — rationale esteso del curatore (1-3 frasi); è la "ragione editoriale" della voce
+- `added_date` — quando è stata aggiunta al bollettino (ISO date)
+- `tags` — array di tag liberi assegnati dal curatore (es. `["mcp", "italia", "giurisprudenza"]`)
+- `curator` — chi ha curato la voce (default: `"founder"`)
+
+**Campi `null` / `[]` by design su `human_picked`:** `reputation_signals` (no GitHub stars per servizi non-GitHub), `inferred_capabilities` (`[]` — non derivate da scan automatico, la "rilevanza" sta in `topic` + `notes_curatorial` + `tags`), `last_activity` (può essere `null` se non applicabile). Non interpretare l'assenza di questi campi come "voce a basso segnale" — è inversa: la voce ha segnale curatoriale esplicito al posto di segnale algoritmico.
 
 **Campo `source_type`** (schema 1.1.0+): distingue origine editoriale della
 voce. Due valori possibili:
@@ -138,8 +166,26 @@ voce. Due valori possibili:
 
 ### 3. Filtra/ordina per rilevanza
 
-Best-effort matching della domanda dell'avvocato con `inferred_capabilities`
-e `inferred_jurisdiction` dei repo nel bollettino. Privilegia:
+**Regola read-first per human_picks (anti-confabulazione).** Leggi
+SEMPRE per prime le voci con `source_type: "human_picked"` e **non
+applicare mai il filtro `inferred_capabilities` a loro** (hanno
+`inferred_capabilities: []` by design — il filtro le scarterebbe
+ingiustamente). Matcha le human_picks contro la domanda dell'avvocato
+usando:
+
+- `inferred_jurisdiction` (match esatto su giurisdizione richiesta)
+- `tags` (intersezione con keyword della domanda)
+- keyword presenti in `topic`
+- keyword presenti in `notes_curatorial`
+
+Una human_pick rilevante per la domanda è SEMPRE inclusa nella risposta,
+anche se sembra "off-topic" rispetto alle capabilities formali — il
+curatore l'ha selezionata apposta perché copre un gap che lo scan
+automatico non avrebbe catturato.
+
+**Per le voci `github_scanned`** (o schema 1.0.0 senza `source_type`),
+applica il matching standard su `inferred_capabilities` +
+`inferred_jurisdiction`. Privilegia:
 
 - Strumenti con `is_active: true` (recenti)
 - Match esatto su giurisdizione richiesta (se specificata)
@@ -158,23 +204,37 @@ strumento.** Se AGPL, aggiungi nota inline:
 > il responsabile legale prima di integrare in workflow di studio
 > proprietario.
 
-**Distinzione `source_type` (schema 1.1.0+):** raggruppa o etichetta le voci
-per origine, così l'avvocato distingue cosa è scan automatico GitHub vs
-cosa è curation editoriale del founder.
+**Layout obbligatorio in due sezioni separate (schema 1.1.0+).** Quando
+nella risposta sono presenti voci `human_picked` rilevanti, devono
+essere presentate come **sezione TOP separata, PRIMA** delle voci
+`github_scanned`. Layout:
 
-- Voci con `source_type: human_picked`: prefisso o sezione **"Dalla
-  curation del fornitore..."** (es. "Risorse selezionate manualmente dal
-  founder RegIA, con rationale di curation").
-- Voci con `source_type: github_scanned` (o campo assente, schema 1.0.0):
-  prefisso o sezione **"Dall'ecosistema GitHub MikeOSS..."** (es. "Strumenti
-  derivati dallo scan automatico dell'ecosistema open source").
+#### Selezione curata RegIA
 
-Se ci sono entrambe le categorie nella risposta, presentale come due
-sezioni separate (o due tabelle), in modo che l'avvocato sappia in chiaro
-quale voce è curation editoriale (più alto signal-to-noise, validata dal
-founder) e quale è scan automatico (più ampia copertura, meno editorial
-filter). Per `human_picked`, mostra anche il campo `notes` se presente —
-è il rationale di curation del founder.
+Sezione introdotta con: *"Risorse selezionate manualmente dal curatore
+RegIA, con rationale editoriale esplicito."* Per ogni voce `human_picked`
+rilevante:
+
+- Nome + URL
+- `topic` (titolo curatoriale)
+- **Rationale del curatore (citato verbatim dal `notes_curatorial`,
+  1-2 righe)** — questa è la parte non-omissibile: è la ragione per
+  cui la voce è in selezione curata e va riprodotta letteralmente,
+  non parafrasata.
+- Giurisdizione + tags
+- Licenza (se nota; se `null` o `proprietary`, dichiaralo)
+
+#### Dall'ecosistema GitHub MikeOSS
+
+Sezione successiva (sotto la curata). Voci `github_scanned` (o schema
+1.0.0 senza `source_type`) col formato standard documentato sopra
+(nome, owner, descrizione, licenza, giurisdizione, capabilities,
+attività, URL).
+
+Se non ci sono human_picks rilevanti per la domanda, la sezione
+"Selezione curata RegIA" è omessa e parte direttamente la sezione
+GitHub. Se non ci sono github_scanned rilevanti, omessa quella e
+mostra solo la curata. Non duplicare voci tra le due sezioni.
 
 ## Gestione errori
 
@@ -241,6 +301,15 @@ human_picked — backward-compat additive).
   informazione legale rilevante per l'avvocato.
 - **Non parli** mai di "fork di BeccarIA" — BeccarIA non è fork tecnico,
   è strumento separato che consuma metadati dell'ecosistema via bollettino.
+- **Non dichiari mai assenza o gap in un dominio** senza prima aver
+  scansionato le human_picks rilevanti filtrate per
+  `inferred_jurisdiction`, `tags`, e parole chiave in `topic` /
+  `notes_curatorial`. Esempio canonico: alla domanda *"esiste un MCP
+  italiano?"* — le human_picks `legaldatahunter-com` e
+  `bettercallclaude-it` contengono entrambe riferimento esplicito a
+  MCP italiani; **citarle PRIMA di concludere alcunché**. Concludere
+  "non risulta un MCP italiano" senza prima aver letto le human_picks
+  è confabulazione, non risposta basata sul bollettino.
 
 ## Coordinamento con le altre skill di BeccarIA
 
