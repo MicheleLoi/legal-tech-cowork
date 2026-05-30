@@ -29,7 +29,7 @@ che restano inerti finché non le attivi esplicitamente:
 - `adattamento-italiano` — adatta al volo skill anglophone a IT/EU
 - `ecosystem-scout` — panoramica intelligente dell'ecosistema legal-AI
   open source (Mike, fork nazionali, ecc.)
-- `pattern-extractor` — applica pattern dall'ecosistema con attribution
+- `schemi-di-ragionamento` — applica pattern dall'ecosistema con attribution
   AGPL obbligatoria
 
 Vedi la sezione **Come testare la modalità avanzata** più sotto. Se non
@@ -94,7 +94,7 @@ click nell'app Claude (modalità Cowork).
 
 Fatto. Vedrai un messaggio di conferma. Dovrebbero comparire **6 skill**
 installate: `verifica-fonti`, `catalogo`, `skill-installer`,
-`adattamento-italiano`, `ecosystem-scout`, `pattern-extractor`. Solo la
+`adattamento-italiano`, `ecosystem-scout`, `schemi-di-ragionamento`. Solo la
 prima è attiva di default; le altre cinque restano inerti finché non le
 invochi esplicitamente (vedi sotto).
 
@@ -246,7 +246,7 @@ e i suoi fork nazionali).
    l'URL come azione utente. Vedi §Prerequisiti per il single allowlist
    step che evita questo caso.
 
-### 5) Test modalità avanzata — `pattern-extractor` (nuova in 4.0.0)
+### 5) Test modalità avanzata — `schemi-di-ragionamento` (nuova in 4.0.0)
 
 Per applicare nella conversazione corrente un pattern derivato
 dall'ecosistema AGPL (Mike, fork) con attribution obbligatoria.
@@ -258,7 +258,7 @@ dall'ecosistema AGPL (Mike, fork) con attribution obbligatoria.
 
    Trigger equivalenti: *"usa il pattern di [strumento] su questo
    testo"*, *"fai redline review con il metodo di [strumento]"*.
-2. **Atteso**: `pattern-extractor` si attiva, fa `WebFetch` del
+2. **Atteso**: `schemi-di-ragionamento` si attiva, fa `WebFetch` del
    bollettino pattern, recupera il pattern matching, e **espone il
    prefisso di attribution obbligatorio** all'inizio della risposta:
 
@@ -287,7 +287,7 @@ Il plugin è onesto sui propri limiti:
 - **Niente polling in background.** Nessuna skill fa fetch ricorrente
   autonomo. Il bollettino viene aperto o quando lo chiedi esplicitamente
   (`catalogo` pointer doctrine) o come reazione a un tuo trigger
-  esplicito (`ecosystem-scout`, `pattern-extractor`, `skill-installer`
+  esplicito (`ecosystem-scout`, `schemi-di-ragionamento`, `skill-installer`
   autonomous post-trigger).
 - **Possibili falsi positivi sui trigger impliciti.** Se chiedi cose
   vagamente assimilabili a "mostrami qualcosa di skill" o "che tool
@@ -297,7 +297,7 @@ Il plugin è onesto sui propri limiti:
 - **`verifica-fonti` non garantisce la correttezza sostanziale.** Una
   citazione formalmente corretta può comunque essere inapplicabile al
   caso concreto. La verifica sostanziale finale resta del professionista.
-- **`pattern-extractor` non inventa attribuzioni.** Se l'ecosistema non
+- **`schemi-di-ragionamento` non inventa attribuzioni.** Se l'ecosistema non
   ha un pattern per il tuo task, te lo dice e procede con approccio
   generale senza falsa attribuzione AGPL.
 
@@ -318,7 +318,7 @@ nella richiesta: *"usa la skill verifica-fonti su questo testo"*. Se
 persiste, apri una issue su
 `https://github.com/MicheleLoi/legal-tech-cowork/issues`.
 
-### `ecosystem-scout` o `pattern-extractor` falliscono il fetch
+### `ecosystem-scout` o `schemi-di-ragionamento` falliscono il fetch
 
 Causa più frequente: `bulletins.micheleloi.pro` non è nell'allowlist
 egress di Claude. Apri Impostazioni → Network egress, aggiungi il
@@ -381,7 +381,7 @@ numerazione anacronistica o un articolo del codice civile incoerente
 col concetto descritto, non lo segnala. Con `verifica-fonti` attiva,
 quando glielo chiedi, produce un rapporto formale citazione-per-citazione
 con flag di formato, plausibilità e coerenza. Le skill ecosystem
-(`ecosystem-scout`, `pattern-extractor`) aprono accesso strutturato ai
+(`ecosystem-scout`, `schemi-di-ragionamento`) aprono accesso strutturato ai
 pattern del legal-AI open source italiano + globale.
 
 **Posso disinstallare il plugin?**
@@ -405,7 +405,7 @@ responsabilità professionale finale resta dell'avvocato.
 **Con che licenza è distribuito BeccarIA?**
 Modello multi-licenza open source: AGPL-3.0 per le skill che
 interagiscono con l'ecosistema legal-AI AGPL (`ecosystem-scout`,
-`pattern-extractor`); MIT per il resto del plugin; Apache-2.0 per i
+`schemi-di-ragionamento`); MIT per il resto del plugin; Apache-2.0 per i
 file forkati da `anthropics/claude-for-legal`. Per i dettagli vedi
 `LICENSE`, `LICENSE-AGPL` e `LICENSE-ANTHROPIC` nel repository.
 
@@ -413,4 +413,4 @@ file forkati da `anthropics/claude-for-legal`. Per i dettagli vedi
 
 *DISTRIBUZIONE.md — BeccarIA v4.0.0. Sei skill totali (`verifica-fonti`
 default; `catalogo`, `skill-installer`, `adattamento-italiano`,
-`ecosystem-scout`, `pattern-extractor` modalità avanzata opt-in).*
+`ecosystem-scout`, `schemi-di-ragionamento` modalità avanzata opt-in).*

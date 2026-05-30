@@ -71,7 +71,7 @@ universale per domini custom.
 3. Onboarding requirement: l'avvocato aggiunge `bulletins.micheleloi.pro`
    alla allowlist egress di Claude Desktop **una volta** (single step),
    poi tutte le skill BeccarIA che usano il VPS funzionano autonomous
-   (catalogo + ecosystem-scout + pattern-extractor).
+   (catalogo + ecosystem-scout + schemi-di-ragionamento).
 4. Pointer-pure resta documentato come **fallback** per casi enterprise
    lockdown / allowlist non modificabile dall'utente.
 
@@ -274,7 +274,7 @@ gap con istruzioni precise:
 > 4. Rifammi la richiesta — funzionerò autonomamente d'ora in avanti.
 >
 > Una volta che il dominio è in allowlist, anche le altre skill di
-> BeccarIA che usano lo stesso VPS (`ecosystem-scout`, `pattern-extractor`)
+> BeccarIA che usano lo stesso VPS (`ecosystem-scout`, `schemi-di-ragionamento`)
 > funzionano autonomously — single onboarding step copre tutto.
 >
 > **Alternativa senza modificare allowlist:** posso punterti l'URL e

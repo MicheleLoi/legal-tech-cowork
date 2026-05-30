@@ -9,7 +9,7 @@ mixed-license model:
    by the absence of any other license header).
 2. **GNU AGPL-3.0-only** — BeccarIA original code that participates in the
    AGPL legal-AI open-source ecosystem (currently:
-   `beccaria/skills/ecosystem-scout/` and `beccaria/skills/pattern-extractor/`).
+   `beccaria/skills/ecosystem-scout/` and `beccaria/skills/schemi-di-ragionamento/`).
    See `LICENSE-AGPL` for terms.
 3. **Apache-2.0** — files inherited from `anthropics/claude-for-legal`
    (the upstream legal-builder-hub plugin), which carry Anthropic's original

@@ -68,7 +68,7 @@ Marker exit quando l'avvocato cambia topic e si esce dalla modalità:
 ## Quando NON attivarsi
 
 - Richiesta di **eseguire** un task legal-AI specifico → invoca
-  `pattern-extractor` (che applica un pattern alla conversazione corrente).
+  `schemi-di-ragionamento` (che applica un pattern alla conversazione corrente).
 - Richiesta di **installare** una skill terza → invoca `skill-installer`.
 - Verifica di citazioni normative italiane → invoca `verifica-fonti`.
 - Adattamento di riferimenti US a IT/EU → invoca `adattamento-italiano`.
@@ -258,7 +258,7 @@ Comportamento atteso dalla skill in questo caso:
 > 4. Rifammi la domanda — funzionerò autonomamente d'ora in avanti.
 >
 > Una volta che il dominio è in allowlist, anche le altre skill di
-> BeccarIA che usano lo stesso VPS (`catalogo`, `pattern-extractor`)
+> BeccarIA che usano lo stesso VPS (`catalogo`, `schemi-di-ragionamento`)
 > funzionano autonomamente — single onboarding step copre tutto.
 >
 > **Alternativa senza modificare allowlist:** posso procedere su
@@ -294,7 +294,7 @@ human_picked — backward-compat additive).
 
 - **Non installi** nulla → quello è `skill-installer`.
 - **Non applichi pattern** dell'ecosistema a un task → quello è
-  `pattern-extractor`.
+  `schemi-di-ragionamento`.
 - **Non inventi** strumenti che non sono nel bollettino. Se non c'è un
   match, dichiaralo apertamente.
 - **Non ometti** mai la licenza nelle risposte. La licenza è
@@ -318,12 +318,12 @@ Flusso tipico integrato:
 1. Avvocato: *"Esiste un tool per estrarre clausole?"*
    → `ecosystem-scout` → consulta bollettino → risponde con elenco strumenti
 2. Avvocato: *"Ok, applica l'approccio di Mike al mio contratto."*
-   → `pattern-extractor` → recupera pattern + attribution → applica
+   → `schemi-di-ragionamento` → recupera pattern + attribution → applica
 3. Avvocato (dopo): *"Installa la skill X."*
    → `skill-installer` → autonomous fetch post-trigger → install
 
 Le tre skill non si sovrappongono: scout = panoramica strategica,
-pattern-extractor = applicazione operativa con attribution, installer =
+schemi-di-ragionamento = applicazione operativa con attribution, installer =
 distribuzione di skill terze.
 
 ## Tono

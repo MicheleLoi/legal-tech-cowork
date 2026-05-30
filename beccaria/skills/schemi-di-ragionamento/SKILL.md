@@ -1,5 +1,5 @@
 ---
-name: pattern-extractor
+name: schemi-di-ragionamento
 description: >
   Applica nella conversazione corrente uno schema di ragionamento per il
   diritto italiano — impalcature di lavoro "scaffold-not-answer" curate
@@ -13,7 +13,7 @@ description: >
 <!-- Bulletin content licensed proprietary © MicheleLoi 2026; see
      https://github.com/MicheleLoi/regia-bollettino-updater/blob/main/NOTICE.md -->
 
-# pattern-extractor — applicazione di schemi di ragionamento per il diritto italiano
+# schemi-di-ragionamento — applicazione di schemi di ragionamento per il diritto italiano
 
 ## Cosa sono gli schemi del bollettino
 
@@ -30,13 +30,13 @@ non un'attribuzione di licenza open source di terzi.
 
 > Nota: il panorama degli strumenti legal-AI open source (Mike e fork
 > nazionali, AGPL) è dominio di `ecosystem-scout`, che consulta un bollettino
-> diverso. `pattern-extractor` applica solo gli schemi editoriali del
+> diverso. `schemi-di-ragionamento` applica solo gli schemi editoriali del
 > bollettino di BeccarIA.
 
 ## Quick start
 
 L'avvocato chiede: *"applica al mio contratto lo schema del bollettino per
-il trasporto di cose"* — pattern-extractor si attiva, consulta il bollettino
+il trasporto di cose"* — schemi-di-ragionamento si attiva, consulta il bollettino
 degli schemi di BeccarIA via `WebFetch`, recupera lo schema corrispondente,
 **espone l'attribuzione editoriale all'inizio della risposta**, poi applica
 il `prompt_template` dello schema alla conversazione corrente.
@@ -57,7 +57,7 @@ editoriale obbligatorio**:
 
 Subito dopo l'attribuzione, marker modalità:
 
-> **[pattern-extractor attiva]**
+> **[schemi-di-ragionamento attiva]**
 
 Poi la risposta operativa (applicazione dello schema al task dell'avvocato).
 
@@ -70,7 +70,7 @@ Marker exit quando l'avvocato cambia topic:
 **Avvocato:** *"Voglio redigere il nucleo di un contratto di trasporto
 di cose per via terra."*
 
-**pattern-extractor:**
+**schemi-di-ragionamento:**
 
 > Sto applicando un'impalcatura di lavoro tratta dal bollettino editoriale
 > di **MicheleLoi** (MicheleLoi/legal-tech-cowork · contenuto proprietario,
@@ -80,7 +80,7 @@ di cose per via terra."*
 > stesse aree (obblighi del vettore, clausole di limitazione, documentazione
 > del danno, termini di reclamo).
 >
-> **[pattern-extractor attiva]**
+> **[schemi-di-ragionamento attiva]**
 >
 > *[applicazione dello schema al task — redazione strutturata]*
 
@@ -97,7 +97,7 @@ di cose per via terra."*
 `ecosystem-scout` risponde alla domanda *"quali strumenti open source
 esistono?"* (dominio diverso). Se l'avvocato, dopo una panoramica, chiede
 invece di applicare uno **schema del bollettino editoriale** al suo caso,
-quello è compito di pattern-extractor.
+quello è compito di schemi-di-ragionamento.
 
 **Trigger impliciti per task riconosciuti:**
 
@@ -334,13 +334,13 @@ generale senza attribuzione).
 
 - `ecosystem-scout` risponde alla domanda *"quali strumenti open source
   esistono?"* (consulta il bollettino ecosystem — Mike e fork, AGPL).
-- `pattern-extractor` applica uno **schema editoriale** del bollettino
+- `schemi-di-ragionamento` applica uno **schema editoriale** del bollettino
   (consulta il bollettino degli schemi — contenuto proprietario MicheleLoi).
 - `prova-schema` registra l'esito quando l'avvocato ha **messo alla prova**
   uno schema sul fascicolo reale (loop di validazione).
 
 I tre domini sono distinti: panorama OSS (ecosystem-scout) ≠ applicazione di
-uno schema editoriale (pattern-extractor) ≠ registrazione di una prova
+uno schema editoriale (schemi-di-ragionamento) ≠ registrazione di una prova
 (prova-schema).
 
 ## Tono
@@ -352,6 +352,6 @@ ma servizio.
 
 ---
 
-*BeccarIA — pattern-extractor — codice AGPL-3.0-only — alimentato dal
+*BeccarIA — schemi-di-ragionamento — codice AGPL-3.0-only — alimentato dal
 bollettino editoriale di MicheleLoi (`regia-bollettino-updater`, contenuto
 proprietario) — attribuzione editoriale obbligatoria sempre*

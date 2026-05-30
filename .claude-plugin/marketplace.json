@@ -7,7 +7,7 @@
     {
       "name": "beccaria",
       "source": "./beccaria",
-      "description": "BeccarIA — Skill Claude per l'avvocato italiano nell'ecosistema legal-AI open source. Sei skill: verifica-fonti (default, controllo citazioni normative IT/EU), catalogo (bollettino skill terze), skill-installer, adattamento-italiano (US→IT mapping), ecosystem-scout (panoramica MikeOSS + fork), pattern-extractor (applicazione di pattern di approccio al diritto italiano, curati editorialmente da MicheleLoi). Tutte le skill avanzate fanno WebFetch autonomous post-trigger esplicito sul VPS BeccarIA (bulletins.micheleloi.pro) — single onboarding step: aggiungere il dominio all'allowlist egress di Claude Desktop. Plugin pubblico sotto RegIA umbrella. Codice skill AGPL-3.0; contenuto dei bollettini proprietario (vedi NOTICE in regia-bollettino-updater).",
+      "description": "BeccarIA — Skill Claude per l'avvocato italiano nell'ecosistema legal-AI open source. Sei skill: verifica-fonti (default, controllo citazioni normative IT/EU), catalogo (bollettino skill terze), skill-installer, adattamento-italiano (US→IT mapping), ecosystem-scout (panoramica MikeOSS + fork), schemi-di-ragionamento (applicazione di pattern di approccio al diritto italiano, curati editorialmente da MicheleLoi). Tutte le skill avanzate fanno WebFetch autonomous post-trigger esplicito sul VPS BeccarIA (bulletins.micheleloi.pro) — single onboarding step: aggiungere il dominio all'allowlist egress di Claude Desktop. Plugin pubblico sotto RegIA umbrella. Codice skill AGPL-3.0; contenuto dei bollettini proprietario (vedi NOTICE in regia-bollettino-updater).",
       "author": {
         "name": "Michele Loi"
       }

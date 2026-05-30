@@ -53,7 +53,7 @@ italiane ed europee che l'ecosistema non copre nativamente.*
    strumento suggerito. Alimentato dal bollettino ecosystem del VPS
    BeccarIA.
 
-6. **`pattern-extractor`** *(nuova in 4.0.0)* — applica pattern di
+6. **`schemi-di-ragionamento`** *(nuova in 4.0.0)* — applica pattern di
    prompt/approccio derivati dall'ecosistema AGPL alla conversazione
    corrente, con **attribution AGPL obbligatoria** all'inizio della
    risposta. Mai inventa attribuzioni: se nel bollettino non c'è un
@@ -64,14 +64,14 @@ italiane ed europee che l'ecosistema non copre nativamente.*
 ## Cosa cambia in v4.0.0
 
 - Identità autonoma sotto **RegIA** (non più sotto-componente MHC-L).
-- Due skill nuove (`ecosystem-scout`, `pattern-extractor`) che integrano
+- Due skill nuove (`ecosystem-scout`, `schemi-di-ragionamento`) che integrano
   BeccarIA nell'ecosistema legal-AI open source italiano via bollettini
   JSON curati pubblicati dal VPS RegIA.
 - Licenza per i nuovi componenti BeccarIA: **GNU AGPL-3.0**, per coerenza
   con l'ecosistema (Mike e fork sono AGPL). Vedi sezione "Licenza" sotto.
 - Doctrine **fetch autonomous post-trigger esplicito su VPS BeccarIA**
   (`bulletins.micheleloi.pro`) per tutte le skill modalità avanzata
-  (`catalogo`, `skill-installer`, `ecosystem-scout`, `pattern-extractor`).
+  (`catalogo`, `skill-installer`, `ecosystem-scout`, `schemi-di-ragionamento`).
   Single onboarding step: aggiungere `bulletins.micheleloi.pro`
   all'allowlist egress di Claude Desktop. Fallback pointer-pure
   documentato in ogni `SKILL.md` per casi di policy di rete restrittiva
@@ -100,7 +100,7 @@ per studio legale.
 
 > *"Ok, applica l'approccio di [strumento] al mio NDA."*
 
-`pattern-extractor` si attiva, consulta il bollettino pattern, espone
+`schemi-di-ragionamento` si attiva, consulta il bollettino pattern, espone
 l'**attribution prefix obbligatorio**:
 
 > Sto applicando un approccio derivato da **[source_repo]** ([owner],
@@ -123,7 +123,7 @@ Poi applica il pattern al task. Mai senza attribution.
   formato, plausibilità numerica, coerenza testuale e knowledge
   interna — i link ai registri authoritative indirizzano l'avvocato alla
   verifica, non la sostituiscono.
-- **Non inventa attribuzioni AGPL.** `pattern-extractor` espone
+- **Non inventa attribuzioni AGPL.** `schemi-di-ragionamento` espone
   l'attribution solo se il pattern è stato effettivamente recuperato dal
   backend; altrimenti dichiara apertamente l'assenza e procede con
   approccio generale di Claude senza attribuire all'ecosistema.
@@ -139,7 +139,7 @@ solo il primo:
   italiano-curato + l'ecosistema globale AGPL invoca esplicitamente una
   delle skill ecosistema: `catalogo` (per skill terze pronte da
   installare), `ecosystem-scout` (per panoramica strumenti open source),
-  `pattern-extractor` (per applicare pattern dell'ecosistema con
+  `schemi-di-ragionamento` (per applicare pattern dell'ecosistema con
   attribution).
 
 **Come si attiva.** L'avvocato dice a Claude:
@@ -147,7 +147,7 @@ solo il primo:
 - *"Apri il bollettino delle skill italiane"* → `catalogo`
 - *"Che tool open source esistono per [task]?"* → `ecosystem-scout`
 - *"Applica l'approccio di [strumento] al mio contratto"* →
-  `pattern-extractor`
+  `schemi-di-ragionamento`
 - *"Installa skill X"* (dopo `catalogo`) → `skill-installer`
 
 Niente di tutto questo è automatico: senza una richiesta esplicita la
@@ -167,7 +167,7 @@ Il plugin opera senza configurazione di rete preventiva in Claude Desktop:
 - **`catalogo` (skill terze) — pointer.** Il plugin suggerisce l'URL del
   bollettino e il fraseggio per chiederne l'apertura a Claude.
   Tu controlli quando e cosa.
-- **`ecosystem-scout`, `pattern-extractor`, `skill-installer` —
+- **`ecosystem-scout`, `schemi-di-ragionamento`, `skill-installer` —
   fetch puntuale solo dopo un tuo trigger esplicito** (richiesta di
   installazione, domanda sull'ecosistema, richiesta di applicare un
   pattern). Niente polling background. Niente fetch senza una tua azione
@@ -201,7 +201,7 @@ BeccarIA usa un modello **multi-license** con tre componenti:
 1. **AGPL-3.0** — le due skill nuove di v4.0.0 che partecipano
    nell'ecosistema legal-AI open source AGPL:
    `beccaria/skills/ecosystem-scout/` e
-   `beccaria/skills/pattern-extractor/`. Vedi `LICENSE-AGPL`.
+   `beccaria/skills/schemi-di-ragionamento/`. Vedi `LICENSE-AGPL`.
 
 2. **MIT** — gli altri componenti BeccarIA originali (
    `beccaria/skills/verifica-fonti/`,
@@ -219,7 +219,7 @@ per-cartella documentata in `LICENSE-AGPL`.
 
 ### Perché AGPL per le due skill nuove
 
-Le skill `ecosystem-scout` e `pattern-extractor` servono pattern e
+Le skill `ecosystem-scout` e `schemi-di-ragionamento` servono pattern e
 metadati derivati da repo AGPL (Mike e fork). Per coerenza con
 l'ecosistema, sono distribuite sotto la stessa licenza che governa
 l'ecosistema. La parte di BeccarIA che non interagisce con codice/dati
@@ -230,7 +230,7 @@ resta MIT come prima.
 
 - **PR su `verifica-fonti`** (pattern di citazione mancanti, registri
   normativi da aggiungere, plausibilità numeriche affinate) → benvenute.
-- **PR su `ecosystem-scout` o `pattern-extractor`** (formattazione output,
+- **PR su `ecosystem-scout` o `schemi-di-ragionamento`** (formattazione output,
   schema mapping, gestione errori) → benvenute, contributi cadono sotto
   AGPL-3.0 per coerenza.
 - **PR su documentazione** → benvenute.
@@ -266,14 +266,14 @@ always-on: it has been refactored as an **advanced opt-in** mode
 
 **Ecosystem skills (new in v4.0.0):** `ecosystem-scout` provides an
 intelligent overview of the legal-AI open-source ecosystem (Mike, forks)
-via a curated JSON bulletin published by the RegIA VPS. `pattern-extractor`
+via a curated JSON bulletin published by the RegIA VPS. `schemi-di-ragionamento`
 applies patterns from the ecosystem to the current conversation, with
 **mandatory AGPL attribution prefix** at the start of every applied
 response. Never invents attributions: if the bulletin has no matching
 pattern, declares it openly.
 
 **Fetch posture:** all advanced-mode skills (`catalogo`,
-`skill-installer`, `ecosystem-scout`, `pattern-extractor`) perform
+`skill-installer`, `ecosystem-scout`, `schemi-di-ragionamento`) perform
 autonomous `WebFetch` on the BeccarIA VPS (`bulletins.micheleloi.pro`)
 **only after an explicit lawyer trigger** (open catalog, install
 request, ecosystem question, pattern application). No background

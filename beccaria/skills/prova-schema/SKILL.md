@@ -21,7 +21,7 @@ description: >
 ## A cosa serve
 
 Quando l'avvocato ha **messo alla prova** uno schema del bollettino
-(un'impalcatura di lavoro applicata via `pattern-extractor`) su un
+(un'impalcatura di lavoro applicata via `schemi-di-ragionamento`) su un
 fascicolo reale, questa skill raccoglie l'esito onesto della prova e lo
 trasmette a chi cura il bollettino, tramite un'email pre-compilata che
 l'avvocato invia con un click.
@@ -41,7 +41,7 @@ dall'esito positivo: scatta sull'atto della prova onesta.
 
 **Opt-in. Non auto-attivarti.** Questa skill parte solo quando
 l'avvocato lo chiede esplicitamente, tipicamente *dopo* aver usato uno
-schema del bollettino (via `pattern-extractor`) sul proprio lavoro.
+schema del bollettino (via `schemi-di-ragionamento`) sul proprio lavoro.
 
 **Trigger naturali:**
 
@@ -52,7 +52,7 @@ schema del bollettino (via `pattern-extractor`) sul proprio lavoro.
 - `/prova-schema`
 
 **Trigger via concatenazione:** se in un turno precedente
-`pattern-extractor` ha applicato uno schema e l'avvocato, più avanti,
+`schemi-di-ragionamento` ha applicato uno schema e l'avvocato, più avanti,
 dice qualcosa come "alla fine mi è servito" / "non mi ha aiutato" /
 "mi avrebbe sviato", offri di registrare l'esito con questa skill —
 ma chiedi conferma, non procedere d'ufficio.
@@ -60,7 +60,7 @@ ma chiedi conferma, non procedere d'ufficio.
 ## Quando NON attivarti
 
 - L'avvocato vuole **applicare** uno schema nuovo al suo caso → quello è
-  `pattern-extractor`.
+  `schemi-di-ragionamento`.
 - L'avvocato chiede *quali* schemi esistono → quello è `ecosystem-scout`.
 - L'avvocato chiede di verificare citazioni normative → quello è
   `verifica-fonti`.
@@ -76,7 +76,7 @@ non un sondaggio di gradimento.
 ### Step 1 — Quale schema è stato messo alla prova
 
 Identifica lo schema. Se l'avvocato lo nomina, usa quel nome. Altrimenti,
-deducilo dal contesto (se `pattern-extractor` ha applicato uno schema in
+deducilo dal contesto (se `schemi-di-ragionamento` ha applicato uno schema in
 questa stessa conversazione, è quasi certamente quello) e **conferma**:
 
 > *"Stai mettendo alla prova lo schema `<pattern_id>` — confermi? Se è un
@@ -260,6 +260,6 @@ lavora.
 ---
 
 *BeccarIA — prova-schema — AGPL-3.0-only — zero storage, mailto-only —
-gemella di `pattern-extractor` (stesso meccanismo mailto, contenuto
+gemella di `schemi-di-ragionamento` (stesso meccanismo mailto, contenuto
 diverso: registra la prova di uno schema esistente, non ne propone uno
 nuovo) — il perk è verdict-neutral*
