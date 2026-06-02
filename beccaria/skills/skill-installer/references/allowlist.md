@@ -49,6 +49,7 @@ connectors:
   # If a skill declares a connector not on this list, it is flagged in
   # permissive mode and refused in restrictive mode.
   # - https://mcp.example.com/server
+  # - https://<endpoint-fornito-da-BuddaLaw>   # BuddaLaw — banca dati giuridica IT (connettore MCP di terzi; bring-your-own abbonamento)
 
 licenses:
   # SPDX license identifiers that community skills may carry.
