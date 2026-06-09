@@ -12,6 +12,12 @@ description: >
   viene mai invocata automaticamente dall'installer né dal catalogo.
   Usa quando l'avvocato scrive "adatta [nome] in italiano",
   "italianizza [nome]", "/adattamento-italiano [nome]", o equivalenti.
+  L'input atteso è un riferimento a una skill terza già installata
+  (nome skill, oppure niente per selezione interattiva dalla lista
+  delle installate). NON è un traduttore o riformulatore di testo
+  libero: declina richieste tipo "riformulami questo testo in
+  italiano", "traduci questo paragrafo", "rendi italiano questo
+  prompt" — fuori scope, anche se la richiesta menziona "italiano".
 argument-hint: "[nome skill già installata, oppure niente per selezione interattiva]"
 ---
 
