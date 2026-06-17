@@ -20,7 +20,7 @@ Ogni entry documenta: voci aggiunte, candidate scartate, SHA commit.
   - Contenuto US-specific senza segnali EU/IT: sure-scale/doc-haus (49★ NOASSERTION), ahacker-1/cre-acquisition-orchestrator (76★ Apache-2.0, US CRE)
   - Publisher anthropics/* senza skill legali: anthropics/skills (licenze proprietarie per le skill principali), anthropics/defending-code-reference-harness (code security, non legal), anthropics/launch-your-agent (3★, startup tool)
   - Close call REFUSE: open-agreements/open-agreements (36★ Apache-2.0, SKILL.md multipli confermati, org; REFUSE per stars < 50 e apparent sole developer stevenobiajulu — non supera reputation minimum), zoharbabin/due-diligence-agents (47★ Apache-2.0; REFUSE per assenza di SKILL.md installabile, applicazione Python non skill)
-- **Commit:** da determinare post-push
+- **Commit:** 58ca1c0
 - **Note:** Secondo run della routine. Ecosistema ancora in espansione ma prevalenza di repos spam (topic stuffing con 0 stars) e repos di diritto non-IT/EU. Segnale positivo: crescita organica dei due entry esistenti (knowledge-work-plugins +8.759 stars in 30 giorni; TerminalSkills/skills +25 stars). Candidato più prossimo alla soglia: open-agreements/open-agreements — da rivalutare il prossimo run se raggiunge 50★ o aggiunte contributors.
 
 ---
