@@ -2,6 +2,34 @@
 
 Tutte le modifiche notabili a questo progetto sono documentate qui.
 
+## v4.3.0 — 2026-06-18 (beta)
+
+### `verifica-fonti` — integrazione Simpliciter MCP (secondo connettore banca dati)
+
+La skill `verifica-fonti` ora riconosce **Simpliciter MCP** come secondo connettore
+opzionale a banca dati giuridica di terzi, accanto a BuddaLaw, **innestato nello
+stesso schema** (consenso esplicito al primo uso, ricerca a cascata, fallback
+automatico ai registri web, provenance esplicita) — non un meccanismo parallelo.
+
+- **Simpliciter** è un connettore **remoto** (endpoint `https://simpliciter.ai/mcp`,
+  OAuth nel browser, abbonamento attivo richiesto): strumenti di sola lettura su
+  normativa + giurisprudenza italiana, recupero di fonti da riferimento esatto con
+  link verificabili. **BuddaLaw** resta forte sulla giurisprudenza di legittimità e
+  merito. Chi non ha alcun connettore non vede cambiamenti: la skill usa i registri
+  web come prima.
+- **Stesse garanzie del primo connettore**: consenso esplicito al primo uso della
+  sessione (default = non usare), memoria di sessione senza persistenza su disco,
+  suggerimento di pseudonimizzare con Recode IT i dati di causa sensibili, fallback
+  ai registri web **non opzionale**.
+- **Nomi dei tool MCP di Simpliciter**: placeholder (`mcp__simpliciter__<da-confermare>`)
+  finché non confermati al primo collegamento del connettore — nessun nome inventato.
+
+### Coerenza documentazione
+
+`README.md` aggiornato per riflettere il comportamento reale: la skill consulta i
+registri pubblici live (WebFetch) e può usare connettori MCP di terzi opzionali e
+consent-gated; nessun connettore è incluso o richiesto dal plugin.
+
 ## v4.2.1 — 2026-06-04 (beta)
 
 ### `verifica-fonti` — integrazione BuddaLaw MCP
