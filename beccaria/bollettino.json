@@ -8,8 +8,8 @@
     "italian_adaptation_status": "pending|ready|stale — pending=never adapted, ready=adapted template generated and validated at least once, stale=upstream skill changed after adaptation",
     "tier": "1 = Anthropic-official (publisher anthropics/*); 2 = community vetted (publisher terzo, passa threshold policy). REFUSE entries are filtered upstream by bollettino-research routine (license assente, hook shell sospetto, injection pattern) and never reach this file. Drives the per-tier line shown to the lawyer by skill-installer."
   },
-  "version": "2026-05-17",
-  "last_updated": "2026-05-17",
+  "version": "2026-06-17",
+  "last_updated": "2026-06-17",
   "entries": [
     {
       "id": "anthropics-knowledge-work-legal",
@@ -30,11 +30,11 @@
       },
 
       "reputation": {
-        "stars": 12267,
-        "last_commit": "2026-05-16",
+        "stars": 21026,
+        "last_commit": "2026-06-17",
         "commit_frequency_30d": 0,
         "contributors": 0,
-        "open_issues": 112,
+        "open_issues": 144,
         "closed_issues_30d": 0,
         "release_tags": 0,
         "license": "Apache-2.0",
@@ -71,16 +71,16 @@
       },
 
       "reputation": {
-        "stars": 51,
-        "last_commit": "2026-05-13",
+        "stars": 76,
+        "last_commit": "2026-06-11",
         "commit_frequency_30d": 0,
         "contributors": 0,
-        "open_issues": 2,
+        "open_issues": 0,
         "closed_issues_30d": 0,
         "release_tags": 0,
         "license": "Apache-2.0",
         "computed_quality_stars": 4,
-        "computed_trend": "stabile"
+        "computed_trend": "in crescita"
       },
 
       "founder_disclaimer": "Skill generica di revisione contrattuale multi-agente; non calibrata su diritto italiano — richiede adattamento su legge applicabile, foro e specificità del tipo contrattuale prima dell'uso.",
