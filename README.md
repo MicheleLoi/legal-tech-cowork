@@ -119,10 +119,13 @@ Poi applica il pattern al task. Mai senza attribution.
   è opt-in via `adattamento-italiano`.
 - **Non garantisce la correttezza sostanziale.** Una citazione formalmente
   corretta può comunque essere inapplicabile al caso concreto.
-- **Non consulta i registri normativi live.** Il controllo è basato su
-  formato, plausibilità numerica, coerenza testuale e knowledge
-  interna — i link ai registri authoritative indirizzano l'avvocato alla
-  verifica, non la sostituiscono.
+- **Consulta i registri pubblici live, ma non sostituisce la verifica
+  diretta per uso processuale.** Il controllo combina formato, plausibilità
+  numerica e coerenza testuale con la **consultazione live** dei registri
+  pubblici (Normattiva, EUR-Lex, Garante, Corte Costituzionale, Cassazione)
+  via WebFetch — e, se l'avvocato lo autorizza, di un connettore MCP a banca
+  dati di terzi (BuddaLaw e/o Simpliciter). Il WebFetch può servire versioni
+  cache: per uso processuale la freschezza va confermata sul link diretto.
 - **Non inventa attribuzioni AGPL.** `schemi-di-ragionamento` espone
   l'attribution solo se il pattern è stato effettivamente recuperato dal
   backend; altrimenti dichiara apertamente l'assenza e procede con
