@@ -8,8 +8,8 @@
     "italian_adaptation_status": "pending|ready|stale — pending=never adapted, ready=adapted template generated and validated at least once, stale=upstream skill changed after adaptation",
     "tier": "1 = Anthropic-official (publisher anthropics/*); 2 = community vetted (publisher terzo, passa threshold policy). REFUSE entries are filtered upstream by bollettino-research routine (license assente, hook shell sospetto, injection pattern) and never reach this file. Drives the per-tier line shown to the lawyer by skill-installer."
   },
-  "version": "2026-06-17",
-  "last_updated": "2026-06-17",
+  "version": "2026-07-17",
+  "last_updated": "2026-07-17",
   "entries": [
     {
       "id": "anthropics-knowledge-work-legal",
@@ -87,6 +87,47 @@
       "recommended_for": "Primo triage di bozze contrattuali per identificare clausole anomale, prima di una revisione approfondita dello studio.",
 
       "added_to_bollettino": "2026-05-17",
+      "italian_adaptation_status": "pending",
+
+      "critical_alert": false,
+      "critical_alert_message": null,
+      "critical_alert_severity": null
+    },
+    {
+      "id": "apiotrowski-commercial-legal-pl",
+      "name": "commercial-legal-pl",
+      "description_it": "Skill Claude per la redazione e analisi di contratti commerciali B2B e IT secondo il diritto polacco (Kodeks cywilny), con moduli GDPR-RODO direttamente applicabili nell'UE.",
+
+      "repo_url": "https://github.com/apiotrowski-afk/commercial-legal-pl",
+      "skill_path": "SKILL.md",
+
+      "area": "commerciale",
+      "jurisdiction": "other",
+      "tier": 2,
+
+      "publisher": {
+        "name": "apiotrowski-afk",
+        "type": "individual",
+        "italian_localized": false
+      },
+
+      "reputation": {
+        "stars": 132,
+        "last_commit": "2026-07-17",
+        "commit_frequency_30d": 4,
+        "contributors": 0,
+        "open_issues": 1,
+        "closed_issues_30d": 0,
+        "release_tags": 1,
+        "license": "Apache-2.0",
+        "computed_quality_stars": 4,
+        "computed_trend": "stabile"
+      },
+
+      "founder_disclaimer": "Skill incentrata sul diritto civile polacco (Kodeks cywilny) e contrattualistica IT polacca; i moduli GDPR-RODO sono direttamente applicabili in Italia, mentre le clausole di diritto locale richiedono adattamento al Codice Civile italiano. Autore individuale, nessun endorsement aziendale.",
+      "recommended_for": "Primo triage di contratti B2B IT e NDA con componente GDPR/UE; da adattare al diritto italiano prima dell'uso in produzione.",
+
+      "added_to_bollettino": "2026-07-17",
       "italian_adaptation_status": "pending",
 
       "critical_alert": false,
