@@ -5,6 +5,32 @@ Ogni entry documenta: voci aggiunte, candidate scartate, SHA commit.
 
 ---
 
+## 2026-07-17
+
+- **1 voce aggiunta** (id: `apiotrowski-commercial-legal-pl`, tier: 2)
+- **Candidati esaminati:** ~350+ su 7 query di ricerca
+  - topic:claude-skill × 100 item (su 1.543 totali)
+  - topic:claude-cowork-plugin × 12
+  - topic:legal-tech × 50 (su 508 totali)
+  - "legal AI agent" × 50
+  - "lawtech open source" × 50
+  - "contract review AI" × 50
+  - org:anthropics topic:skill × 0 risultati utili
+- **Candidato promosso:**
+  - `apiotrowski-afk/commercial-legal-pl` — 132★, Apache-2.0, SKILL.md confermato, last_commit 2026-07-17, release v0.2.1 (20 giugno 2026). Skill per contrattualistica B2B IT polacca + moduli GDPR-RODO. Reputazione: stars ≥ 50 AND last commit ≤ 180 giorni (pass). Spam filter: 132 stars > 100 (pass). Rilevanza IT: EU signal via GDPR-RODO (pass, no marker US-only). Schema: SKILL.md root + .claude-plugin/ (pass). jurisdiction=other (diritto polacco primario, GDPR secondario EU). tier=2 (publisher individuale, non anthropics/).
+- **Principali motivi di esclusione per gli altri candidati:**
+  - License AGPL-3.0 (viral, fuori lista): `fedec65/bettercallclaude` (33★, Swiss legal), `zeweihan/aiworkdeck` (61★, IDE legale)
+  - License assente/NOASSERTION: `vikashjeyaraman/opencouncil-contract-inspector` (151★), `Vaquill-AI/awesome-legaltech` (162★, awesome-list + no license), `jacktotem/anonimizzatore-pdf` (italiano ma NOASSERTION)
+  - Rilevanza IT esclusa (US-only): `ahacker-1/cre-acquisition-orchestrator` (92★ Apache-2.0, US CRE senza segnali EU/IT)
+  - Diritto non-IT/EU: Wolfgangrush family (14+ repo diritto indiano, MIT, 1-2★), `madfam-org/tezca` (diritto messicano, AGPL), `erjigit7/myizam` (Kyrgyzstan), `jabezpauls/startup-law-skill` (diritto indiano)
+  - Stars < 50 + publisher individuale (filtro spam): `JohnDeer-ai/veqtor-mcp` (2★), `eliasreiche/legal-ops-germany` (5★), `kjgdgch65g/nl-rag-qdrant-legal` (6★), `lowtidebuild/contract-review-agent` (39★), `rohasnagpal/AI-Blueprint` (38★)
+  - Schema mancante (applicazioni complete, non skill): `zeweihan/aiworkdeck`, `sebastianfoerste/contract-review-eval-harness`, decine di repo AI contract review webapp
+  - Massa repo ncreighton/* (WordPress plugin, 0★, no license, topic stuffing)
+  - Prossimi alla soglia (da rivalutare): `fedec65/bettercallclaude` (33★ AGPL, license barrier unico blocco — se l'autore aggiungerà MIT/Apache), `lowtidebuild/contract-review-agent` (39★ Apache-2.0, schema da verificare)
+- **Commit:** 3c710a9
+
+---
+
 ## 2026-06-17
 
 - **0 voci aggiunte** (nessun candidato ha superato la threshold policy in questo run)
