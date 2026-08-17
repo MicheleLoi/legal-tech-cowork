@@ -5,6 +5,25 @@ Ogni entry documenta: voci aggiunte, candidate scartate, SHA commit.
 
 ---
 
+## 2026-08-17
+
+- **0 voci aggiunte** (run parziale: GitHub scope limitato alla sessione corrente)
+- **0 voci scartate** (ricerca non completabile)
+- **3 voci esistenti mantenute senza reputation refresh** (repos fuori scope sessione)
+- **Query eseguite (5/7):**
+  - topic:claude-skill updated:>2026-07-18 → 0 risultati
+  - topic:claude-cowork-plugin updated:>2026-07-18 → 0 risultati
+  - topic:legal-tech updated:>2026-07-18 → 0 risultati
+  - "legal AI agent" updated:>2026-07-18 → 0 risultati
+  - "lawtech open source" updated:>2026-07-18 → 0 risultati
+  - "contract review AI" — non eseguita (scope constraint)
+  - owner:anthropics topic:skill — non eseguita (scope constraint)
+- **Causa blocco:** La sessione remote agent è configurata con GitHub MCP scope ristretto a `micheleloi/legal-tech-cowork`. La routine `bollettino-research` richiede ricerca across-GitHub (7 query broad senza repo arg). I tool `search_repositories` e `search_code` senza filtro repo esplicito non rientrano nello scope sessione — le chiamate hanno restituito 0 risultati (filtro applicato a livello API MCP). Reputation refresh delle 3 voci esistenti non eseguito per lo stesso motivo (repos `anthropics/knowledge-work-plugins`, `TerminalSkills/skills`, `apiotrowski-afk/commercial-legal-pl` non accessibili fuori scope).
+- **Azione richiesta al founder:** Configurare accesso GitHub MCP con scope allargato per questa routine, oppure attivare `gh CLI` nella sandbox del remote agent (come da nota in BOLLETTINO_FORMAT.md: "Possibile che serva GitHub MCP connector configurato da founder (parking)"). Vedere `claude.ai/code` → settings sessione remote → GitHub integration scope.
+- **Commit:** (nessuna voce nuova — commit solo timestamp bollettino + questo log)
+
+---
+
 ## 2026-07-17
 
 - **1 voce aggiunta** (id: `apiotrowski-commercial-legal-pl`, tier: 2)

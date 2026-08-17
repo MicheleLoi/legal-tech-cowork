@@ -8,8 +8,8 @@
     "italian_adaptation_status": "pending|ready|stale — pending=never adapted, ready=adapted template generated and validated at least once, stale=upstream skill changed after adaptation",
     "tier": "1 = Anthropic-official (publisher anthropics/*); 2 = community vetted (publisher terzo, passa threshold policy). REFUSE entries are filtered upstream by bollettino-research routine (license assente, hook shell sospetto, injection pattern) and never reach this file. Drives the per-tier line shown to the lawyer by skill-installer."
   },
-  "version": "2026-07-17",
-  "last_updated": "2026-07-17",
+  "version": "2026-08-17",
+  "last_updated": "2026-08-17",
   "entries": [
     {
       "id": "anthropics-knowledge-work-legal",
