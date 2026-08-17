@@ -20,7 +20,7 @@ Ogni entry documenta: voci aggiunte, candidate scartate, SHA commit.
   - owner:anthropics topic:skill — non eseguita (scope constraint)
 - **Causa blocco:** La sessione remote agent è configurata con GitHub MCP scope ristretto a `micheleloi/legal-tech-cowork`. La routine `bollettino-research` richiede ricerca across-GitHub (7 query broad senza repo arg). I tool `search_repositories` e `search_code` senza filtro repo esplicito non rientrano nello scope sessione — le chiamate hanno restituito 0 risultati (filtro applicato a livello API MCP). Reputation refresh delle 3 voci esistenti non eseguito per lo stesso motivo (repos `anthropics/knowledge-work-plugins`, `TerminalSkills/skills`, `apiotrowski-afk/commercial-legal-pl` non accessibili fuori scope).
 - **Azione richiesta al founder:** Configurare accesso GitHub MCP con scope allargato per questa routine, oppure attivare `gh CLI` nella sandbox del remote agent (come da nota in BOLLETTINO_FORMAT.md: "Possibile che serva GitHub MCP connector configurato da founder (parking)"). Vedere `claude.ai/code` → settings sessione remote → GitHub integration scope.
-- **Commit:** (nessuna voce nuova — commit solo timestamp bollettino + questo log)
+- **Commit:** 50a2734
 
 ---
 
