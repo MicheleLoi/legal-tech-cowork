@@ -5,6 +5,27 @@ Ogni entry documenta: voci aggiunte, candidate scartate, SHA commit.
 
 ---
 
+## 2026-09-17
+
+- **0 voci aggiunte** (GitHub scope ristretto — terzo mese consecutivo)
+- **0 candidate scartate** (ricerche non completabili per scope)
+- **3 voci esistenti mantenute senza reputation refresh** (repos fuori scope sessione)
+- **Commit:** d2e2e14
+- **Query eseguite (7/7, tutte → 0 risultati):**
+  - topic:claude-skill updated:>2026-08-18 → 0 risultati
+  - topic:claude-cowork-plugin updated:>2026-08-18 → 0 risultati
+  - topic:legal-tech updated:>2026-08-18 → 0 risultati
+  - "legal AI agent" updated:>2026-08-18 → 0 risultati
+  - "lawtech open source" updated:>2026-08-18 → 0 risultati
+  - "contract review AI" updated:>2026-08-18 → 0 risultati
+  - org:anthropics topic:skill → 0 risultati
+- **Reputation refresh tentato:** access denied per tutti e 3 i repo (anthropics/knowledge-work-plugins, TerminalSkills/skills, apiotrowski-afk/commercial-legal-pl) — fuori scope GitHub MCP.
+- **Causa blocco:** GitHub MCP scope ristretto a `micheleloi/legal-tech-cowork`. Identica causa di agosto 2026. Terzo run consecutivo bloccato (agosto + settembre incluso). Luglio 2026 fu l'ultimo run funzionante (scope più ampio in quella sessione).
+- **Nota path:** la routine è indirizzata a `mhc-l/bollettino.json` ma il file reale è `beccaria/bollettino.json` (plugin rinominato da mhc-l a beccaria in BeccarIA v4.0.0). Il file aggiornato in questo run è `beccaria/bollettino.json`.
+- **Azione richiesta al founder:** Configurare accesso GitHub MCP con scope allargato per le sessioni remote della routine `bollettino-research` — oppure attivare `gh CLI` nella sandbox del remote agent. Aggiornare anche il path nella configurazione della routine da `mhc-l/` a `beccaria/`. Vedere `claude.ai/code` → settings sessione remote → GitHub integration scope.
+
+---
+
 ## 2026-08-17
 
 - **0 voci aggiunte** (run parziale: GitHub scope limitato alla sessione corrente)
