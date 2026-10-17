@@ -10,7 +10,7 @@ Ogni entry documenta: voci aggiunte, candidate scartate, SHA commit.
 - **0 voci aggiunte** (GitHub scope ristretto — quarto mese consecutivo)
 - **0 candidate scartate** (ricerche non completabili per scope)
 - **3 voci esistenti mantenute senza reputation refresh** (repos fuori scope sessione)
-- **Commit:** (vedi sotto)
+- **Commit:** fb2a106
 - **Query eseguite (7/7, tutte → 0 risultati):**
   - topic:claude-skill updated:>2026-09-17 → 0 risultati
   - topic:claude-cowork-plugin updated:>2026-09-17 → 0 risultati
